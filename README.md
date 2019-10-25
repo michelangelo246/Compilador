@@ -1,2 +1,6 @@
 # Compilador
-Compilador para a linguagem GOL (Graph Oriented Language)
+Compilador para a linguagem GOL.
+
+![Screenshot](Capturar.JPG)
+
+Autor: Michelangelo da Rocha Machado
