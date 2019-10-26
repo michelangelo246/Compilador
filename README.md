@@ -1,5 +1,4 @@
-# Compilador
-Compilador para a linguagem GOL.
+Projeto de gramática e fase de análise de uma linguagem denominada GOL com geração de código de três endereços.
 
 ![Screenshot](Capturar.JPG)
 
