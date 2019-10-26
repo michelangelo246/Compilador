@@ -1,4 +1,6 @@
-Projeto de gramática e fase de análise de uma linguagem denominada GOL com geração de código de três endereços.
+# Compilador
+
+Projeto de uma linguagem denominada GOL e de seu respectivo compilador (fase de síntese) com geração de código de três endereços.
 
 ![Screenshot](Capturar.JPG)
 
