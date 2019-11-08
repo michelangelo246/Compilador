@@ -47,18 +47,8 @@ O programa pode gerar a árvore sintática abstrata (AST) nas seguintes formas:
 
 \*Para utilizar o graphviz, instale na sua máquina através do comando: ```sudo apt install graphviz```
 
-Código exemplo e sua respectiva AST:
-
-Código             |  Árvore
-:-------------------------:|:-------------------------:
-```c
-int func1(int a, double b, graph c)
-{
-	return 0;
-}
-
-int func2()
-{
-	return 0;
-}
-```  |  <img src="https://github.com/michelangelo246/Compilador/blob/master/Arvore.png" width="600">
+AST gerada a partir do código exemplo:
+<p float="left">
+  <img src="https://github.com/michelangelo246/Compilador/blob/master/Codigo.png" width="250">
+  <img src="https://github.com/michelangelo246/Compilador/blob/master/Arvore.png" width="500">
+</p>
