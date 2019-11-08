@@ -10,38 +10,7 @@ typedef union
   int int_;
   double double_;
   char* string_;
-  Trans_Unit trans_unit_;
-  Assign_Operator assign_operator_;
-  Constant constant_;
-  Unary_Operator unary_operator_;
-  Type type_;
-  Arg_Exp_List arg_exp_list_;
-  Primary_Exp primary_exp_;
-  Posfix_Exp posfix_exp_;
-  Unary_Exp unary_exp_;
-  Multi_Exp multi_exp_;
-  Add_Exp add_exp_;
-  Rel_Exp rel_exp_;
-  Eq_Exp eq_exp_;
-  Log_And_Exp log_and_exp_;
-  Log_Or_Exp log_or_exp_;
-  Expression expression_;
-  Init_Decl_List init_decl_list_;
-  Init_Declarator init_declarator_;
-  Var_Declaration var_declaration_;
-  Var_Decl_List var_decl_list_;
-  Parameter_List parameter_list_;
-  Statement_List statement_list_;
-  Statement statement_;
-  Open_Stm open_stm_;
-  Block_Stm block_stm_;
-  Return_Stm return_stm_;
-  Exp_Stm exp_stm_;
-  Closed_Stm closed_stm_;
-  Simple_Stm simple_stm_;
-  Declarator declarator_;
-  Function_Def function_def_;
-  Ext_Var_Decl ext_var_decl_;
+  No no_;
 } YYSTYPE;
 
 #define _ERROR_ 258
@@ -85,7 +54,7 @@ typedef union
 #define _IDENT_ 296
 
 extern YYSTYPE yylval;
-Trans_Unit pTrans_Unit(FILE *inp);
+No pTrans_Unit(FILE *inp);
 
 
 #endif
