@@ -6,8 +6,8 @@ Projeto de uma linguagem denominada GOL e de seu respectivo compilador (fase de 
 
 Autor: Michelangelo da Rocha Machado
 
-
-Efeito de algumas operações:
+# Linguagem
+## Efeito de algumas operações:
 
 As operações a seguir foram derivadas de algumas das operações
 básicas encontradas na biblioteca Ngraph para lidar com grafos em C++.
@@ -28,7 +28,7 @@ a = G3#13@; //a recebe o grau de saída do nó 13
 G3 = G1&13&; //G3 recebe grafo composto pelos vizinhos do nó 13 no grafo G1
 ```
 
-Notas:
+## Notas:
 
 Os únicos tipos numéricos são: ‘int’ e ‘float’; Não existe sobrecarga
 de nomes de funções; Em um ‘if’, o ‘else' estará associado com o ‘if’
@@ -37,3 +37,27 @@ consistente com aquelas da matemática; O tipo grafo armazena grafos
 direcionados sem repetição de arestas; O tamanho máximo de um
 identificador é 31 caracteres; As declarações de variáveis devem
 constar antes dos statements;
+
+# Codigo:
+
+O programa pode gerar a árvore nas seguintes formas:
+1. Texto puro
+2. Visual
+2.1. Codigo .dot que pode ser copiado para algum site (e.g. ) 
+2.2. Arquivo .dot que pode ser usado para gerar uma imagem com comando graphviz: ```dot dot -Tpng Arvore.dot -o Arvore.png ```
+
+\*Para utilizar o graphviz, instale na sua máquina através do comando: ```sudo apt install graphviz```
+
+Exemplo de imagem gerada a partir do código exemplo:
+```c
+int func1(int a, double b, graph c)
+{
+	return 0;
+}
+
+int func2()
+{
+	return 0;
+}
+```
+![Screenshot](Arvore.png)
