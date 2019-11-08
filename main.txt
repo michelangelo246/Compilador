@@ -1,0 +1,36 @@
+int main()
+{
+	graph G1; 		//Declaração de variável do tipo graph
+	graph G2;
+	graph G3;
+	
+	G1 << a; 		//Inserção de vértice 13 no grafo G1
+	G1 << (a,14); 		//Inserção de aresta (13,14) no grafo G1
+	G2 << 15; 		//Inserção de vértice 15 no grafo G2
+	
+	G3 = G1 + G2; 	//G3 recebe união dos grafos G1 e G2
+	
+	G2 = G3[G1]; 	//G2 recebe subgrafo de G3 composto por vértices de G1
+	a  = G3@13#; 	//a recebe o grau de entrada do nó 13
+	a  = G3#13@; 	//a recebe o grau de saída do nó 13
+	G3 = G1&13&; 	//G3 recebe grafo composto pelos vizinhos do nó 13 no grafo G1
+
+	G3 = (G1&10&);
+	
+	while(1)
+	{
+		printf("hello world");
+	}
+	return 0;
+}
+double Func(int num, double var, graph grafo)
+{
+	double num = 3.0;
+	int numa = 3, numb = 4;
+	printf();
+	if(num == 3)
+	{
+		int teste = 3;
+	}
+	return 0;
+}
