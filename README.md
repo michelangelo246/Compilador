@@ -41,7 +41,7 @@ constar antes dos statements;
 O programa pode gerar a árvore sintática abstrata (AST) nas seguintes formas:
 1. Texto puro
 2. Codigo .dot que pode ser copiado para algum site (e.g. ) 
-3. Arquivo .dot que pode ser usado para gerar uma imagem com comando graphviz: ```dot dot -Tpng Arvore.dot -o Arvore.png ```
+3. Arquivo .dot que pode ser usado para gerar uma imagem com comando graphviz: ```dot -Tpng Arvore.dot -o Arvore.png ```
 
 \*Para utilizar o graphviz, instale-o na sua máquina através do comando: ```sudo apt install graphviz```
 
