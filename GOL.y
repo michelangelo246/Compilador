@@ -321,8 +321,3 @@ Ext_Var_Decl
 /*ExtVarDecFun*/	: Function_Def { $$ = $1; } 
 /*ExtVarDecVar*/	| Var_Declaration { $$ = $1; }
 					;
-
-
-
-
-
