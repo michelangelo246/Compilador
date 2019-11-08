@@ -59,4 +59,4 @@ int func2()
 	return 0;
 }
 ```
-![Screenshot](Arvore.png =250x250)
+<img src="https://github.com/michelangelo246/Compilador/blob/master/Arvore.png" width="200">
