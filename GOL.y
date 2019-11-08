@@ -1,4 +1,6 @@
-/**	Michelangelo da R. Machado - 14/0156089 **/
+/**	Michelangelo da R. Machado - 14/0156089
+**/
+
 %error-verbose
 %define parse.lac full
 %{
@@ -18,21 +20,21 @@ extern int initialize_lexer(FILE * inp);
 void yyerror(const char *str)
 {
 	extern char *GOLtext;
-	fprintf(stderr,"Erro: line %d column %d: %s at %s \n",
+	fprintf(stderr,"Erro: linha %d coluna %d: %s em %s \n",
 	yy_mylinenumber + 1, (int)(yy_mycolumnnumber - strlen(GOLtext)), str, GOLtext);
 	error = 1;
 }
 
-Trans_Unit YY_RESULT_Trans_Unit_ = 0;
-Trans_Unit pTrans_Unit(FILE *inp)
+No YY_RESULT_Trans_Unit_ = 0;
+No pTrans_Unit(FILE *inp)
 {
 	initialize_lexer(inp);
 	if (yyparse())
-	{ /* Failure */
+	{ /* Falha */
 		return 0;
 	}
 	else
-	{ /* Success */
+	{ /* Sucesso */
 		return YY_RESULT_Trans_Unit_;
 	}
 }
@@ -44,39 +46,7 @@ Trans_Unit pTrans_Unit(FILE *inp)
   int int_;
   double double_;
   char* string_;
-  Trans_Unit trans_unit_;
-  Assign_Operator assign_operator_;
-  Constant constant_;
-  Unary_Operator unary_operator_;
-  Type type_;
-  Arg_Exp_List arg_exp_list_;
-  Primary_Exp primary_exp_;
-  Posfix_Exp posfix_exp_;
-  Unary_Exp unary_exp_;
-  Multi_Exp multi_exp_;
-  Add_Exp add_exp_;
-  Rel_Exp rel_exp_;
-  Eq_Exp eq_exp_;
-  Log_And_Exp log_and_exp_;
-  Log_Or_Exp log_or_exp_;
-  Expression expression_;
-  Init_Decl_List init_decl_list_;
-  Init_Declarator init_declarator_;
-  Var_Declaration var_declaration_;
-  Var_Decl_List var_decl_list_;
-  Parameter_List parameter_list_;
-  Statement_List statement_list_;
-  Statement statement_;
-  Open_Stm open_stm_;
-  Block_Stm block_stm_;
-  Return_Stm return_stm_;
-  Exp_Stm exp_stm_;
-  Closed_Stm closed_stm_;
-  Simple_Stm simple_stm_;
-  Declarator declarator_;
-  Function_Def function_def_;
-  Ext_Var_Decl ext_var_decl_;
-
+  No no_;
 }
 
 %token _ERROR_
@@ -115,242 +85,241 @@ Trans_Unit pTrans_Unit(FILE *inp)
 %token VOID    		"void"
 %token WHILE   		"while"
 
-%type <trans_unit_> Trans_Unit
-%type <assign_operator_> Assign_Operator
-%type <constant_> Constant
-%type <unary_operator_> Unary_Operator
-%type <type_> Type
-%type <arg_exp_list_> Arg_Exp_List
-%type <primary_exp_> Primary_Exp
-%type <posfix_exp_> Posfix_Exp
-%type <unary_exp_> Unary_Exp
-%type <multi_exp_> Multi_Exp
-%type <add_exp_> Add_Exp
-%type <rel_exp_> Rel_Exp
-%type <eq_exp_> Eq_Exp
-%type <log_and_exp_> Log_And_Exp
-%type <log_or_exp_> Log_Or_Exp
-%type <expression_> Expression
-%type <init_decl_list_> Init_Decl_List
-%type <init_declarator_> Init_Declarator
-%type <var_declaration_> Var_Declaration
-%type <var_decl_list_> Var_Decl_List
-%type <parameter_list_> Parameter_List
-%type <statement_list_> Statement_List
-%type <statement_> Statement
-%type <open_stm_> Open_Stm
-%type <block_stm_> Block_Stm
-%type <return_stm_> Return_Stm
-%type <exp_stm_> Exp_Stm
-%type <closed_stm_> Closed_Stm
-%type <simple_stm_> Simple_Stm
-%type <declarator_> Declarator
-%type <function_def_> Function_Def
-%type <ext_var_decl_> Ext_Var_Decl
+%token <string_> _STRING_
+%token <int_> 	 _INTEGER_
+%token <double_> _DOUBLE_
+%token <string_> _IDENT_
 
-%token<string_> _STRING_
-%token<int_> 	_INTEGER_
-%token<double_> _DOUBLE_
-%token<string_> _IDENT_
+%type <no_> Trans_Unit
+%type <no_> Assign_Operator
+%type <no_> Constant
+%type <no_> Unary_Operator
+%type <no_> Type
+%type <no_> Arg_Exp_List
+%type <no_> Primary_Exp
+%type <no_> Posfix_Exp
+%type <no_> Unary_Exp
+%type <no_> Multi_Exp
+%type <no_> Add_Exp
+%type <no_> Rel_Exp
+%type <no_> Eq_Exp
+%type <no_> Log_And_Exp
+%type <no_> Log_Or_Exp
+%type <no_> Expression
+%type <no_> Init_Decl_List
+%type <no_> Init_Declarator
+%type <no_> Var_Declaration
+%type <no_> Var_Decl_List
+%type <no_> Parameter_List
+%type <no_> Statement_List
+%type <no_> Statement
+%type <no_> Open_Stm
+%type <no_> Block_Stm
+%type <no_> Return_Stm
+%type <no_> Exp_Stm
+%type <no_> Closed_Stm
+%type <no_> Simple_Stm
+%type <no_> Declarator
+%type <no_> Function_Def
+%type <no_> Ext_Var_Decl
 
 %start Trans_Unit
 %%
 Trans_Unit 
-/*TraUniExtVar*/	: Ext_Var_Decl { $$ = make_TraUniExtVar($1); YY_RESULT_Trans_Unit_= $$; } 
-/*TraUniList*/		| Trans_Unit Ext_Var_Decl { $$ = make_TraUniList($1, $2); YY_RESULT_Trans_Unit_= $$; }
+/*TraUniExtVar*/	: Ext_Var_Decl { $$ = $1; YY_RESULT_Trans_Unit_= $$; } 
+/*TraUniList*/		| Trans_Unit Ext_Var_Decl { $$ = make_No(is_TraUniList, ins_No($1, ins_No($2, NULL)), NULL); YY_RESULT_Trans_Unit_= $$; }
 					;
 
 Assign_Operator 
-/*AssOpEQ*/			: "=" { $$ = make_AssOpEQ();  } 
-/*AssOpINS*/		| "<<" { $$ = make_AssOpINS();  }
+/*AssOpEQ*/			: "=" { $$ = make_No(is_AssOpEQ, NULL, NULL); } 
+/*AssOpINS*/		| "<<" { $$ = make_No(is_AssOpINS, NULL, NULL); }
 					;
 	
 Constant 	
-/*ConstInt*/		: _INTEGER_ { $$ = make_ConstInt($1); insConstIntSymbol_Table(SymbolTable, $1, yy_mylinenumber+1, yy_mycolumnnumber); } 
-/*ConstDouble*/		| _DOUBLE_ { $$ = make_ConstDouble($1); insConstDoubleSymbol_Table(SymbolTable, $1, yy_mylinenumber+1, yy_mycolumnnumber); }
-/*ConstStr*/		| _STRING_ { $$ = make_ConstStr($1); insConstStrSymbol_Table(SymbolTable, $1, yy_mylinenumber+1, yy_mycolumnnumber); }
+/*ConstInt*/		: _INTEGER_ { $$ = make_No(is_ConstInt, NULL, ins_Args_Int(is_ConstInt, $1, NULL)); insConstIntSymbol_Table(SymbolTable, $1, yy_mylinenumber+1, yy_mycolumnnumber); } 
+/*ConstDouble*/		| _DOUBLE_ { $$ = make_No(is_ConstDouble, NULL, ins_Args_Double(is_ConstDouble, $1, NULL)); insConstDoubleSymbol_Table(SymbolTable, $1, yy_mylinenumber+1, yy_mycolumnnumber); }
+/*ConstStr*/		| _STRING_ { $$ = make_No(is_ConstStr, NULL, ins_Args_Str(is_ConstStr, $1, NULL)); insConstStrSymbol_Table(SymbolTable, $1, yy_mylinenumber+1, yy_mycolumnnumber); }
 					;
 	
 Unary_Operator 	
-/*UnaOpMinus*/		: "-" { $$ = make_UnaOpMinus();  } 
-/*UnaOpNot*/		| "!" { $$ = make_UnaOpNot();  }
+/*UnaOpMinus*/		: "-" { $$ = make_No(is_UnaOpMinus, NULL, NULL); } 
+/*UnaOpNot*/		| "!" { $$ = make_No(is_UnaOpNot, NULL, NULL); }
 					;
 	
 Type 	
-/*TypeVoid*/		: "void" { $$ = make_TypeVoid();  } 
-/*TypeInt*/			| "int" { $$ = make_TypeInt();  }
-/*TypeDouble*/		| "double" { $$ = make_TypeDouble();  }
-/*TypeGraph*/		| "graph" { $$ = make_TypeGraph();  }
+/*TypeVoid*/		: "void" { $$ = make_No(is_TypeVoid, NULL, NULL); } 
+/*TypeInt*/			| "int" { $$ = make_No(is_TypeInt, NULL, NULL); }
+/*TypeDouble*/		| "double" { $$ = make_No(is_TypeDouble, NULL, NULL); }
+/*TypeGraph*/		| "graph" { $$ = make_No(is_TypeGraph, NULL, NULL); }
 					;
 	
 Arg_Exp_List 	
-/*ArgExpListExp*/	: Expression { $$ = make_ArgExpListExp($1);  } 
-/*ArgExpList*/		| Arg_Exp_List "," Expression { $$ = make_ArgExpList($1, $3);  }
+/*ArgExpListExp*/	: Expression { $$ = $1; } 
+/*ArgExpList*/		| Arg_Exp_List "," Expression { $$ = make_No(is_ArgExpList, ins_No($1, ins_No($3, NULL)), NULL); }
 					;
 	
 Primary_Exp 	
-/*PriExpId*/		: _IDENT_ { $$ = make_PriExpId($1);  } 
-/*PriExpConst*/		| Constant { $$ = make_PriExpConst($1);  }
-/*PriExpExp*/		| "(" Expression ")" { $$ = make_PriExpExp($2);  }
+/*PriExpId*/		: _IDENT_ { $$ = make_No(is_PriExpId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); } 
+/*PriExpConst*/		| Constant { $$ = $1; }
+/*PriExpExp*/		| "(" Expression ")" { $$ = make_No(is_PriExpExp, ins_No($2, NULL), NULL); }
 					;
 	
 Posfix_Exp 	
-/*PosExpPri*/		: Primary_Exp { $$ = make_PosExpPri($1);  } 
-/*PosExpSub*/		| _IDENT_ "[" Primary_Exp "]" { $$ = make_PosExpSub($1, $3);  }
-/*PosExpIn*/		| _IDENT_ "@" Primary_Exp "#" { $$ = make_PosExpIn($1, $3);  }
-/*PosExpOut*/		| _IDENT_ "#" Primary_Exp "@" { $$ = make_PosExpOut($1, $3);  }
-/*PosExpNeig*/		| _IDENT_ "&" Primary_Exp "&" { $$ = make_PosExpNeig($1, $3);  }
-/*PosExpCal*/		| _IDENT_ "(" ")" { $$ = make_PosExpCal($1);  }
-/*PosExpCalArg*/	| _IDENT_ "(" Arg_Exp_List ")" { $$ = make_PosExpCalArg($1, $3);  }
-					| _IDENT_ "[" error "]" { yyerror("sem expressao para subgrafo"); }
-					| _IDENT_ "@" error "#" { yyerror("sem expressao para grau de entrada"); }
-					| _IDENT_ "#" error "@" { yyerror("sem expressao para grau de saida"); }
-					| _IDENT_ "&" error "&" { yyerror("sem expressao para vizinhanca"); }
+/*PosExpPri*/		: Primary_Exp { $$ = $1; } 
+/*PosExpSub*/		| _IDENT_ "[" Primary_Exp "]" 	{ $$ = make_No(is_PosExpSub, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); }
+/*PosExpIn*/		| _IDENT_ "@" Primary_Exp "#" 	{ $$ = make_No(is_PosExpIn, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); }
+/*PosExpOut*/		| _IDENT_ "#" Primary_Exp "@" 	{ $$ = make_No(is_PosExpOut, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); }
+/*PosExpNeig*/		| _IDENT_ "&" Primary_Exp "&" 	{ $$ = make_No(is_PosExpNeig, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); }
+/*PosExpCal*/		| _IDENT_ "(" ")" 			  	{ $$ = make_No(is_PosExpCal, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); }
+/*PosExpCalArg*/	| _IDENT_ "(" Arg_Exp_List ")"  { $$ = make_No(is_PosExpCalArg, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); }
+					| _IDENT_ "[" error "]" { printf("sem expressao para subgrafo"); }
+					| _IDENT_ "@" error "#" { printf("sem expressao para grau de entrada"); }
+					| _IDENT_ "#" error "@" { printf("sem expressao para grau de saida"); }
+					| _IDENT_ "&" error "&" { printf("sem expressao para vizinhanca"); }
 					;
 	
 Unary_Exp 	
-/*UnaExpPos*/		: Posfix_Exp { $$ = make_UnaExpPos($1);  } 
-/*UnaExpOp*/		| Unary_Operator Unary_Exp { $$ = make_UnaExpOp($1, $2);  }
+/*UnaExpPos*/		: Posfix_Exp { $$ = $1; } 
+/*UnaExpOp*/		| Unary_Operator Unary_Exp { $$ = make_No(is_UnaExpOp, ins_No($1, ins_No($2, NULL)), NULL); }
 					;
 	
 Multi_Exp 	
-/*MulExpUna*/		: Unary_Exp { $$ = make_MulExpUna($1);  } 
-/*MulExpMul*/		| Multi_Exp "*" Unary_Exp { $$ = make_MulExpMul($1, $3);  }
-/*MulExpDiv*/		| Multi_Exp "/" Unary_Exp { $$ = make_MulExpDiv($1, $3);  }
+/*MulExpUna*/		: Unary_Exp { $$ = $1; } 
+/*MulExpMul*/		| Multi_Exp "*" Unary_Exp { $$ = make_No(is_MulExpMul, ins_No($1, ins_No($3, NULL)), NULL); }
+/*MulExpDiv*/		| Multi_Exp "/" Unary_Exp { $$ = make_No(is_MulExpDiv, ins_No($1, ins_No($3, NULL)), NULL); }
 					;
 	
 Add_Exp 	
-/*AddExpMul*/		: Multi_Exp { $$ = make_AddExpMul($1);  } 
-/*AddExpAdd*/		| Add_Exp "+" Multi_Exp { $$ = make_AddExpAdd($1, $3);  }
-/*AddExpSub*/		| Add_Exp "-" Multi_Exp { $$ = make_AddExpSub($1, $3);  }
+/*AddExpMul*/		: Multi_Exp { $$ = $1; } 
+/*AddExpAdd*/		| Add_Exp "+" Multi_Exp { $$ = make_No(is_AddExpAdd, ins_No($1, ins_No($3, NULL)), NULL); }
+/*AddExpSub*/		| Add_Exp "-" Multi_Exp { $$ = make_No(is_AddExpSub, ins_No($1, ins_No($3, NULL)), NULL); }
 					;
 	
 Rel_Exp 	
-/*RelExpAdd*/		: Add_Exp { $$ = make_RelExpAdd($1);  } 
-/*RelExpLT*/		| Rel_Exp "<" Add_Exp { $$ = make_RelExpLT($1, $3);  }
-/*RelExpGT*/		| Rel_Exp ">" Add_Exp { $$ = make_RelExpGT($1, $3);  }
-/*RelExpLE*/		| Rel_Exp "<=" Add_Exp { $$ = make_RelExpLE($1, $3);  }
-/*RelExpGE*/		| Rel_Exp ">=" Add_Exp { $$ = make_RelExpGE($1, $3);  }
+/*RelExpAdd*/		: Add_Exp { $$ = $1; } 
+/*RelExpLT*/		| Rel_Exp "<" Add_Exp { $$ = make_No(is_RelExpLT, ins_No($1, ins_No($3, NULL)), NULL); }
+/*RelExpGT*/		| Rel_Exp ">" Add_Exp { $$ = make_No(is_RelExpGT, ins_No($1, ins_No($3, NULL)), NULL); }
+/*RelExpLE*/		| Rel_Exp "<=" Add_Exp { $$ = make_No(is_RelExpLE, ins_No($1, ins_No($3, NULL)), NULL); }
+/*RelExpGE*/		| Rel_Exp ">=" Add_Exp { $$ = make_No(is_RelExpGE, ins_No($1, ins_No($3, NULL)), NULL); }
 					;
 	
 Eq_Exp 	
-/*EqExpRel*/		: Rel_Exp { $$ = make_EqExpRel($1);  } 
-/*EqExpEQ*/			| Eq_Exp "==" Rel_Exp { $$ = make_EqExpEQ($1, $3);  }
-/*EqExpNE*/			| Eq_Exp "!=" Rel_Exp { $$ = make_EqExpNE($1, $3);  }
+/*EqExpRel*/		: Rel_Exp { $$ = $1; } 
+/*EqExpEQ*/			| Eq_Exp "==" Rel_Exp { $$ = make_No(is_EqExpEQ, ins_No($1, ins_No($3, NULL)), NULL); }
+/*EqExpNE*/			| Eq_Exp "!=" Rel_Exp { $$ = make_No(is_EqExpNE, ins_No($1, ins_No($3, NULL)), NULL); }
 					;
 	
 Log_And_Exp 	
-/*LogAndExpEq*/		: Eq_Exp { $$ = make_LogAndExpEq($1);  } 
-/*LogAndExpAnd*/	| Log_And_Exp "&&" Eq_Exp { $$ = make_LogAndExpAnd($1, $3);  }
+/*LogAndExpEq*/		: Eq_Exp { $$ = $1; } 
+/*LogAndExpAnd*/	| Log_And_Exp "&&" Eq_Exp { $$ = make_No(is_LogAndExpAnd, ins_No($1, ins_No($3, NULL)), NULL); }
 					;
 	
 Log_Or_Exp 	
-/*LogOrExpLogAnd*/	: Log_And_Exp { $$ = make_LogOrExpLogAnd($1);  } 
-/*LogOrExpLogOr*/	| Log_Or_Exp "||" Log_And_Exp { $$ = make_LogOrExpLogOr($1, $3);  }
+/*LogOrExpLogAnd*/	: Log_And_Exp { $$ = $1; } 
+/*LogOrExpLogOr*/	| Log_Or_Exp "||" Log_And_Exp { $$ = make_No(is_LogOrExpLogOr, ins_No($1, ins_No($3, NULL)), NULL); }
 					;
 	
 Expression 	
-/*ExpLogOr*/		: Log_Or_Exp { $$ = make_ExpLogOr($1);  } 
-/*ExpAss*/			| _IDENT_ Assign_Operator Expression { $$ = make_ExpAss($1, $2, $3);  }
-/*ExpAssGraph*/		| _IDENT_ Assign_Operator "(" Expression "," Expression ")" { $$ = make_ExpAssGraph($1, $2, $4, $6);  }
-					| _IDENT_ error Expression { yyerror("Sem operador de atribuição"); }
-					| _IDENT_ error "(" Expression "," Expression ")" { yyerror("Sem operador de atribuição"); }
+/*ExpLogOr*/		: Log_Or_Exp { $$ = $1; } 
+/*ExpAss*/			| _IDENT_ Assign_Operator Expression { $$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL)); }
+/*ExpAssGraph*/		| _IDENT_ Assign_Operator "(" Expression "," Expression ")" { $$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($4, ins_No($6, NULL))), ins_Args_Ident(Is_Ident, $1, NULL)); }
+					| _IDENT_ error Expression { printf("Sem operador de atribuição"); }
+					| _IDENT_ error "(" Expression "," Expression ")" { printf("Sem operador de atribuição"); }
 					;
 	
 Init_Decl_List 	
-/*IniDecListIni*/	: Init_Declarator { $$ = make_IniDecListIni($1);  } 
-/*IniDecList*/		| Init_Decl_List "," Init_Declarator { $$ = make_IniDecList($1, $3);  }
+/*IniDecListIni*/	: Init_Declarator { $$ = make_No(is_IniDecListIni, ins_No($1, NULL), NULL); } 
+/*IniDecList*/		| Init_Decl_List "," Init_Declarator { $$ = make_No(is_IniDecList, ins_No($1, ins_No($3, NULL)), NULL); }
 					;
 	
 Init_Declarator 	
-/*IniDecId*/		: _IDENT_ { $$ = make_IniDecId($1);  } 
-/*IniDecIdE*/		| _IDENT_ Assign_Operator Log_Or_Exp { $$ = make_IniDecIdE($1, $2, $3);  }
+/*IniDecId*/		: _IDENT_ { $$ = make_No(is_IniDecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); } 
+/*IniDecIdE*/		| _IDENT_ Assign_Operator Log_Or_Exp { $$ = make_No(is_IniDecIdE, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL)); }
 					;
 	
 Var_Declaration 	
-/*VarDec*/			: Type Init_Decl_List ";" { $$ = make_VarDec($1, $2); insTableSymbol_VarDec($1, $2, yy_mylinenumber+1, yy_mycolumnnumber); } 
-					| error Init_Decl_List ";" { yyerror("Sem identificador na declaracao de variavel com inicialização"); }
+/*VarDec*/			: Type Init_Decl_List ";" { $$ = make_No(is_VarDec, ins_No($1, ins_No($2, NULL)), NULL); insTableSymbol_VarDec($1, $2, yy_mylinenumber+1, yy_mycolumnnumber); } 
+					| error Init_Decl_List ";" { printf("Sem identificador na declaracao de variavel com inicialização"); }
 					;
 	
 Var_Decl_List 	
-/*VarDecListVar*/	: Var_Declaration { $$ = make_VarDecListVar($1);  } 
-/*VarDecList*/		| Var_Decl_List Var_Declaration { $$ = make_VarDecList($1, $2);  }
+/*VarDecListVar*/	: Var_Declaration { $$ = $1; } 
+/*VarDecList*/		| Var_Decl_List Var_Declaration { $$ = make_No(is_VarDecList, ins_No($1, ins_No($2, NULL)), NULL); }
 					;
 	
 Parameter_List 	
-/*ParamListId*/		: Type _IDENT_ { $$ = make_ParamListId($1, $2);  } 
-/*ParamList*/		| Parameter_List "," Type _IDENT_ { $$ = make_ParamList($1, $3, $4);  }
+/*ParamListId*/		: Type _IDENT_ { $$ = make_No(is_ParamListId, ins_No($1, NULL), ins_Args_Ident(Is_Ident, $2, NULL)); } 
+/*ParamList*/		| Parameter_List "," Type _IDENT_ { $$ = make_No(is_ParamList, ins_No($1, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $4, NULL)); }
 					;
 	
 Statement_List 	
-/*StmListStm*/		: Statement { $$ = make_StmListStm($1);  } 
-/*StmList*/			| Statement_List Statement { $$ = make_StmList($1, $2);  }
+/*StmListStm*/		: Statement { $$ = $1; } 
+/*StmList*/			| Statement_List Statement { $$ = make_No(is_StmList, ins_No($1, ins_No($2, NULL)), NULL); }
 					;
 	
 Statement 	
-/*StmOpen*/			: Open_Stm { $$ = make_StmOpen($1);  } 
-/*StmClosed*/		| Closed_Stm { $$ = make_StmClosed($1);  }
+/*StmOpen*/			: Open_Stm { $$ = $1; } 
+/*StmClosed*/		| Closed_Stm { $$ = $1; }
 					;
 	
 Open_Stm 	
-/*OpnStmIfSmp*/		: "if" "(" Expression ")" Simple_Stm { $$ = make_OpnStmIfSmp($3, $5);  } 
-/*OpnStmIfOpn*/		| "if" "(" Expression ")" Open_Stm { $$ = make_OpnStmIfOpn($3, $5);  }
-/*OpnStmIfCls*/		| "if" "(" Expression ")" Closed_Stm "else" Open_Stm { $$ = make_OpnStmIfCls($3, $5, $7);  }
-/*OpnStmWhile*/		| "while" "(" Expression ")" Open_Stm { $$ = make_OpnStmWhile($3, $5);  }
-					| "if" "(" error ")" Simple_Stm { yyerror("If sem expressao");  } 
-					| "if" "(" error ")" Open_Stm { yyerror("If sem expressao"); }
-					| "if" "(" error ")" Closed_Stm "else" Open_Stm { yyerror("If sem expressao"); } 
-					| "while" "(" error ")" Open_Stm { yyerror("While sem expressao"); }
+/*OpnStmIfSmp*/		: "if" "(" Expression ")" Simple_Stm { $$ = make_No(is_OpnStmIfSmp, ins_No($3, ins_No($5, NULL)), NULL); } 
+/*OpnStmIfOpn*/		| "if" "(" Expression ")" Open_Stm { $$ = make_No(is_OpnStmIfOpn, ins_No($3, ins_No($5, NULL)), NULL); }
+/*OpnStmIfCls*/		| "if" "(" Expression ")" Closed_Stm "else" Open_Stm { $$ = make_No(is_OpnStmIfCls, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL); }
+/*OpnStmWhile*/		| "while" "(" Expression ")" Open_Stm { $$ = make_No(is_OpnStmWhile, ins_No($3, ins_No($5, NULL)), NULL); }
+					| "if" "(" error ")" Simple_Stm { printf("If sem expressao"); } 
+					| "if" "(" error ")" Open_Stm { printf("If sem expressao"); }
+					| "if" "(" error ")" Closed_Stm "else" Open_Stm { printf("If sem expressao"); } 
+					| "while" "(" error ")" Open_Stm { printf("While sem expressao"); }
 					;
 	
 Block_Stm 	
-/*BlkStm*/			: "{" "}" { $$ = make_BlkStm();  } 
-/*BlkStmList*/		| "{" Statement_List "}" { $$ = make_BlkStmList($2);  }
-/*BlkStmVar*/		| "{" Var_Decl_List "}" { $$ = make_BlkStmVar($2);  }
-/*BlkStmVarStm*/	| "{" Var_Decl_List Statement_List "}" { $$ = make_BlkStmVarStm($2, $3);  }
+/*BlkStm*/			: "{" "}" { $$ = make_No(is_BlkStm, NULL, NULL); } 
+/*BlkStmList*/		| "{" Statement_List "}" { $$ = $2; }
+/*BlkStmVar*/		| "{" Var_Decl_List "}" { $$ = $2; }
+/*BlkStmVarStm*/	| "{" Var_Decl_List Statement_List "}" { $$ = make_No(is_BlkStmVarStm, ins_No($2, ins_No($3, NULL)), NULL); }
 					;
 	
 Return_Stm 	
-/*RetStmRet*/		: "return" ";" { $$ = make_RetStmRet();  } 
-/*RetStmExp*/		| "return" Expression ";" { $$ = make_RetStmExp($2);  }
+/*RetStmRet*/		: "return" ";" { $$ = make_No(is_RetStmRet, NULL, NULL); } 
+/*RetStmExp*/		| "return" Expression ";" { $$ = make_No(is_RetStmExp, ins_No($2, NULL), NULL); }
 					;
 	
 Exp_Stm 	
-/*ExpStmNul*/		: ";" { $$ = make_ExpStmNul();  } 
-/*ExpStmExp*/		| Expression ";" { $$ = make_ExpStmExp($1);  }
+/*ExpStmNul*/		: ";" { $$ = make_No(is_ExpStmNul, NULL, NULL); } 
+/*ExpStmExp*/		| Expression ";" { $$ = make_No(is_ExpStmExp, ins_No($1, NULL), NULL); }
 					;
 	
 Closed_Stm 	
-/*ClosedStmSmp*/	: Simple_Stm { $$ = make_ClosedStmSmp($1);  } 
-/*ClosedStmIf*/		| "if" "(" Expression ")" Closed_Stm "else" Closed_Stm { $$ = make_ClosedStmIf($3, $5, $7);  }
-/*ClosedStmWhile*/	| "while" "(" Expression ")" Closed_Stm { $$ = make_ClosedStmWhile($3, $5);  }
-					| "if" "(" error ")" Closed_Stm "else" Closed_Stm { yyerror("If sem expressao"); }
-					| "while" "(" error ")" Closed_Stm { yyerror("While sem expressao"); }
+/*ClosedStmSmp*/	: Simple_Stm { $$ = $1; } 
+/*ClosedStmIf*/		| "if" "(" Expression ")" Closed_Stm "else" Closed_Stm { $$ = make_No(is_ClosedStmIf, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL); }
+/*ClosedStmWhile*/	| "while" "(" Expression ")" Closed_Stm { $$ = make_No(is_ClosedStmWhile, ins_No($3, ins_No($5, NULL)), NULL); }
+					| "if" "(" error ")" Closed_Stm "else" Closed_Stm { printf("If sem expressao"); }
+					| "while" "(" error ")" Closed_Stm { printf("While sem expressao"); }
 					;
 	
 Simple_Stm 	
-/*SmpStmBlock*/		: Block_Stm { $$ = make_SmpStmBlock($1);  } 
-/*SmpStmExp*/		| Exp_Stm { $$ = make_SmpStmExp($1);  }
-/*SmpStmRet*/		| Return_Stm { $$ = make_SmpStmRet($1);  }
+/*SmpStmBlock*/		: Block_Stm { $$ = $1; } 
+/*SmpStmExp*/		| Exp_Stm { $$ = $1; }
+/*SmpStmRet*/		| Return_Stm { $$ = $1; }
 					;
 	
 Declarator 	
-/*DecIdParam*/		: _IDENT_ "(" Parameter_List ")" { $$ = make_DecIdParam($1, $3);  } 
-/*DecId*/			| _IDENT_ "(" ")" { $$ = make_DecId($1);  }
-					| error "(" Parameter_List ")" { yyerror("Declaracao de funcao sem identificar e parametros"); }
-					| error "(" ")" { yyerror("Declaracao de funcao sem identificar e parametros"); }
+/*DecIdParam*/		: _IDENT_ "(" Parameter_List ")" { $$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); } 
+/*DecId*/			| _IDENT_ "(" ")" { $$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); }
+					| error "(" Parameter_List ")" { printf("Declaracao de funcao sem identificar e parametros"); }
+					| error "(" ")" { printf("Declaracao de funcao sem identificar e parametros"); }
 					;
 	
 Function_Def 	
-/*FunDef*/			: Type Declarator Block_Stm 
-						{ $$ = make_FunDef($1, $2, $3); insFuncSymbol_Table(SymbolTable, 
-						($2->kind == is_DecIdParam ? $2->u.decidparam_.ident_ : $2->u.decid_.ident_), yy_mylinenumber, yy_mycolumnnumber, $1,
-						($2->kind == is_DecIdParam ? $2->u.decidparam_.parameter_list_ : NULL)); }
+/*FunDef*/			: Type Declarator Block_Stm  { $$ = make_No(is_FunDef, ins_No($1, ins_No($2, ins_No($3, NULL))), NULL);
+												   insFuncSymbol_Table(SymbolTable, ( $2->u.ident_.ident_ ),
+												   yy_mylinenumber, yy_mycolumnnumber, $1, ( $2->kind == is_DecIdParam ? $2->filhos->no : NULL)); }
 					;
 	
 Ext_Var_Decl 	
-/*ExtVarDecFun*/	: Function_Def { $$ = make_ExtVarDecFun($1);  } 
-/*ExtVarDecVar*/	| Var_Declaration { $$ = make_ExtVarDecVar($1);  }
+/*ExtVarDecFun*/	: Function_Def { $$ = $1; } 
+/*ExtVarDecVar*/	| Var_Declaration { $$ = $1; }
 					;
 
 
