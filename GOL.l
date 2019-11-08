@@ -1,12 +1,9 @@
 /**	Michelangelo da R. Machado - 14/0156089
-	Alteracoes: 
-	Buffer para lidar com string literal
-	Aprimoracao da expressao regular para double
-	Removido empilhamento de erros
-	Alterado tamanho maximo permitido para identificador
 **/
 
 %option noyywrap
+%option nounput
+%option noinput
 
 %{
 #define yylval GOLlval
@@ -90,8 +87,8 @@ EOL		[\r\n]
 <YYINITIAL>"&&"      		count(); return AND_OP;
 <YYINITIAL>"||"      		count(); return OR_OP;
 <YYINITIAL>";"      		count(); return SEMICOLN;
-<YYINITIAL>"{"      		count(); return OPN_CRLY;
-<YYINITIAL>"}"      		count(); return CLS_CRLY;
+<YYINITIAL>"{"      		count(); SymbolTable = newSymbol_Table(); return OPN_CRLY;
+<YYINITIAL>"}"      		count(); SymbolTable = SymbolTable->next; return CLS_CRLY;
 <YYINITIAL>"double"     	count(); return DOUBLE;
 <YYINITIAL>"else"      		count(); return ELSE;
 <YYINITIAL>"graph"      	count(); return GRAPH;
@@ -134,11 +131,11 @@ void yyerror(int tipo)
 	switch(tipo)
 	{
 	case STRING_:
-		fprintf(stderr,"Erro: linha %d coluna %d em comentario nao fechado\n",
+		fprintf(stderr,"Erro: linha %d coluna %d em string nao fechado\n",
 		yy_string_line + 1, yy_string_column); error = 1;
 		break;
 	case COMENTARIO_:
-		fprintf(stderr,"Erro: linha %d coluna %d em string nao fechada\n",
+		fprintf(stderr,"Erro: linha %d coluna %d em comentario nao fechada\n",
 		yy_comment_line + 1, yy_comment_column); error = 1;
 		break;
 	case UNDEFINED_:
