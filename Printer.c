@@ -307,4 +307,3 @@ void resizeBuffer(void)
 
 char *buf_;
 int cur_, buf_size;
-
