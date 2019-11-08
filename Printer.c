@@ -5,1582 +5,133 @@
 #include <string.h>
 #include <stdlib.h>
 
+
 int _n_;
 char *buf_;
 int cur_;
 int buf_size;
+char buffer [99];
 
-char *showTrans_Unit(Trans_Unit p)
+char *showTrans_Unit(No p)
 {
   _n_ = 0;
   bufReset();
-  shTrans_Unit(p);
+  bufAppendS("digraph { ");
+  shTree(p,0);
+  bufAppendS(" }");
   return buf_;
 }
-
-void shTrans_Unit(Trans_Unit _p_)
+int aux_pos;
+void shTree(No p, int pos)
 {
-  switch(_p_->kind)
-  {
-  case is_TraUniExtVar:
-    bufAppendC('(');
-
-    bufAppendS("TraUniExtVar");
-
-    bufAppendC(' ');
-
-    shExt_Var_Decl(_p_->u.trauniextvar_.ext_var_decl_);
-
-    bufAppendC(')');
-
-    break;
-  case is_TraUniList:
-    bufAppendC('(');
-
-    bufAppendS("TraUniList");
-
-    bufAppendC(' ');
-
-    shTrans_Unit(_p_->u.traunilist_.trans_unit_);
+	Nos aux;
 	
-	bufAppendC(' ');
+	printType(p->kind,0);
 	
-    shExt_Var_Decl(_p_->u.traunilist_.ext_var_decl_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Trans_Unit!\n");
-    exit(1);
-  }
+	switch(p->kind)
+	{
+	case is_ConstInt:
+		printf(" %d ",p->u.constint_.integer_);
+		break;
+	case is_ConstDouble:
+		printf(" %g ",p->u.constdouble_.double_);
+		break;
+	case is_ConstStr:
+		printf(" %s ",p->u.conststr_.string_);
+		break;
+	default:
+		break;
+	}
+	
+	if((p->kind == is_PosExpSub ) || (p->kind == is_PosExpIn ) || (p->kind == is_PosExpOut ) ||
+	(p->kind == is_PosExpNeig ) || (p->kind == is_PosExpCal ) || (p->kind == is_PosExpCalArg ) ||
+	(p->kind == is_ExpAss ) || (p->kind == is_ExpAssGraph ) || (p->kind == is_IniDecIdE ) || 
+	(p->kind == is_ParamListId ) || (p->kind == is_ParamList ) || (p->kind == is_DecIdParam ) || (p->kind == is_DecId ))
+	{
+		printf(" %s ",p->u.ident_.ident_);
+		
+		aux_pos = pos+1;
+		sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+		bufAppendS(buffer);
+		bufAppendS(" -> ");
+		sprintf(buffer, "\"%s (%d)\"", p->u.ident_.ident_, aux_pos);
+		bufAppendS(buffer);
+		bufAppendS("; ");
+		aux_pos++;
+	}
+	
+	aux_pos = pos+1;
+	aux = p->filhos;
+	while(aux)
+	{
+		switch(aux->no->kind)
+		{
+		case is_ConstInt:
+			aux_pos = pos+1;
+			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			bufAppendS(buffer);
+			bufAppendS(" -> ");
+			sprintf(buffer, "\"%d (%d)\"", aux->no->u.constint_.integer_, aux_pos);
+			bufAppendS(buffer);
+			bufAppendS("; ");
+			aux_pos++;
+			break;
+		case is_ConstDouble:
+			aux_pos = pos+1;
+			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			bufAppendS(buffer);
+			bufAppendS(" -> ");
+			sprintf(buffer, "\"%g (%d)\"", aux->no->u.constdouble_.double_, aux_pos);
+			bufAppendS(buffer);
+			bufAppendS("; ");
+			aux_pos++;
+			break;
+		case is_ConstStr:
+			aux_pos = pos+1;
+			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			bufAppendS(buffer);
+			bufAppendS(" -> ");
+			sprintf(buffer, "\"%s (%d)\"", aux->no->u.conststr_.string_, aux_pos);
+			bufAppendS(buffer);
+			bufAppendS("; ");
+			aux_pos++;
+			break;
+		case is_IniDecId:
+			aux_pos = pos+1;
+			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			bufAppendS(buffer);
+			bufAppendS(" -> ");
+			sprintf(buffer, "\"%s (%d)\"", aux->no->u.ident_.ident_, aux_pos);
+			bufAppendS(buffer);
+			bufAppendS("; ");
+			aux_pos++;
+			break;
+		case is_PriExpId:
+			aux_pos = pos+1;
+			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			bufAppendS(buffer);
+			bufAppendS(" -> ");
+			sprintf(buffer, "\"%s (%d)\"", aux->no->u.ident_.ident_, aux_pos);
+			bufAppendS(buffer);
+			bufAppendS("; ");
+			aux_pos++;
+			break;
+		default:
+			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			bufAppendS(buffer);
+			bufAppendS(" -> ");
+			sprintf(buffer, "\"%s (%d)\"", printType(aux->no->kind,1), aux_pos);
+			bufAppendS(buffer);
+			bufAppendS("; ");
+			
+			shTree(aux->no,aux_pos);
+			aux_pos++;
+		}
+		
+		aux = aux->next;
+	}
 }
 
-void shAssign_Operator(Assign_Operator _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_AssOpEQ:
-	bufAppendC('(');
-  
-    bufAppendS("AssOpEQ");
-	
-	bufAppendS(" \"=\" ");
-	
-	bufAppendC(')');
-	
-    break;
-  case is_AssOpINS:
-	bufAppendC('(');
-  
-    bufAppendS("AssOpINS");
-	
-	bufAppendS(" \"<<\" ");
-	
-	bufAppendC(')');
-	
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Assign_Operator!\n");
-    exit(1);
-  }
-}
-
-void shConstant(Constant _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_ConstInt:
-    bufAppendC('(');
-
-    bufAppendS("ConstInt");
-
-    bufAppendC(' ');
-
-    shInteger(_p_->u.constint_.integer_);
-
-    bufAppendC(')');
-
-    break;
-  case is_ConstDouble:
-    bufAppendC('(');
-
-    bufAppendS("ConstDouble");
-
-    bufAppendC(' ');
-
-    shDouble(_p_->u.constdouble_.double_);
-
-    bufAppendC(')');
-
-    break;
-  case is_ConstStr:
-    bufAppendC('(');
-
-    bufAppendS("ConstStr");
-
-    bufAppendC(' ');
-
-    shString(_p_->u.conststr_.string_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Constant!\n");
-    exit(1);
-  }
-}
-
-void shUnary_Operator(Unary_Operator _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_UnaOpMinus:
-	bufAppendC('(');
-  
-    bufAppendS("UnaOpMinus");
-	
-	bufAppendS(" \"-\" ");
-	
-	bufAppendC(')');
-	
-    break;
-  case is_UnaOpNot:
-	bufAppendC('(');
-  
-    bufAppendS("UnaOpNot");
-	
-	bufAppendS(" \"!\" ");
-	
-	bufAppendC(')');
-	
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Unary_Operator!\n");
-    exit(1);
-  }
-}
-
-void shType(Type _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_TypeVoid:
-	bufAppendC('(');
-  
-    bufAppendS("TypeVoid");
-	
-	bufAppendS( " \"void\" ");
-	
-	bufAppendC(')');
-	
-    break;
-  case is_TypeInt:
-	bufAppendC('(');
-  
-    bufAppendS("TypeInt");
-	
-	bufAppendS(" \"int\" ");
-	
-	bufAppendC(')');
-	
-    break;
-  case is_TypeDouble:
-	bufAppendC('(');
-  
-    bufAppendS("TypeDouble");
-	
-	bufAppendS(" \"double\" ");
-	
-	bufAppendC(')');
-	
-    break;
-  case is_TypeGraph:
-	bufAppendC('(');
-  
-    bufAppendS("TypeGraph");
-	
-	bufAppendS(" \"graph\" ");
-	
-	bufAppendC(')');
-	
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Type!\n");
-    exit(1);
-  }
-}
-
-void shArg_Exp_List(Arg_Exp_List _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_ArgExpListExp:
-    bufAppendC('(');
-
-    bufAppendS("ArgExpListExp");
-
-    bufAppendC(' ');
-
-    shExpression(_p_->u.argexplistexp_.expression_);
-
-    bufAppendC(')');
-
-    break;
-  case is_ArgExpList:
-    bufAppendC('(');
-
-    bufAppendS("ArgExpList");
-
-    bufAppendC(' ');
-
-    shArg_Exp_List(_p_->u.argexplist_.arg_exp_list_);
-
-	bufAppendC(' ');
-	
-    shExpression(_p_->u.argexplist_.expression_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Arg_Exp_List!\n");
-    exit(1);
-  }
-}
-
-void shPrimary_Exp(Primary_Exp _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_PriExpId:
-    bufAppendC('(');
-
-    bufAppendS("PriExpId");
-
-    bufAppendC(' ');
-
-    shIdent(_p_->u.priexpid_.ident_);
-
-    bufAppendC(')');
-
-    break;
-  case is_PriExpConst:
-    bufAppendC('(');
-
-    bufAppendS("PriExpConst");
-
-    bufAppendC(' ');
-
-    shConstant(_p_->u.priexpconst_.constant_);
-
-    bufAppendC(')');
-
-    break;
-  case is_PriExpExp:
-    bufAppendC('(');
-
-    bufAppendS("PriExpExp");
-
-    bufAppendC(' ');
-	
-	bufAppendS(" \"(\" ");
-
-    shExpression(_p_->u.priexpexp_.expression_);
-	
-	bufAppendS(" \")\" ");
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Primary_Exp!\n");
-    exit(1);
-  }
-}
-
-void shPosfix_Exp(Posfix_Exp _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_PosExpPri:
-    bufAppendC('(');
-
-    bufAppendS("PosExpPri");
-
-    bufAppendC(' ');
-
-    shPrimary_Exp(_p_->u.posexppri_.primary_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_PosExpSub:
-    bufAppendC('(');
-
-    bufAppendS("PosExpSub");
-
-    bufAppendS(" \"[\" ");
-
-    shIdent(_p_->u.posexpsub_.ident_);
-
-	bufAppendS(" \"]\" ");
-	
-    shPrimary_Exp(_p_->u.posexpsub_.primary_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_PosExpIn:
-    bufAppendC('(');
-
-    bufAppendS("PosExpIn");
-
-    bufAppendS(" \"@\" ");
-
-    shIdent(_p_->u.posexpin_.ident_);
-
-	bufAppendS(" \"#\" ");
-	
-    shPrimary_Exp(_p_->u.posexpin_.primary_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_PosExpOut:
-    bufAppendC('(');
-
-    bufAppendS("PosExpOut");
-
-    bufAppendS(" \"#\" ");
-
-    shIdent(_p_->u.posexpout_.ident_);
-
-	bufAppendS(" \"@\" ");
-	
-    shPrimary_Exp(_p_->u.posexpout_.primary_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_PosExpNeig:
-    bufAppendC('(');
-
-    bufAppendS("PosExpNeig");
-
-    bufAppendS(" \"&\" ");
-
-    shIdent(_p_->u.posexpneig_.ident_);
-
-	bufAppendS(" \"&\" ");
-	
-    shPrimary_Exp(_p_->u.posexpneig_.primary_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_PosExpCal:
-    bufAppendC('(');
-
-    bufAppendS("PosExpCal");
-
-    shIdent(_p_->u.posexpcal_.ident_);
-
-    bufAppendS(" \"(\" ");
-	
-	bufAppendS(" \")\" ");
-
-    bufAppendC(')');
-
-    break;
-  case is_PosExpCalArg:
-    bufAppendC('(');
-
-    bufAppendS("PosExpCalArg");
-
-    bufAppendS(" \"(\" ");
-
-    shIdent(_p_->u.posexpcalarg_.ident_);
-
-	bufAppendS(" \")\" ");
-	
-    shArg_Exp_List(_p_->u.posexpcalarg_.arg_exp_list_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Posfix_Exp!\n");
-    exit(1);
-  }
-}
-
-void shUnary_Exp(Unary_Exp _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_UnaExpPos:
-    bufAppendC('(');
-
-    bufAppendS("UnaExpPos");
-
-    bufAppendC(' ');
-
-    shPosfix_Exp(_p_->u.unaexppos_.posfix_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_UnaExpOp:
-    bufAppendC('(');
-
-    bufAppendS("UnaExpOp");
-
-    bufAppendC(' ');
-
-    shUnary_Operator(_p_->u.unaexpop_.unary_operator_);
-
-	bufAppendC(' ');
-	
-    shUnary_Exp(_p_->u.unaexpop_.unary_exp_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Unary_Exp!\n");
-    exit(1);
-  }
-}
-
-void shMulti_Exp(Multi_Exp _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_MulExpUna:
-    bufAppendC('(');
-
-    bufAppendS("MulExpUna");
-
-    bufAppendC(' ');
-
-    shUnary_Exp(_p_->u.mulexpuna_.unary_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_MulExpMul:
-    bufAppendC('(');
-
-    bufAppendS("MulExpMul");
-
-    bufAppendC(' ');
-
-    shMulti_Exp(_p_->u.mulexpmul_.multi_exp_);
-
-	bufAppendS(" \"*\" ");
-	
-    shUnary_Exp(_p_->u.mulexpmul_.unary_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_MulExpDiv:
-    bufAppendC('(');
-
-    bufAppendS("MulExpDiv");
-
-    bufAppendC(' ');
-
-    shMulti_Exp(_p_->u.mulexpdiv_.multi_exp_);
-
-	bufAppendS(" \"/\" ");
-	
-    shUnary_Exp(_p_->u.mulexpdiv_.unary_exp_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Multi_Exp!\n");
-    exit(1);
-  }
-}
-
-void shAdd_Exp(Add_Exp _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_AddExpMul:
-    bufAppendC('(');
-
-    bufAppendS("AddExpMul");
-
-    bufAppendC(' ');
-
-    shMulti_Exp(_p_->u.addexpmul_.multi_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_AddExpAdd:
-    bufAppendC('(');
-
-    bufAppendS("AddExpAdd");
-
-    bufAppendC(' ');
-
-    shAdd_Exp(_p_->u.addexpadd_.add_exp_);
-
-	bufAppendS(" \"+\" ");
-	
-    shMulti_Exp(_p_->u.addexpadd_.multi_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_AddExpSub:
-    bufAppendC('(');
-
-    bufAppendS("AddExpSub");
-
-    bufAppendC(' ');
-
-    shAdd_Exp(_p_->u.addexpsub_.add_exp_);
-
-	bufAppendS(" \"-\" ");
-	
-    shMulti_Exp(_p_->u.addexpsub_.multi_exp_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Add_Exp!\n");
-    exit(1);
-  }
-}
-
-void shRel_Exp(Rel_Exp _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_RelExpAdd:
-    bufAppendC('(');
-
-    bufAppendS("RelExpAdd");
-
-    bufAppendC(' ');
-
-    shAdd_Exp(_p_->u.relexpadd_.add_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_RelExpLT:
-    bufAppendC('(');
-
-    bufAppendS("RelExpLT");
-
-    bufAppendC(' ');
-
-    shRel_Exp(_p_->u.relexplt_.rel_exp_);
-
-	bufAppendS(" \"<\" ");
-	
-    shAdd_Exp(_p_->u.relexplt_.add_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_RelExpGT:
-    bufAppendC('(');
-
-    bufAppendS("RelExpGT");
-
-    bufAppendC(' ');
-
-    shRel_Exp(_p_->u.relexpgt_.rel_exp_);
-
-	bufAppendS(" \">\" ");
-	
-    shAdd_Exp(_p_->u.relexpgt_.add_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_RelExpLE:
-    bufAppendC('(');
-
-    bufAppendS("RelExpLE");
-
-    bufAppendC(' ');
-
-    shRel_Exp(_p_->u.relexple_.rel_exp_);
-
-	bufAppendS(" \"<=\" ");
-	
-    shAdd_Exp(_p_->u.relexple_.add_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_RelExpGE:
-    bufAppendC('(');
-
-    bufAppendS("RelExpGE");
-
-    bufAppendC(' ');
-
-    shRel_Exp(_p_->u.relexpge_.rel_exp_);
-
-	bufAppendS(" \">=\" ");
-	
-    shAdd_Exp(_p_->u.relexpge_.add_exp_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Rel_Exp!\n");
-    exit(1);
-  }
-}
-
-void shEq_Exp(Eq_Exp _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_EqExpRel:
-    bufAppendC('(');
-
-    bufAppendS("EqExpRel");
-
-    bufAppendC(' ');
-
-    shRel_Exp(_p_->u.eqexprel_.rel_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_EqExpEQ:
-    bufAppendC('(');
-
-    bufAppendS("EqExpEQ");
-
-    bufAppendC(' ');
-
-    shEq_Exp(_p_->u.eqexpeq_.eq_exp_);
-
-	bufAppendS(" \"==\" ");
-	
-    shRel_Exp(_p_->u.eqexpeq_.rel_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_EqExpNE:
-    bufAppendC('(');
-
-    bufAppendS("EqExpNE");
-
-    bufAppendC(' ');
-
-    shEq_Exp(_p_->u.eqexpne_.eq_exp_);
-
-	bufAppendS(" \"!=\" ");
-	
-    shRel_Exp(_p_->u.eqexpne_.rel_exp_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Eq_Exp!\n");
-    exit(1);
-  }
-}
-
-void shLog_And_Exp(Log_And_Exp _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_LogAndExpEq:
-    bufAppendC('(');
-
-    bufAppendS("LogAndExpEq");
-
-    bufAppendC(' ');
-
-    shEq_Exp(_p_->u.logandexpeq_.eq_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_LogAndExpAnd:
-    bufAppendC('(');
-
-    bufAppendS("LogAndExpAnd");
-
-    bufAppendC(' ');
-
-    shLog_And_Exp(_p_->u.logandexpand_.log_and_exp_);
-
-	bufAppendS(" \"&&\" ");
-	
-    shEq_Exp(_p_->u.logandexpand_.eq_exp_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Log_And_Exp!\n");
-    exit(1);
-  }
-}
-
-void shLog_Or_Exp(Log_Or_Exp _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_LogOrExpLogAnd:
-    bufAppendC('(');
-
-    bufAppendS("LogOrExpLogAnd");
-
-    bufAppendC(' ');
-
-    shLog_And_Exp(_p_->u.logorexplogand_.log_and_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_LogOrExpLogOr:
-    bufAppendC('(');
-
-    bufAppendS("LogOrExpLogOr");
-
-    bufAppendC(' ');
-
-    shLog_Or_Exp(_p_->u.logorexplogor_.log_or_exp_);
-
-	bufAppendS(" \"||\" ");
-	
-    shLog_And_Exp(_p_->u.logorexplogor_.log_and_exp_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Log_Or_Exp!\n");
-    exit(1);
-  }
-}
-
-void shExpression(Expression _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_ExpLogOr:
-    bufAppendC('(');
-
-    bufAppendS("ExpLogOr");
-
-    bufAppendC(' ');
-
-    shLog_Or_Exp(_p_->u.explogor_.log_or_exp_);
-
-    bufAppendC(')');
-
-    break;
-  case is_ExpAss:
-    bufAppendC('(');
-
-    bufAppendS("ExpAss");
-
-    bufAppendC(' ');
-
-    shIdent(_p_->u.expass_.ident_);
-
-	bufAppendC(' ');
-	
-    shAssign_Operator(_p_->u.expass_.assign_operator_);
-
-	bufAppendC(' ');
-	
-    shExpression(_p_->u.expass_.expression_);
-
-    bufAppendC(')');
-
-    break;
-  case is_ExpAssGraph:
-    bufAppendC('(');
-
-    bufAppendS("ExpAssGraph");
-
-    bufAppendC(' ');
-
-    shIdent(_p_->u.expassgraph_.ident_);
-
-	bufAppendC(' ');
-	
-    shAssign_Operator(_p_->u.expassgraph_.assign_operator_);
-
-	bufAppendS(" \"(\" ");
-	
-    shExpression(_p_->u.expassgraph_.expression_1);
-
-	bufAppendS(" \",\" ");
-	
-    shExpression(_p_->u.expassgraph_.expression_2);
-	
-	bufAppendS(" \")\" ");
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Expression!\n");
-    exit(1);
-  }
-}
-
-void shInit_Decl_List(Init_Decl_List _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_IniDecListIni:
-    bufAppendC('(');
-
-    bufAppendS("IniDecListIni");
-
-    bufAppendC(' ');
-
-    shInit_Declarator(_p_->u.inideclistini_.init_declarator_);
-
-    bufAppendC(')');
-
-    break;
-  case is_IniDecList:
-    bufAppendC('(');
-
-    bufAppendS("IniDecList");
-
-    bufAppendC(' ');
-
-    shInit_Decl_List(_p_->u.inideclist_.init_decl_list_);
-
-	bufAppendS(" \",\" ");
-	
-    shInit_Declarator(_p_->u.inideclist_.init_declarator_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Init_Decl_List!\n");
-    exit(1);
-  }
-}
-
-void shInit_Declarator(Init_Declarator _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_IniDecId:
-    bufAppendC('(');
-
-    bufAppendS("IniDecId");
-
-    bufAppendC(' ');
-
-    shIdent(_p_->u.inidecid_.ident_);
-
-    bufAppendC(')');
-
-    break;
-  case is_IniDecIdE:
-    bufAppendC('(');
-
-    bufAppendS("IniDecIdE");
-
-    bufAppendC(' ');
-
-    shIdent(_p_->u.inidecide_.ident_);
-
-	bufAppendC(' ');
-
-    shAssign_Operator(_p_->u.inidecide_.assign_operator_);
-
-	bufAppendC(' ');
-
-    shLog_Or_Exp(_p_->u.inidecide_.log_or_exp_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Init_Declarator!\n");
-    exit(1);
-  }
-}
-
-void shVar_Declaration(Var_Declaration _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_VarDec:
-    bufAppendC('(');
-
-    bufAppendS("VarDec");
-
-    bufAppendC(' ');
-
-    shType(_p_->u.vardec_.type_);
-
-	bufAppendC(' ');
-
-    shInit_Decl_List(_p_->u.vardec_.init_decl_list_);
-	
-	bufAppendS(" \";\" ");
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Var_Declaration!\n");
-    exit(1);
-  }
-}
-
-void shVar_Decl_List(Var_Decl_List _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_VarDecListVar:
-    bufAppendC('(');
-
-    bufAppendS("VarDecListVar");
-
-    bufAppendC(' ');
-
-    shVar_Declaration(_p_->u.vardeclistvar_.var_declaration_);
-
-    bufAppendC(')');
-
-    break;
-  case is_VarDecList:
-    bufAppendC('(');
-
-    bufAppendS("VarDecList");
-
-    bufAppendC(' ');
-
-    shVar_Decl_List(_p_->u.vardeclist_.var_decl_list_);
-
-	bufAppendC(' ');
-
-    shVar_Declaration(_p_->u.vardeclist_.var_declaration_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Var_Decl_List!\n");
-    exit(1);
-  }
-}
-
-void shParameter_List(Parameter_List _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_ParamListId:
-    bufAppendC('(');
-
-    bufAppendS("ParamListId");
-
-    bufAppendC(' ');
-
-    shType(_p_->u.paramlistid_.type_);
-
-	bufAppendC(' ');
-
-    shIdent(_p_->u.paramlistid_.ident_);
-
-    bufAppendC(')');
-
-    break;
-  case is_ParamList:
-    bufAppendC('(');
-
-    bufAppendS("ParamList");
-
-    bufAppendC(' ');
-
-    shParameter_List(_p_->u.paramlist_.parameter_list_);
-
-	bufAppendS(" \",\" ");
-
-    shType(_p_->u.paramlist_.type_);
-
-	bufAppendC(' ');
-
-    shIdent(_p_->u.paramlist_.ident_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Parameter_List!\n");
-    exit(1);
-  }
-}
-
-void shStatement_List(Statement_List _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_StmListStm:
-    bufAppendC('(');
-
-    bufAppendS("StmListStm");
-
-    bufAppendC(' ');
-
-    shStatement(_p_->u.stmliststm_.statement_);
-
-    bufAppendC(')');
-
-    break;
-  case is_StmList:
-    bufAppendC('(');
-
-    bufAppendS("StmList");
-
-    bufAppendC(' ');
-
-    shStatement_List(_p_->u.stmlist_.statement_list_);
-
-	bufAppendC(' ');
-
-    shStatement(_p_->u.stmlist_.statement_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Statement_List!\n");
-    exit(1);
-  }
-}
-
-void shStatement(Statement _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_StmOpen:
-    bufAppendC('(');
-
-    bufAppendS("StmOpen");
-
-    bufAppendC(' ');
-
-    shOpen_Stm(_p_->u.stmopen_.open_stm_);
-
-    bufAppendC(')');
-
-    break;
-  case is_StmClosed:
-    bufAppendC('(');
-
-    bufAppendS("StmClosed");
-
-    bufAppendC(' ');
-
-    shClosed_Stm(_p_->u.stmclosed_.closed_stm_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Statement!\n");
-    exit(1);
-  }
-}
-
-void shOpen_Stm(Open_Stm _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_OpnStmIfSmp:
-    bufAppendC('(');
-
-    bufAppendS("OpnStmIfSmp");
-
-    bufAppendS(" \"if\" ");
-	
-	bufAppendS(" \"(\" ");
-
-    shExpression(_p_->u.opnstmifsmp_.expression_);
-
-	bufAppendS(" \")\" ");
-
-    shSimple_Stm(_p_->u.opnstmifsmp_.simple_stm_);
-
-    bufAppendC(')');
-
-    break;
-  case is_OpnStmIfOpn:
-    bufAppendC('(');
-
-    bufAppendS("OpnStmIfOpn");
-
-    bufAppendS(" \"if\" ");
-	
-	bufAppendS(" \"(\" ");
-
-    shExpression(_p_->u.opnstmifopn_.expression_);
-
-	bufAppendS(" \")\" ");
-
-    shOpen_Stm(_p_->u.opnstmifopn_.open_stm_);
-
-    bufAppendC(')');
-
-    break;
-  case is_OpnStmIfCls:
-    bufAppendC('(');
-
-    bufAppendS("OpnStmIfCls");
-
-    bufAppendS(" \"if\" ");
-	
-	bufAppendS(" \"(\" ");
-
-    shExpression(_p_->u.opnstmifcls_.expression_);
-
-	bufAppendS(" \")\" ");
-
-    shClosed_Stm(_p_->u.opnstmifcls_.closed_stm_);
-
-	bufAppendS(" \"else\" ");
-
-    shOpen_Stm(_p_->u.opnstmifcls_.open_stm_);
-
-    bufAppendC(')');
-
-    break;
-  case is_OpnStmWhile:
-    bufAppendC('(');
-
-    bufAppendS("OpnStmWhile");
-
-    bufAppendS(" \"while\" ");
-	
-	bufAppendS(" \"(\" ");
-
-    shExpression(_p_->u.opnstmwhile_.expression_);
-
-	bufAppendS(" \")\" ");
-
-    shOpen_Stm(_p_->u.opnstmwhile_.open_stm_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Open_Stm!\n");
-    exit(1);
-  }
-}
-
-void shBlock_Stm(Block_Stm _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_BlkStm:
-	bufAppendC('(');
-  
-    bufAppendS("BlkStm");
-	
-	bufAppendS(" \"{\" ");
-	
-	bufAppendS(" \"}\" ");
-	
-	bufAppendC(')');
-	
-    break;
-  case is_BlkStmList:
-    bufAppendC('(');
-
-    bufAppendS("BlkStmList");
-
-    bufAppendS(" \"{\" ");
-
-    shStatement_List(_p_->u.blkstmlist_.statement_list_);
-	
-	bufAppendS(" \"}\" ");
-
-    bufAppendC(')');
-
-    break;
-  case is_BlkStmVar:
-    bufAppendC('(');
-
-    bufAppendS("BlkStmVar");
-
-    bufAppendS(" \"{\" ");
-
-    shVar_Decl_List(_p_->u.blkstmvar_.var_decl_list_);
-	
-	bufAppendS(" \"}\" ");
-
-    bufAppendC(')');
-
-    break;
-  case is_BlkStmVarStm:
-    bufAppendC('(');
-
-    bufAppendS("BlkStmVarStm");
-
-    bufAppendS(" \"{\" ");
-
-    shVar_Decl_List(_p_->u.blkstmvarstm_.var_decl_list_);
-
-	bufAppendC(' ');
-
-    shStatement_List(_p_->u.blkstmvarstm_.statement_list_);
-	
-	bufAppendS(" \"}\" ");
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Block_Stm!\n");
-    exit(1);
-  }
-}
-
-void shReturn_Stm(Return_Stm _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_RetStmRet:
-	bufAppendC('(');
-  
-    bufAppendS("RetStmRet");
-	
-	bufAppendS(" \"return\" ");
-	
-	bufAppendS(" \";\" ");
-	
-	bufAppendC(')');
-	
-    break;
-  case is_RetStmExp:
-    bufAppendC('(');
-
-    bufAppendS("RetStmExp");
-
-    bufAppendS(" \"return\" ");
-
-    shExpression(_p_->u.retstmexp_.expression_);
-	
-	bufAppendS(" \";\" ");
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Return_Stm!\n");
-    exit(1);
-  }
-}
-
-void shExp_Stm(Exp_Stm _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_ExpStmNul:
-	bufAppendC('(');
-	
-    bufAppendS("ExpStmNul");
-	
-	bufAppendS(" \";\" ");
-	
-	bufAppendC(')');
-	
-    break;
-  case is_ExpStmExp:
-    bufAppendC('(');
-
-    bufAppendS("ExpStmExp");
-
-    bufAppendC(' ');
-
-    shExpression(_p_->u.expstmexp_.expression_);
-	
-	bufAppendS(" \";\" ");
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Exp_Stm!\n");
-    exit(1);
-  }
-}
-
-void shClosed_Stm(Closed_Stm _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_ClosedStmSmp:
-    bufAppendC('(');
-
-    bufAppendS("ClosedStmSmp");
-
-    bufAppendC(' ');
-
-    shSimple_Stm(_p_->u.closedstmsmp_.simple_stm_);
-
-    bufAppendC(')');
-
-    break;
-  case is_ClosedStmIf:
-    bufAppendC('(');
-
-    bufAppendS("ClosedStmIf");
-
-    bufAppendS(" \"if\" ");
-	
-	bufAppendS(" \"(\" ");
-
-    shExpression(_p_->u.closedstmif_.expression_);
-
-	bufAppendS(" \")\" ");
-
-    shClosed_Stm(_p_->u.closedstmif_.closed_stm_1);
-
-	bufAppendS(" \"else\" ");
-
-    shClosed_Stm(_p_->u.closedstmif_.closed_stm_2);
-
-    bufAppendC(')');
-
-    break;
-  case is_ClosedStmWhile:
-    bufAppendC('(');
-
-    bufAppendS("ClosedStmWhile");
-
-    bufAppendS(" \"while\" ");
-	
-	bufAppendS(" \"(\" ");
-
-    shExpression(_p_->u.closedstmwhile_.expression_);
-
-	bufAppendS(" \")\" ");
-
-    shClosed_Stm(_p_->u.closedstmwhile_.closed_stm_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Closed_Stm!\n");
-    exit(1);
-  }
-}
-
-void shSimple_Stm(Simple_Stm _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_SmpStmBlock:
-    bufAppendC('(');
-
-    bufAppendS("SmpStmBlock");
-
-    bufAppendC(' ');
-
-    shBlock_Stm(_p_->u.smpstmblock_.block_stm_);
-
-    bufAppendC(')');
-
-    break;
-  case is_SmpStmExp:
-    bufAppendC('(');
-
-    bufAppendS("SmpStmExp");
-
-    bufAppendC(' ');
-
-    shExp_Stm(_p_->u.smpstmexp_.exp_stm_);
-
-    bufAppendC(')');
-
-    break;
-  case is_SmpStmRet:
-    bufAppendC('(');
-
-    bufAppendS("SmpStmRet");
-
-    bufAppendC(' ');
-
-    shReturn_Stm(_p_->u.smpstmret_.return_stm_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Simple_Stm!\n");
-    exit(1);
-  }
-}
-
-void shDeclarator(Declarator _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_DecIdParam:
-    bufAppendC('(');
-
-    bufAppendS("DecIdParam");
-
-    bufAppendC(' ');
-
-    shIdent(_p_->u.decidparam_.ident_);
-
-	bufAppendS(" \"(\" ");
-
-    shParameter_List(_p_->u.decidparam_.parameter_list_);
-	
-	bufAppendS(" \")\" ");
-
-    bufAppendC(')');
-
-    break;
-  case is_DecId:
-    bufAppendC('(');
-
-    bufAppendS("DecId");
-
-    bufAppendC(' ');
-
-    shIdent(_p_->u.decid_.ident_);
-	
-	bufAppendS(" \"(\" ");
-	
-	bufAppendS(" \")\" ");
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Declarator!\n");
-    exit(1);
-  }
-}
-
-void shFunction_Def(Function_Def _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_FunDef:
-    bufAppendC('(');
-
-    bufAppendS("FunDef");
-
-    bufAppendC(' ');
-
-    shType(_p_->u.fundef_.type_);
-
-	bufAppendC(' ');
-
-    shDeclarator(_p_->u.fundef_.declarator_);
-
-	bufAppendC(' ');
-
-    shBlock_Stm(_p_->u.fundef_.block_stm_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Function_Def!\n");
-    exit(1);
-  }
-}
-
-void shExt_Var_Decl(Ext_Var_Decl _p_)
-{
-  switch(_p_->kind)
-  {
-  case is_ExtVarDecFun:
-    bufAppendC('(');
-
-    bufAppendS("ExtVarDecFun");
-
-    bufAppendC(' ');
-
-    shFunction_Def(_p_->u.extvardecfun_.function_def_);
-
-    bufAppendC(')');
-
-    break;
-  case is_ExtVarDecVar:
-    bufAppendC('(');
-
-    bufAppendS("ExtVarDecVar");
-
-    bufAppendC(' ');
-
-    shVar_Declaration(_p_->u.extvardecvar_.var_declaration_);
-
-    bufAppendC(')');
-
-    break;
-
-  default:
-    fprintf(stderr, "Erro: kind nao identificado ao analisar Ext_Var_Decl!\n");
-    exit(1);
-  }
-}
 
 void shInteger(Integer i)
 {
@@ -1588,24 +139,118 @@ void shInteger(Integer i)
   sprintf(tmp, "%d", i);
   bufAppendS(tmp);
 }
+
 void shDouble(Double d)
 {
   char tmp[16];
   sprintf(tmp, "%g", d);
   bufAppendS(tmp);
 }
+
 void shString(String s)
 {
   bufAppendC('\"');
   bufAppendS(s);
   bufAppendC('\"');
 }
+
 void shIdent(String s)
 {
   bufAppendC('\"');
   bufAppendS(s);
   bufAppendC('\"');
 }
+
+char* printType(int kind, int modo)
+{
+	switch(kind)
+	{
+	case is_TraUniExtVar: if(modo==0)printf(" TraUniExtVar ");else return" TraUniExtVar "; break; 
+	case is_TraUniList: if(modo==0)printf(" TraUniList ");else return " TraUniList "; break; 
+	case is_AssOpEQ: if(modo==0)printf(" \"=\" ");else return " = "; break; 
+	case is_AssOpINS: if(modo==0)printf(" \"<<\" ");else return " << "; break; 
+	case is_ConstInt: if(modo==0)printf(" ConstInt ");else return " ConstInt "; break; 
+	case is_ConstDouble: if(modo==0)printf(" ConstDouble ");else return " ConstDouble "; break; 
+	case is_ConstStr: if(modo==0)printf(" ConstStr ");else return " ConstStr "; break; 
+	case is_UnaOpMinus: if(modo==0)printf(" \"-\" ");else return " - "; break; 
+	case is_UnaOpNot: if(modo==0)printf(" \"!\" ");else return " ! "; break; 
+	case is_TypeVoid: if(modo==0)printf(" \"void\" ");else return " void "; break; 
+	case is_TypeInt: if(modo==0)printf(" \"int\" ");else return " int "; break; 
+	case is_TypeDouble: if(modo==0)printf(" \"double\" ");else return " double "; break; 
+	case is_TypeGraph: if(modo==0)printf(" \"graph\" ");else return " graph "; break; 
+	case is_ArgExpListExp: if(modo==0)printf(" ArgExpListExp ");else return " ArgExpListExp "; break; 
+	case is_ArgExpList: if(modo==0)printf(" ArgExpList ");else return " ArgExpList "; break; 
+	case is_PriExpId: if(modo==0)printf(" PriExpId ");else return " PriExpId "; break; 
+	case is_PriExpConst: if(modo==0)printf(" PriExpConst ");else return " PriExpConst "; break; 
+	case is_PriExpExp: if(modo==0)printf(" PriExpExp ");else return " PriExpExp "; break; 
+	case is_PosExpPri: if(modo==0)printf(" PosExpPri ");else return " PosExpPri "; break; 
+	case is_PosExpSub: if(modo==0)printf(" PosExpSub ");else return " PosExpSub "; break; 
+	case is_PosExpIn: if(modo==0)printf(" PosExpIn ");else return " PosExpIn "; break; 
+	case is_PosExpOut: if(modo==0)printf(" PosExpOut ");else return " PosExpOut "; break; 
+	case is_PosExpNeig: if(modo==0)printf(" PosExpNeig ");else return " PosExpNeig "; break; 
+	case is_PosExpCal: if(modo==0)printf(" PosExpCal ");else return " PosExpCal "; break; 
+	case is_PosExpCalArg: if(modo==0)printf(" PosExpCalArg ");else return " PosExpCalArg "; break; 
+	case is_UnaExpPos: if(modo==0)printf(" UnaExpPos ");else return " UnaExpPos "; break; 
+	case is_UnaExpOp: if(modo==0)printf(" UnaExpOp ");else return " UnaExpOp "; break; 
+	case is_MulExpUna: if(modo==0)printf(" MulExpUna ");else return " MulExpUna "; break; 
+	case is_MulExpMul: if(modo==0)printf(" MulExpMul ");else return " MulExpMul "; break; 
+	case is_MulExpDiv: if(modo==0)printf(" MulExpDiv ");else return " MulExpDiv "; break; 
+	case is_AddExpMul: if(modo==0)printf(" AddExpMul ");else return " AddExpMul "; break; 
+	case is_AddExpAdd: if(modo==0)printf(" AddExpAdd ");else return " AddExpAdd "; break; 
+	case is_AddExpSub: if(modo==0)printf(" AddExpSub ");else return " AddExpSub "; break; 
+	case is_RelExpAdd: if(modo==0)printf(" RelExpAdd ");else return " RelExpAdd "; break; 
+	case is_RelExpLT: if(modo==0)printf(" RelExpLT ");else return " RelExpLT "; break; 
+	case is_RelExpGT: if(modo==0)printf(" RelExpGT ");else return " RelExpGT "; break; 
+	case is_RelExpLE: if(modo==0)printf(" RelExpLE ");else return " RelExpLE "; break; 
+	case is_RelExpGE: if(modo==0)printf(" RelExpGE ");else return " RelExpGE "; break; 
+	case is_EqExpRel: if(modo==0)printf(" EqExpRel ");else return " EqExpRel "; break; 
+	case is_EqExpEQ: if(modo==0)printf(" EqExpEQ ");else return " EqExpEQ "; break; 
+	case is_EqExpNE: if(modo==0)printf(" EqExpNE ");else return " EqExpNE "; break; 
+	case is_LogAndExpEq: if(modo==0)printf(" LogAndExpEq ");else return " LogAndExpEq "; break; 
+	case is_LogAndExpAnd: if(modo==0)printf(" LogAndExpAnd ");else return " LogAndExpAnd "; break; 
+	case is_LogOrExpLogAnd: if(modo==0)printf(" LogOrExpLogAnd ");else return " LogOrExpLogAnd "; break; 
+	case is_LogOrExpLogOr: if(modo==0)printf(" LogOrExpLogOr ");else return " LogOrExpLogOr "; break; 
+	case is_ExpLogOr: if(modo==0)printf(" ExpLogOr ");else return " ExpLogOr "; break; 
+	case is_ExpAss: if(modo==0)printf(" ExpAss ");else return " ExpAss "; break; 
+	case is_ExpAssGraph: if(modo==0)printf(" ExpAssGraph ");else return " ExpAssGraph "; break; 
+	case is_IniDecListIni: if(modo==0)printf(" IniDecListIni ");else return " IniDecListIni "; break; 
+	case is_IniDecList: if(modo==0)printf(" IniDecList ");else return " IniDecList "; break; 
+	case is_IniDecId: if(modo==0)printf(" IniDecId ");else return " IniDecId "; break; 
+	case is_IniDecIdE: if(modo==0)printf(" IniDecIdE ");else return " IniDecIdE "; break; 
+	case is_VarDec: if(modo==0)printf(" VarDec ");else return " VarDec "; break; 
+	case is_VarDecListVar: if(modo==0)printf(" VarDecListVar ");else return " VarDecListVar "; break; 
+	case is_VarDecList: if(modo==0)printf(" VarDecList ");else return " VarDecList "; break; 
+	case is_ParamListId: if(modo==0)printf(" ParamListId ");else return " ParamListId "; break; 
+	case is_ParamList: if(modo==0)printf(" ParamList ");else return " ParamList "; break; 
+	case is_StmListStm: if(modo==0)printf(" StmListStm ");else return " StmListStm "; break; 
+	case is_StmList: if(modo==0)printf(" StmList ");else return " StmList "; break; 
+	case is_StmOpen: if(modo==0)printf(" StmOpen ");else return " StmOpen "; break; 
+	case is_StmClosed: if(modo==0)printf(" StmClosed ");else return " StmClosed "; break; 
+	case is_OpnStmIfSmp: if(modo==0)printf(" OpnStmIfSmp ");else return " OpnStmIfSmp "; break; 
+	case is_OpnStmIfOpn: if(modo==0)printf(" OpnStmIfOpn ");else return " OpnStmIfOpn "; break; 
+	case is_OpnStmIfCls: if(modo==0)printf(" OpnStmIfCls ");else return " OpnStmIfCls "; break; 
+	case is_OpnStmWhile: if(modo==0)printf(" OpnStmWhile ");else return " OpnStmWhile "; break; 
+	case is_BlkStm: if(modo==0)printf(" BlkStm \"{}\"");else return " BlkStm {}"; break; 
+	case is_BlkStmList: if(modo==0)printf(" BlkStmList ");else return " BlkStmList "; break; 
+	case is_BlkStmVar: if(modo==0)printf(" BlkStmVar ");else return " BlkStmVar "; break; 
+	case is_BlkStmVarStm: if(modo==0)printf(" BlkStmVarStm ");else return " BlkStmVarStm "; break; 
+	case is_RetStmRet: if(modo==0)printf(" RetStmRet ");else return " RetStmRet "; break; 
+	case is_RetStmExp: if(modo==0)printf(" RetStmExp ");else return " return "; break; 
+	case is_ExpStmNul: if(modo==0)printf(" ExpStmNul \";\" ");else return " ExpStmNul ; "; break; 
+	case is_ExpStmExp: if(modo==0)printf(" ExpStmExp ");else return " ExpStmExp "; break; 
+	case is_ClosedStmSmp: if(modo==0)printf(" ClosedStmSmp ");else return " ClosedStmSmp "; break; 
+	case is_ClosedStmIf: if(modo==0)printf(" ClosedStmIf ");else return " ClosedStmIf "; break; 
+	case is_ClosedStmWhile: if(modo==0)printf(" ClosedStmWhile ");else return " ClosedStmWhile "; break; 
+	case is_SmpStmBlock: if(modo==0)printf(" SmpStmBlock ");else return " SmpStmBlock "; break; 
+	case is_SmpStmExp: if(modo==0)printf(" SmpStmExp ");else return " SmpStmExp "; break; 
+	case is_SmpStmRet: if(modo==0)printf(" SmpStmRet ");else return " SmpStmRet "; break; 
+	case is_DecIdParam: if(modo==0)printf(" DecIdParam ");else return " DecIdParam "; break; 
+	case is_DecId: if(modo==0)printf(" DecId ");else return " DecId "; break; 
+	case is_FunDef: if(modo==0)printf(" FunDef ");else return " FunDef "; break; 
+	case is_ExtVarDecFun: if(modo==0)printf(" ExtVarDecFun ");else return " ExtVarDecFun "; break; 
+	case is_ExtVarDecVar : if(modo==0)printf(" ExtVarDecVar  ");else return " ExtVarDecVar  "; break; 
+	} 
+	return NULL; }
 
 void bufAppendS(const char *s)
 {
@@ -1623,6 +268,7 @@ void bufAppendS(const char *s)
   cur_ += len;
   buf_[cur_] = 0;
 }
+
 void bufAppendC(const char c)
 {
   if (cur_ == buf_size)
@@ -1634,6 +280,7 @@ void bufAppendC(const char c)
   cur_++;
   buf_[cur_] = 0;
 }
+
 void bufReset(void)
 {
   cur_ = 0;
@@ -1641,6 +288,7 @@ void bufReset(void)
   resizeBuffer();
   memset(buf_, 0, buf_size);
 }
+
 void resizeBuffer(void)
 {
   char *temp = (char *) malloc(buf_size);
@@ -1656,6 +304,7 @@ void resizeBuffer(void)
   }
   buf_ = temp;
 }
+
 char *buf_;
 int cur_, buf_size;
 
