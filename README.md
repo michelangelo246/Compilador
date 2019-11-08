@@ -40,15 +40,14 @@ constar antes dos statements;
 
 # Codigo:
 
-O programa pode gerar a árvore nas seguintes formas:
+O programa pode gerar a árvore sintática abstrata (AST) nas seguintes formas:
 1. Texto puro
-2. Visual
-2.1. Codigo .dot que pode ser copiado para algum site (e.g. ) 
-2.2. Arquivo .dot que pode ser usado para gerar uma imagem com comando graphviz: ```dot dot -Tpng Arvore.dot -o Arvore.png ```
+2. Codigo .dot que pode ser copiado para algum site (e.g. ) 
+3. Arquivo .dot que pode ser usado para gerar uma imagem com comando graphviz: ```dot dot -Tpng Arvore.dot -o Arvore.png ```
 
 \*Para utilizar o graphviz, instale na sua máquina através do comando: ```sudo apt install graphviz```
 
-Exemplo de imagem gerada a partir do código exemplo:
+AST gerada a partir do código exemplo:
 ```c
 int func1(int a, double b, graph c)
 {
@@ -60,4 +59,4 @@ int func2()
 	return 0;
 }
 ```
-![Screenshot](Arvore.png)
+![Screenshot](Arvore.png =250x250)
