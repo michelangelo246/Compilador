@@ -65,7 +65,7 @@ int main(int argc, char ** argv)
 				case 2:
 					printf("\n[GraphViz]\n");
 					printf("%s\n", showTrans_Unit(parse_tree));
-					printf("\n /!\ Copie e cole em http://www.webgraphviz.com/ /!\\");
+					printf("\n /!\\ Copie e cole em http://www.webgraphviz.com/ /!\\");
 					ok = 1;
 					break;
 				case 3:
