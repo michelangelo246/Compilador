@@ -48,10 +48,6 @@ O programa pode gerar a árvore sintática abstrata (AST) nas seguintes formas:
 \*Para utilizar o graphviz, instale na sua máquina através do comando: ```sudo apt install graphviz```
 
 AST gerada a partir do código exemplo:
-<p float="left">
-  
-  <img src="https://github.com/michelangelo246/Compilador/blob/master/Arvore.png" width="500">
-</p>
 
 | Codigo        | AST           |
 | ------------- |:-------------:|
