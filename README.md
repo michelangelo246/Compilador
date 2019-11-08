@@ -59,4 +59,4 @@ int func2()
 	return 0;
 }
 ```
-<img src="https://github.com/michelangelo246/Compilador/blob/master/Arvore.png" width="200">
+<img src="https://github.com/michelangelo246/Compilador/blob/master/Arvore.png" width="500">
