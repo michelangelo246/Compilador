@@ -1,8 +1,6 @@
-# Compilador
+![Screenshot](Capturar.JPG)
 
 Projeto de uma linguagem denominada GOL e de seu respectivo compilador (fase de síntese) com geração de código de três endereços.
-
-![Screenshot](Capturar.JPG)
 
 Autor: Michelangelo da Rocha Machado
 
@@ -47,6 +45,7 @@ O programa pode gerar a árvore sintática abstrata (AST) nas seguintes formas:
 
 \*Para utilizar o graphviz, instale-o na sua máquina através do comando: ```sudo apt install graphviz```
 
+## AST:
 AST gerada a partir de código exemplo:
 
 | Codigo        | AST           |
