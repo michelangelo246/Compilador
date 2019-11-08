@@ -73,7 +73,7 @@ int main(int argc, char ** argv)
 					printf("\n[Plain text]\n");
 					fprintf(arvore,showTrans_Unit(parse_tree));
 					fclose(arvore);
-					printf("\n\nArquivo .dot gerado com sucesso!\n");
+					printf("\n\n /!\\ Arquivo .dot gerado com sucesso!\nUtilize o comando dot -Tpng Arvore.dot -o Arvore.png para gerar a imagem /!\\ \n");
 					ok = 1;
 					break;
 				default:
