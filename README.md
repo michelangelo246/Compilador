@@ -49,6 +49,6 @@ O programa pode gerar a árvore sintática abstrata (AST) nas seguintes formas:
 
 AST gerada a partir do código exemplo:
 <p float="left">
-  <img src="https://github.com/michelangelo246/Compilador/blob/master/Codigo.png" width="250">
-  <img src="https://github.com/michelangelo246/Compilador/blob/master/Arvore.PNG" width="500">
+  <img src="https://github.com/michelangelo246/Compilador/blob/master/Codigo.PNG" width="250">
+  <img src="https://github.com/michelangelo246/Compilador/blob/master/Arvore.png" width="500">
 </p>
