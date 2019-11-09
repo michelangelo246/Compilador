@@ -1,4 +1,4 @@
-![Screenshot](Capturar.JPG)
+> ![Screenshot](Capturar.JPG)
 
 Projeto de uma linguagem denominada GOL e de seu respectivo compilador (fase de síntese) com geração de código de três endereços.
 
