@@ -7,6 +7,7 @@
 
 %{
 #define yylval GOLlval
+/*#define yylloc GOLlcoc*/
 #define YY_BUFFER_APPEND GOL_BUFFER_APPEND
 #define YY_BUFFER_RESET GOL_BUFFER_RESET
 #define initialize_lexer GOL_initialize_lexer

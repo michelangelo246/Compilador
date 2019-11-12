@@ -61,6 +61,7 @@ typedef struct Symbol_Table_
 	
 }Symbol_Table;
 
+/*Mantem referencia para todas os contextos criados*/
 typedef struct Symbol_Table_Set_
 {
 	Symbol_Table *table;
@@ -137,9 +138,7 @@ struct No_
 };
 
 No make_No(int p1, Nos p2, Args p3);
-
 Nos ins_No(No p1, Nos p2);
-
 Args ins_Args_Int(int kind, Integer p1, Args p2);
 Args ins_Args_Double(int kind, Double p1, Args p2);
 Args ins_Args_Str(int kind, String p1, Args p2);

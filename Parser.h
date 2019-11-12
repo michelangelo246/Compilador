@@ -13,6 +13,17 @@ typedef union
   No no_;
 } YYSTYPE;
 
+/*Permite usar @1.first_line .. @n.first_line / @$.first_line 
+Desativado pois torna o parser mais lento
+Para usar: setar campos do yylloc no .l
+typedef struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+} YYLTYPE;*/ 
+
 #define _ERROR_ 258
 #define ASG_OP 259
 #define INS_OP 260
@@ -54,6 +65,7 @@ typedef union
 #define _IDENT_ 296
 
 extern YYSTYPE yylval;
+/*extern YYLTYPE yylloc;*/
 No pTrans_Unit(FILE *inp);
 
 

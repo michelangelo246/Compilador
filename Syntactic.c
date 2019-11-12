@@ -92,6 +92,7 @@ void insVarSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4, No p5)
 	p1->lines = tmp;
 }
 
+/*Usada */
 void insFuncSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4, No p5, No p6)
 {
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
@@ -139,6 +140,9 @@ void insFuncSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4, No p5, No 
 	p1->lines = tmp;
 }
 
+/*Usada na regra de declaração de variavel. Percorre a lista de declarações 
+  do código fonte (e.g. int a,b,c), inserindo na tabela de simbolos todos 
+  identificadores da lista com o tipo encontrado no comando de declaração*/
 void insTableSymbol_VarDec(No p1, No p2, int line, int column)
 {
 	No tmp = p2;
@@ -177,6 +181,7 @@ void insTableSymbol_VarDec(No p1, No p2, int line, int column)
 	}
 }
 
+/*Imprime todas as tabelas de símbolos criadas*/
 void showSymbolTable()
 {
 	Table_Line *aux;
@@ -264,10 +269,11 @@ void showSymbolTable()
 
 /********************   Arvore    ********************/
 
-/* Argumentos:
-	p1: Inteiro que identifica a regra que gerou o no.
-	p2: Filhos do no.
-	p3: Outros argumentos que possam ser relevantes ao no.
+/* Cria um nó com as informações passadas
+Argumentos:
+   p1: Inteiro que identifica a regra que gerou o no.
+   p2: Filhos do no.
+   p3: Outros argumentos que possam ser relevantes ao no.
 */
 No make_No(int p1, Nos p2, Args p3)
 {
@@ -292,6 +298,7 @@ No make_No(int p1, Nos p2, Args p3)
 		break;
 	}
 	
+	//Regras que possuem um identificador no corpo recebem um nó com esse identificador armazenado*
 	if((p1 == is_PriExpId) ||
 	(p1 == is_PosExpSub ) || (p1 == is_PosExpIn ) || (p1 == is_PosExpOut ) ||
 	(p1 == is_PosExpNeig ) || (p1 == is_PosExpCal ) || (p1 == is_PosExpCalArg ) ||
@@ -302,6 +309,7 @@ No make_No(int p1, Nos p2, Args p3)
 		no->u.ident_.ident_ = p3->u.ident_;
 	}
 	
+	//Libera a memória alocada pela lista de argumentos, a qual serve apenas de container, seus valores são armazenados no nó retornado
 	while(p3)
 	{
 		aux = p3;
@@ -312,7 +320,7 @@ No make_No(int p1, Nos p2, Args p3)
 	return no;
 }
 
-/* Recebe uma lista de nos e um no, encadeia o no na lista e retorna a lista*/
+/*Recebe um no unitário p1 e uma lista de nos p2 (ou NULL), insere o no unitário na frente da lista e retorna a lista resultante*/
 Nos ins_No(No p1, Nos p2)
 {
 	Nos nos = (Nos) malloc(sizeof(struct Nos_));
@@ -331,6 +339,7 @@ union{
 	Ident ident_;
 }any;
 
+/*Recebe um no unitário de int p1 e uma lista de nos de int p2 (ou NULL), insere o no unitário na frente da lista e retorna a lista resultante*/
 Args ins_Args_Int(int kind, Integer p1, Args p2)
 {
 	Args args = (Args) malloc(sizeof(struct Args_));
@@ -343,6 +352,8 @@ Args ins_Args_Int(int kind, Integer p1, Args p2)
 	
 	return args;
 }
+
+/*Recebe um no unitário de double p1 e uma lista de nos de double p2 (ou NULL), insere o no unitário na frente da lista e retorna a lista resultante*/
 Args ins_Args_Double(int kind, Double p1, Args p2)
 {
 	Args args = (Args) malloc(sizeof(struct Args_));
@@ -355,6 +366,8 @@ Args ins_Args_Double(int kind, Double p1, Args p2)
 	
 	return args;
 }
+
+/*Recebe um no unitário de string p1 e uma lista de nos de string p2 (ou NULL), insere o no unitário na frente da lista e retorna a lista resultante*/
 Args ins_Args_Str(int kind, String p1, Args p2)
 {
 	Args args = (Args) malloc(sizeof(struct Args_));
@@ -367,6 +380,8 @@ Args ins_Args_Str(int kind, String p1, Args p2)
 	
 	return args;
 }
+
+/*Recebe um no unitário de ident p1 e uma lista de nos de ident p2 (ou NULL), insere o no unitário na frente da lista e retorna a lista resultante*/
 Args ins_Args_Ident(int kind, Ident p1, Args p2)
 {
 	Args args = (Args) malloc(sizeof(struct Args_));

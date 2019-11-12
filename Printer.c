@@ -21,7 +21,9 @@ char *showTrans_Unit(No p)
   bufAppendS(" }");
   return buf_;
 }
+
 int aux_pos;
+
 void shTree(No p, int pos)
 {
 	Nos aux;
@@ -250,7 +252,8 @@ char* printType(int kind, int modo)
 	case is_ExtVarDecFun: if(modo==0)printf(" ExtVarDecFun ");else return " ExtVarDecFun "; break; 
 	case is_ExtVarDecVar : if(modo==0)printf(" ExtVarDecVar  ");else return " ExtVarDecVar  "; break; 
 	} 
-	return NULL; }
+	return NULL; 
+}
 
 void bufAppendS(const char *s)
 {
