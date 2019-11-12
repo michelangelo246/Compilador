@@ -72,13 +72,13 @@ typedef struct Symbol_Table_Set_
 
 Symbol_Table *newSymbol_Table();
 
-void SymbolTable_ins_ConstInt(Integer p2, int p3, int p4);
-void SymbolTable_ins_ConstDouble(Double p2, int p3, int p4);
-void SymbolTable_ins_constStr(String p2, int p3, int p4);
-void SymbolTable_ins_Var(String p2, int p3, int p4, No p5);
+void SymbolTable_ins_ConstInt(Integer symbol, int linha, int coluna);
+void SymbolTable_ins_ConstDouble(Double symbol, int linha, int coluna);
+void SymbolTable_ins_constStr(String symbol, int linha, int coluna);
+void SymbolTable_ins_Var(String symbol, int linha, int coluna, No tipo);
 
 void SymbolTable_ins_Fun(String p2, int p3, int p4, No p5, No p6);
-void SymbolTable_ins_VarList(No p1, No p2, int p3, int p4);
+void SymbolTable_ins_VarList(No tipo, No lista_dec_var, int linha, int coluna);
 
 int SymbolTable_lookup(Ident p1);
 void SymbolTable_Show();

@@ -26,7 +26,7 @@ Symbol_Table *newSymbol_Table()
 	return tmp;
 }
 
-void SymbolTable_ins_ConstInt(Integer p2, int p3, int p4)
+void SymbolTable_ins_ConstInt(Integer symbol, int linha, int coluna)
 {
 	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
@@ -36,14 +36,14 @@ void SymbolTable_ins_ConstInt(Integer p2, int p3, int p4)
         exit(1);
     }
 	tmp->Kind = Is_ConstInt;
-	tmp->u.constint.value = p2;
-	tmp->u.constint.line = p3;
-	tmp->u.constint.column = p4;
+	tmp->u.constint.value = symbol;
+	tmp->u.constint.line = linha;
+	tmp->u.constint.column = coluna;
 	tmp->next = contexto->lines;
 	contexto->lines = tmp;
 }
 
-void SymbolTable_ins_ConstDouble(Double p2, int p3, int p4)
+void SymbolTable_ins_ConstDouble(Double symbol, int linha, int coluna)
 {
 	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
@@ -53,14 +53,14 @@ void SymbolTable_ins_ConstDouble(Double p2, int p3, int p4)
         exit(1);
     }
 	tmp->Kind = Is_ConstDouble;
-	tmp->u.constdouble.value = p2;
-	tmp->u.constdouble.line = p3;
-	tmp->u.constdouble.column = p4;
+	tmp->u.constdouble.value = symbol;
+	tmp->u.constdouble.line = linha;
+	tmp->u.constdouble.column = coluna;
 	tmp->next = contexto->lines;
 	contexto->lines = tmp;
 }
 
-void SymbolTable_ins_constStr(String p2, int p3, int p4)
+void SymbolTable_ins_constStr(String symbol, int linha, int coluna)
 {
 	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
@@ -70,14 +70,14 @@ void SymbolTable_ins_constStr(String p2, int p3, int p4)
         exit(1);
     }
 	tmp->Kind = Is_ConstStr;
-	tmp->u.conststr.value = strdup(p2);
-	tmp->u.conststr.line = p3;
-	tmp->u.conststr.column = p4;
+	tmp->u.conststr.value = strdup(symbol);
+	tmp->u.conststr.line = linha;
+	tmp->u.conststr.column = coluna;
 	tmp->next = contexto->lines;
 	contexto->lines = tmp;
 }
 
-void SymbolTable_ins_Var(String p2, int p3, int p4, No p5)
+void SymbolTable_ins_Var(String symbol, int linha, int coluna, No tipo)
 {
 	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
@@ -87,98 +87,118 @@ void SymbolTable_ins_Var(String p2, int p3, int p4, No p5)
         exit(1);
     }
 	tmp->Kind = Is_Ident;
-	tmp->u.ident.value = strdup(p2);
-	tmp->u.ident.line = p3;
-	tmp->u.ident.column = p4;
+	tmp->u.ident.value = strdup(symbol);
+	tmp->u.ident.line = linha;
+	tmp->u.ident.column = coluna;
 	tmp->u.ident.Kind = Is_Var;
-	tmp->u.ident.Type = p5->kind-9;
+	switch(tipo->kind)
+	{
+	case is_TypeVoid:
+		tmp->u.ident.Type = is_TypeVoid;
+		break;
+	case is_TypeInt:
+		tmp->u.ident.Type = is_TypeInt;
+		break;
+	case is_TypeDouble:
+		tmp->u.ident.Type = is_TypeDouble;
+		break;
+	case is_TypeGraph:
+		tmp->u.ident.Type = is_TypeGraph;
+		break;
+	default:
+		tmp->u.ident.Type = is_TypeVoid;
+		break;
+	}
 	tmp->next = contexto->lines;
 	contexto->lines = tmp;
 }
 
 /*Usada na regra de definição de função. */
-void SymbolTable_ins_Fun(String p2, int p3, int p4, No p5, No p6)
+void SymbolTable_ins_Fun(String identificador, int linha, int coluna, No tipo, No parametros)
 {
+	No curr_param;
+	Function_Param *aux;
 	Symbol_Table *contexto = SymbolTable;
-	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
-	if (!tmp)
+	Table_Line *nova_linha = (Table_Line*) malloc(sizeof(Table_Line));
+	if (!nova_linha)
     {
         fprintf(stderr, "Erro: Faltou memoria ao tentar inserir uma linha na tabela de simbolos!\n");
         exit(1);
     }
-	tmp->Kind = Is_Ident;
-	tmp->u.ident.value = strdup(p2);
-	tmp->u.ident.line = p3;
-	tmp->u.ident.column = p4;
-	tmp->u.ident.Kind = Is_Proc;
-	tmp->u.ident.Type = p5->kind-9;
-	tmp->u.ident.param = NULL;
+
+	nova_linha->Kind = Is_Ident;
+	nova_linha->u.ident.value = strdup(identificador);
+	nova_linha->u.ident.line = linha;
+	nova_linha->u.ident.column = coluna;
+	nova_linha->u.ident.Kind = Is_Proc;
+	nova_linha->u.ident.Type = tipo->kind-9;
+	nova_linha->u.ident.param = NULL;
 	
-	No tmp2 = p6;
-	Function_Param *aux;
-	while(tmp2)
+	//insere os parametros um a um na linha da declaração da função
+	curr_param = parametros;
+	while(curr_param)
 	{
-		if(tmp2->kind == is_ParamList)
+		if(curr_param->kind == is_ParamList)
 		{
 			aux = (Function_Param*) malloc(sizeof(Function_Param));
-			aux->name = strdup(tmp2->u.ident_.ident_);
-			aux->Type = tmp2->filhos->next->no->kind-9;
+			aux->name = strdup(curr_param->u.ident_.ident_);
+			aux->Type = curr_param->filhos->next->no->kind-9;
 			
-			aux->next = tmp->u.ident.param;
-			tmp->u.ident.param = aux;
+			aux->next = nova_linha->u.ident.param;
+			nova_linha->u.ident.param = aux;
 			
-			tmp2 = tmp2->filhos->no;
+			curr_param = curr_param->filhos->no;
 		}
-		else if(tmp2->kind == is_ParamListId)
+		else if(curr_param->kind == is_ParamListId)
 		{
 			aux = (Function_Param*) malloc(sizeof(Function_Param));
-			aux->name = strdup(tmp2->u.ident_.ident_);
-			aux->Type = tmp2->filhos->no->kind-9;
+			aux->name = strdup(curr_param->u.ident_.ident_);
+			aux->Type = curr_param->filhos->no->kind-9;
 			
-			aux->next = tmp->u.ident.param;
-			tmp->u.ident.param = aux;
-			tmp2 = NULL;
+			aux->next = nova_linha->u.ident.param;
+			nova_linha->u.ident.param = aux;
+			curr_param = NULL;
 		}
 	}
 	
-	tmp->next = contexto->lines;
-	contexto->lines = tmp;
+	nova_linha->next = contexto->lines;
+	contexto->lines = nova_linha;
 }
 
 /*Usada na regra de declaração de variavel. Percorre a lista de declarações 
   do código fonte (e.g. int a,b,c), inserindo na tabela de simbolos todos 
   identificadores da lista com o tipo encontrado no comando de declaração*/
-void SymbolTable_ins_VarList(No p1, No p2, int line, int column)
+void SymbolTable_ins_VarList(No tipo, No lista_dec_var, int linha, int coluna)
 {
-	No tmp = p2;
+	No dec_atual = lista_dec_var;
 	String name;
-	while(tmp)
+	while(dec_atual)
 	{
-		switch(tmp->kind)
+		switch(dec_atual->kind)
 		{
 		case is_IniDecListIni:
-			if(tmp->filhos->no->kind == is_IniDecId)
+			if(dec_atual->filhos->no->kind == is_IniDecId)
 			{
-				name = tmp->filhos->no->u.ident_.ident_;
+				name = dec_atual->filhos->no->u.ident_.ident_;
 			}
 			else
 			{
-				name = tmp->filhos->no->u.ident_.ident_;
+				name = dec_atual->filhos->no->u.ident_.ident_;
 			}
-			SymbolTable_ins_Var(name , line, column, p1);
-			tmp = NULL;
+			SymbolTable_ins_Var(name , linha, coluna, tipo);
+			dec_atual = NULL;
 			break;
 		case is_IniDecList:
-			if(tmp->filhos->next->no->kind == is_IniDecId)
+			if(dec_atual->filhos->next->no->kind == is_IniDecId)
 			{
-				name = tmp->filhos->next->no->u.ident_.ident_;
+				name = dec_atual->filhos->next->no->u.ident_.ident_;
 			}
 			else
 			{
-				name = tmp->filhos->next->no->u.ident_.ident_;
+				name = dec_atual->filhos->next->no->u.ident_.ident_;
 			}
-			SymbolTable_ins_Var(name , line, column, p1);
-			tmp = tmp->filhos->no;
+			SymbolTable_ins_Var(name , linha, coluna, tipo);
+			dec_atual = dec_atual->filhos->no;
 			break;
 		default:
 			break;
