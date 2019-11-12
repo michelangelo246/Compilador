@@ -83,7 +83,7 @@ int main(int argc, char ** argv)
 			}
 		}
 		printf("\n\n[Tabela de simbolos]");
-		showSymbolTable(SymbolTable);
+		SymbolTable_Show(SymbolTable);
 		return 0;
 	}
 	return 1;

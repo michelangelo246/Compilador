@@ -71,14 +71,18 @@ typedef struct Symbol_Table_Set_
 
 
 Symbol_Table *newSymbol_Table();
-void insConstIntSymbol_Table(Symbol_Table *p1, Integer p2, int p3, int p4);
-void insConstDoubleSymbol_Table(Symbol_Table *p1, Double p2, int p3, int p4);
-void insConstStrSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4);
-void insVarSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4, No p5);
-void insFuncSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4, No p5, No p6);
-void showSymbolTable();
 
-void insTableSymbol_VarDec(No p1, No p2, int p3, int p4);
+void SymbolTable_ins_ConstInt(Integer p2, int p3, int p4);
+void SymbolTable_ins_ConstDouble(Double p2, int p3, int p4);
+void SymbolTable_ins_constStr(String p2, int p3, int p4);
+void SymbolTable_ins_Var(String p2, int p3, int p4, No p5);
+
+void SymbolTable_ins_Fun(String p2, int p3, int p4, No p5, No p6);
+void SymbolTable_ins_VarList(No p1, No p2, int p3, int p4);
+
+int SymbolTable_lookup(Ident p1);
+void SymbolTable_Show();
+
 
 Symbol_Table *SymbolTable;
 Symbol_Table_Set *SymbolTableSet;

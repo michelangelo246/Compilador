@@ -26,8 +26,9 @@ Symbol_Table *newSymbol_Table()
 	return tmp;
 }
 
-void insConstIntSymbol_Table(Symbol_Table *p1, Integer p2, int p3, int p4)
+void SymbolTable_ins_ConstInt(Integer p2, int p3, int p4)
 {
+	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
 	if (!tmp)
     {
@@ -38,12 +39,13 @@ void insConstIntSymbol_Table(Symbol_Table *p1, Integer p2, int p3, int p4)
 	tmp->u.constint.value = p2;
 	tmp->u.constint.line = p3;
 	tmp->u.constint.column = p4;
-	tmp->next = p1->lines;
-	p1->lines = tmp;
+	tmp->next = contexto->lines;
+	contexto->lines = tmp;
 }
 
-void insConstDoubleSymbol_Table(Symbol_Table *p1, Double p2, int p3, int p4)
+void SymbolTable_ins_ConstDouble(Double p2, int p3, int p4)
 {
+	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
 	if (!tmp)
     {
@@ -54,12 +56,13 @@ void insConstDoubleSymbol_Table(Symbol_Table *p1, Double p2, int p3, int p4)
 	tmp->u.constdouble.value = p2;
 	tmp->u.constdouble.line = p3;
 	tmp->u.constdouble.column = p4;
-	tmp->next = p1->lines;
-	p1->lines = tmp;
+	tmp->next = contexto->lines;
+	contexto->lines = tmp;
 }
 
-void insConstStrSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4)
+void SymbolTable_ins_constStr(String p2, int p3, int p4)
 {
+	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
 	if (!tmp)
     {
@@ -70,12 +73,13 @@ void insConstStrSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4)
 	tmp->u.conststr.value = strdup(p2);
 	tmp->u.conststr.line = p3;
 	tmp->u.conststr.column = p4;
-	tmp->next = p1->lines;
-	p1->lines = tmp;
+	tmp->next = contexto->lines;
+	contexto->lines = tmp;
 }
 
-void insVarSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4, No p5)
+void SymbolTable_ins_Var(String p2, int p3, int p4, No p5)
 {
+	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
 	if (!tmp)
     {
@@ -88,13 +92,14 @@ void insVarSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4, No p5)
 	tmp->u.ident.column = p4;
 	tmp->u.ident.Kind = Is_Var;
 	tmp->u.ident.Type = p5->kind-9;
-	tmp->next = p1->lines;
-	p1->lines = tmp;
+	tmp->next = contexto->lines;
+	contexto->lines = tmp;
 }
 
-/*Usada */
-void insFuncSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4, No p5, No p6)
+/*Usada na regra de definição de função. */
+void SymbolTable_ins_Fun(String p2, int p3, int p4, No p5, No p6)
 {
+	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
 	if (!tmp)
     {
@@ -136,14 +141,14 @@ void insFuncSymbol_Table(Symbol_Table *p1, String p2, int p3, int p4, No p5, No 
 		}
 	}
 	
-	tmp->next = p1->lines;
-	p1->lines = tmp;
+	tmp->next = contexto->lines;
+	contexto->lines = tmp;
 }
 
 /*Usada na regra de declaração de variavel. Percorre a lista de declarações 
   do código fonte (e.g. int a,b,c), inserindo na tabela de simbolos todos 
   identificadores da lista com o tipo encontrado no comando de declaração*/
-void insTableSymbol_VarDec(No p1, No p2, int line, int column)
+void SymbolTable_ins_VarList(No p1, No p2, int line, int column)
 {
 	No tmp = p2;
 	String name;
@@ -160,7 +165,7 @@ void insTableSymbol_VarDec(No p1, No p2, int line, int column)
 			{
 				name = tmp->filhos->no->u.ident_.ident_;
 			}
-			insVarSymbol_Table(SymbolTable, name , line, column, p1);
+			SymbolTable_ins_Var(name , line, column, p1);
 			tmp = NULL;
 			break;
 		case is_IniDecList:
@@ -172,7 +177,7 @@ void insTableSymbol_VarDec(No p1, No p2, int line, int column)
 			{
 				name = tmp->filhos->next->no->u.ident_.ident_;
 			}
-			insVarSymbol_Table(SymbolTable, name , line, column, p1);
+			SymbolTable_ins_Var(name , line, column, p1);
 			tmp = tmp->filhos->no;
 			break;
 		default:
@@ -181,27 +186,59 @@ void insTableSymbol_VarDec(No p1, No p2, int line, int column)
 	}
 }
 
-/*Imprime todas as tabelas de símbolos criadas*/
-void showSymbolTable()
+/*busca o identificador informado em todos os contextos partindo do atual "para cima"
+  retorno: 1: achou; 0: nao achou*/
+int SymbolTable_lookup(Ident p1)
 {
-	Table_Line *aux;
-	Function_Param *aux2;
-	Symbol_Table_Set *aux3 = SymbolTableSet;
+	Table_Line *linha;
+	Symbol_Table *contexto = SymbolTable;
+
+	//percorre os contextos
+	while(contexto)
+	{
+		linha = contexto->lines;
+		
+		//percorre as linha do contexto atual
+		while(linha)
+		{
+			//se o simbolo atual for do tipo identificador
+			if(linha->Kind == Is_Ident)
+			{
+				//se o identificador na linha analisada for igual ao procurado, retorna 1
+				if(!strcmp(linha->u.ident.value,p1))
+				{
+					return 1;
+				}
+			}
+			linha = linha->next;
+		}
+		contexto = contexto->next;
+	}
+	//nao encontrou o identificador
+	return 0;
+}
+
+/*Imprime todas as tabelas de símbolos criadas*/
+void SymbolTable_Show()
+{
+	Table_Line *linha;
+	Function_Param *params;
+	Symbol_Table_Set *contexto = SymbolTableSet;
 	
 	
-	while(aux3)
+	while(contexto)
 	{
 		printf("\n[ Tabela ]\n");
 		
-		aux = aux3->table->lines;
-		while(aux)
+		linha = contexto->table->lines;
+		while(linha)
 		{
-			switch(aux->Kind)
+			switch(linha->Kind)
 			{
 			case Is_Ident:
-				printf("  [ Identifier | tipo: %s ",(aux->u.ident.Kind == Is_Proc? "Funcao  " : "Variavel"));
-				printf("| value: %s \t", aux->u.ident.value);
-				switch(aux->u.ident.Type)
+				printf("  [ Identifier | tipo: %s ",(linha->u.ident.Kind == Is_Proc? "Funcao  " : "Variavel"));
+				printf("| value: %s \t", linha->u.ident.value);
+				switch(linha->u.ident.Type)
 				{
 				case Is_TypeVoid:
 					printf("| type: void   ");
@@ -216,14 +253,14 @@ void showSymbolTable()
 					printf("| type: graph  ");
 					break;
 				}
-				printf("| line: %d | column: %d ]\n",aux->u.ident.line, aux->u.ident.column);
-				if(aux->u.ident.Kind == Is_Proc)
+				printf("| line: %d | column: %d ]\n",linha->u.ident.line, linha->u.ident.column);
+				if(linha->u.ident.Kind == Is_Proc)
 				{
-					printf("  [ %s params: (",aux->u.ident.value);
-					aux2 = aux->u.ident.param;
-					while(aux2)
+					printf("  [ %s params: (",linha->u.ident.value);
+					params = linha->u.ident.param;
+					while(params)
 					{
-						switch(aux2->Type)
+						switch(params->Type)
 						{
 						case Is_TypeVoid:
 							printf(" void ");
@@ -238,32 +275,32 @@ void showSymbolTable()
 							printf(" graph ");
 							break;
 						}
-						printf("%s",aux2->name);
-						if(aux2->next)
+						printf("%s",params->name);
+						if(params->next)
 						{
 							printf(", ");
 						}
-						aux2 = aux2->next;
+						params = params->next;
 					}
 					printf(") ]\n");
 				}
 				
 				break;
 			case Is_ConstInt:
-				printf("  [ Constant   | tipo: int      | value: %d \t| line: %d | column: %d ]\n", aux->u.constint.value, aux->u.constint.line, aux->u.constint.column);
+				printf("  [ Constant   | tipo: int      | value: %d \t| line: %d | column: %d ]\n", linha->u.constint.value, linha->u.constint.line, linha->u.constint.column);
 				break;
 			case Is_ConstDouble:
-				printf("  [ Constant   | tipo: double   | value: %g \t| line: %d | column: %d ]\n", aux->u.constdouble.value, aux->u.constdouble.line, aux->u.constdouble.column);
+				printf("  [ Constant   | tipo: double   | value: %g \t| line: %d | column: %d ]\n", linha->u.constdouble.value, linha->u.constdouble.line, linha->u.constdouble.column);
 				break;
 			case Is_ConstStr:
-				printf("  [ Constant   | tipo: string   | value: %s \t| line: %d | column: %d ]\n", aux->u.conststr.value, aux->u.conststr.line, aux->u.conststr.column);
+				printf("  [ Constant   | tipo: string   | value: %s \t| line: %d | column: %d ]\n", linha->u.conststr.value, linha->u.conststr.line, linha->u.conststr.column);
 				break;
 			default:
 				break;
 			}
-			aux = aux->next;
+			linha = linha->next;
 		}
-		aux3 = aux3->next;
+		contexto = contexto->next;
 	}
 }
 

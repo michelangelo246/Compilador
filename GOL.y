@@ -136,9 +136,9 @@ Assign_Operator
 					;
 	
 Constant 	
-/*ConstInt*/		: _INTEGER_ { $$ = make_No(is_ConstInt, NULL, ins_Args_Int(is_ConstInt, $1, NULL)); insConstIntSymbol_Table(SymbolTable, $1, yy_mylinenumber+1, yy_mycolumnnumber); } 
-/*ConstDouble*/		| _DOUBLE_ { $$ = make_No(is_ConstDouble, NULL, ins_Args_Double(is_ConstDouble, $1, NULL)); insConstDoubleSymbol_Table(SymbolTable, $1, yy_mylinenumber+1, yy_mycolumnnumber); }
-/*ConstStr*/		| _STRING_ { $$ = make_No(is_ConstStr, NULL, ins_Args_Str(is_ConstStr, $1, NULL)); insConstStrSymbol_Table(SymbolTable, $1, yy_mylinenumber+1, yy_mycolumnnumber); }
+/*ConstInt*/		: _INTEGER_ { $$ = make_No(is_ConstInt, NULL, ins_Args_Int(is_ConstInt, $1, NULL)); SymbolTable_ins_ConstInt($1, yy_mylinenumber+1, yy_mycolumnnumber); } 
+/*ConstDouble*/		| _DOUBLE_ { $$ = make_No(is_ConstDouble, NULL, ins_Args_Double(is_ConstDouble, $1, NULL)); SymbolTable_ins_ConstDouble($1, yy_mylinenumber+1, yy_mycolumnnumber); }
+/*ConstStr*/		| _STRING_ { $$ = make_No(is_ConstStr, NULL, ins_Args_Str(is_ConstStr, $1, NULL)); SymbolTable_ins_constStr($1, yy_mylinenumber+1, yy_mycolumnnumber); }
 					;
 	
 Unary_Operator 	
@@ -159,7 +159,7 @@ Arg_Exp_List
 					;
 	
 Primary_Exp 	
-/*PriExpId*/		: _IDENT_ { $$ = make_No(is_PriExpId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); } 
+/*PriExpId*/		: _IDENT_ { $$ = make_No(is_PriExpId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); }
 /*PriExpConst*/		| Constant { $$ = $1; }
 /*PriExpExp*/		| "(" Expression ")" { $$ = make_No(is_PriExpExp, ins_No($2, NULL), NULL); }
 					;
@@ -238,7 +238,7 @@ Init_Declarator
 					;
 	
 Var_Declaration 	
-/*VarDec*/			: Type Init_Decl_List ";" { $$ = make_No(is_VarDec, ins_No($1, ins_No($2, NULL)), NULL); insTableSymbol_VarDec($1, $2, yy_mylinenumber+1, yy_mycolumnnumber); } 
+/*VarDec*/			: Type Init_Decl_List ";" { $$ = make_No(is_VarDec, ins_No($1, ins_No($2, NULL)), NULL); SymbolTable_ins_VarList($1, $2, yy_mylinenumber+1, yy_mycolumnnumber); } 
 					| error Init_Decl_List ";" { printf("Sem identificador na declaracao de variavel com inicialização"); }
 					;
 	
@@ -307,13 +307,13 @@ Simple_Stm
 Declarator 	
 /*DecIdParam*/		: _IDENT_ "(" Parameter_List ")" { $$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); } 
 /*DecId*/			| _IDENT_ "(" ")" { $$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); }
-					| error "(" Parameter_List ")" { printf("Declaracao de funcao sem identificar e parametros"); }
-					| error "(" ")" { printf("Declaracao de funcao sem identificar e parametros"); }
+					| error "(" Parameter_List ")" { printf("Declaracao de funcao sem identificador"); }
+					| error "(" ")" { printf("Declaracao de funcao sem identificador"); }
 					;
 	
 Function_Def 	
 /*FunDef*/			: Type Declarator Block_Stm  { $$ = make_No(is_FunDef, ins_No($1, ins_No($2, ins_No($3, NULL))), NULL);
-												   insFuncSymbol_Table(SymbolTable, ( $2->u.ident_.ident_ ),
+												   SymbolTable_ins_Fun(( $2->u.ident_.ident_ ),
 												   yy_mylinenumber, yy_mycolumnnumber, $1, ( $2->kind == is_DecIdParam ? $2->filhos->no : NULL)); }
 					;
 	
