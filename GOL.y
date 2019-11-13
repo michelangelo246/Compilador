@@ -16,8 +16,13 @@ extern int yylex(void);
 int yy_mylinenumber;
 int yy_mycolumnnumber;
 
+//utilizados para nomear as tabelas. 1. No léxico, ao identificar '{', empilha um contexto
+//com o último nome guardado no recent_identifier 2. No sintático é definido o valor de
+//recent_identifier ao ler uma regra no estilo int num(), com o nome da função declarada
+//com o index, pode-se manter o mesmo recent_identifier mas diferenciando o escopo interno
 char *recent_identifier = NULL;
 int recent_identifier_index = 0;
+
 extern int initialize_lexer(FILE * inp);
 
 void yyerror(const char *str)
