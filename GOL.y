@@ -158,7 +158,7 @@ Unary_Operator
 					;
 	
 Type 	
-/*TypeVoid*/		: "void"	{ $$ = make_No(is_TypeVoid, NULL, NULL); } 
+/*TypeVoid*/		: "void"	{ $$ = make_No(is_TypeVoid, NULL, NULL); SymbolTable_Show();} 
 /*TypeInt*/			| "int" 	{ $$ = make_No(is_TypeInt, NULL, NULL); }
 /*TypeDouble*/		| "double" 	{ $$ = make_No(is_TypeDouble, NULL, NULL); }
 /*TypeGraph*/		| "graph" 	{ $$ = make_No(is_TypeGraph, NULL, NULL); }
@@ -333,8 +333,7 @@ Declarator
 	
 Function_Def 	
 /*FunDef*/			: Type Declarator Block_Stm	{ $$ = make_No(is_FunDef, ins_No($1, ins_No($2, ins_No($3, NULL))), NULL);
-												  SymbolTable_ins_Fun(( $2->u.ident_.ident_ ),
-												  yy_mylinenumber, yy_mycolumnnumber, $1, ( $2->kind == is_DecIdParam ? $2->filhos->no : NULL)); }
+												  SymbolTable_ins_Fun(( $2->u.ident_.ident_ ), yy_mylinenumber, yy_mycolumnnumber, $1, ( $2->kind == is_DecIdParam ? $2->filhos->no : NULL)); }
 					;
 	
 Ext_Var_Decl 	

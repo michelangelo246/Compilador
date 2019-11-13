@@ -82,7 +82,7 @@ void SymbolTable_ins_Var(String symbol, int linha, int coluna, No tipo);
 void SymbolTable_ins_Fun(String p2, int p3, int p4, No p5, No p6);
 void SymbolTable_ins_VarList(No tipo, No lista_dec_var, int linha, int coluna);
 
-int SymbolTable_lookup(Ident p1);
+Table_Line * SymbolTable_lookup(Ident p1);
 void SymbolTable_Show();
 
 

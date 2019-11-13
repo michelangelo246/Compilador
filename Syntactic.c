@@ -100,19 +100,19 @@ void SymbolTable_ins_Var(String symbol, int linha, int coluna, No tipo)
 	switch(tipo->kind)
 	{
 	case is_TypeVoid:
-		tmp->u.ident.Type = is_TypeVoid;
+		tmp->u.ident.Type = Is_TypeVoid;
 		break;
 	case is_TypeInt:
-		tmp->u.ident.Type = is_TypeInt;
+		tmp->u.ident.Type = Is_TypeInt;
 		break;
 	case is_TypeDouble:
-		tmp->u.ident.Type = is_TypeDouble;
+		tmp->u.ident.Type = Is_TypeDouble;
 		break;
 	case is_TypeGraph:
-		tmp->u.ident.Type = is_TypeGraph;
+		tmp->u.ident.Type = Is_TypeGraph;
 		break;
 	default:
-		tmp->u.ident.Type = is_TypeVoid;
+		tmp->u.ident.Type = Is_TypeVoid;
 		break;
 	}
 	tmp->next = contexto->lines;
@@ -214,8 +214,8 @@ void SymbolTable_ins_VarList(No tipo, No lista_dec_var, int linha, int coluna)
 }
 
 /*busca o identificador informado em todos os contextos partindo do atual "para cima".
-  retorno: 1: achou; 0: nao achou*/
-int SymbolTable_lookup(Ident p1)
+  retorno: referência para a linha correspondente ao identificador ou NULL*/
+Table_Line *SymbolTable_lookup(Ident p1)
 {
 	Table_Line *linha;
 	Symbol_Table *contexto = SymbolTable;
@@ -234,7 +234,7 @@ int SymbolTable_lookup(Ident p1)
 				//se o identificador na linha analisada for igual ao procurado, retorna 1
 				if(!strcmp(linha->u.ident.value,p1))
 				{
-					return 1;
+					return linha;
 				}
 			}
 			linha = linha->next;
