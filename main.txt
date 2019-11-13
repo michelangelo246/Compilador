@@ -5,7 +5,7 @@ int main()
 	graph G2;
 	graph G3;
 	
-	void num;
+	
 	G1 << a; 		//Inserção de vértice 13 no grafo G1
 	G1 << (a,14); 	//Inserção de aresta (13,14) no grafo G1
 	G2 << 15; 		//Inserção de vértice 15 no grafo G2
@@ -30,6 +30,7 @@ double Func(int num, double var, graph grafo)
 	double num = 3.0;
 	int numa = 3, numb = 4;
 	double num = 3.0;
+	void num;
 	printf();
 	if(num == 3)
 	{

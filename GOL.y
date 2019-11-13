@@ -13,9 +13,11 @@
 
 extern int yyparse(void);
 extern int yylex(void);
+
 int yy_mylinenumber;
 int yy_mycolumnnumber;
 
+int recent_type;
 //utilizados para nomear as tabelas. 1. No léxico, ao identificar '{', empilha um contexto
 //com o último nome guardado no recent_identifier 2. No sintático é definido o valor de
 //recent_identifier ao ler uma regra no estilo int num(), com o nome da função declarada
@@ -325,15 +327,16 @@ Simple_Stm
 					;
 	
 Declarator 	
-/*DecIdParam*/		: _IDENT_ "(" Parameter_List ")"	{ $$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); recent_identifier = $1; recent_identifier_index = 0; } 
-/*DecId*/			| _IDENT_ "(" ")" 					{ $$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); recent_identifier = $1; recent_identifier_index = 0; }
+/*DecIdParam*/		: _IDENT_ "(" Parameter_List ")"	{ $$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); recent_identifier = $1; recent_identifier_index = 0; 
+														  SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, $3); } 
+/*DecId*/			| _IDENT_ "(" ")" 					{ $$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); recent_identifier = $1; recent_identifier_index = 0;
+														  SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, NULL); }
 					| error "(" Parameter_List ")" 		{ printf("Declaracao de funcao sem identificador"); }
 					| error "(" ")" 					{ printf("Declaracao de funcao sem identificador"); }
 					;
 	
 Function_Def 	
-/*FunDef*/			: Type Declarator Block_Stm	{ $$ = make_No(is_FunDef, ins_No($1, ins_No($2, ins_No($3, NULL))), NULL);
-												  SymbolTable_ins_Fun(( $2->u.ident_.ident_ ), yy_mylinenumber, yy_mycolumnnumber, $1, ( $2->kind == is_DecIdParam ? $2->filhos->no : NULL)); }
+/*FunDef*/			: Type Declarator Block_Stm	{ $$ = make_No(is_FunDef, ins_No($1, ins_No($2, ins_No($3, NULL))), NULL); }
 					;
 	
 Ext_Var_Decl 	

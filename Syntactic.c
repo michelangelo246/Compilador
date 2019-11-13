@@ -121,7 +121,7 @@ void SymbolTable_ins_Var(String symbol, int linha, int coluna, No tipo)
 
 /*Usada na regra de definição de função. recebe o identificador a ser inserido e uma
   lista de parametros, que será utilizada para inserir um a um os parametros na tabela*/
-void SymbolTable_ins_Fun(String identificador, int linha, int coluna, No tipo, No parametros)
+void SymbolTable_ins_Fun(String identificador, int linha, int coluna, int tipo, No parametros)
 {
 	No curr_param;
 	Function_Param *aux;
@@ -138,7 +138,7 @@ void SymbolTable_ins_Fun(String identificador, int linha, int coluna, No tipo, N
 	nova_linha->u.ident.line = linha;
 	nova_linha->u.ident.column = coluna;
 	nova_linha->u.ident.Kind = Is_Proc;
-	nova_linha->u.ident.Type = tipo->kind-9;
+	nova_linha->u.ident.Type = tipo;
 	nova_linha->u.ident.param = NULL;
 	
 	//insere os parametros um a um na linha da declaração da função
@@ -149,7 +149,25 @@ void SymbolTable_ins_Fun(String identificador, int linha, int coluna, No tipo, N
 		{
 			aux = (Function_Param*) malloc(sizeof(Function_Param));
 			aux->name = strdup(curr_param->u.ident_.ident_);
-			aux->Type = curr_param->filhos->next->no->kind-9;
+			//aux->Type = curr_param->filhos->next->no->kind-9;
+			switch(curr_param->filhos->next->no->kind)
+			{
+			case is_TypeVoid:
+				aux->Type = Is_TypeVoid;
+				break;
+			case is_TypeInt:
+				aux->Type = Is_TypeInt;
+				break;
+			case is_TypeDouble:
+				aux->Type = Is_TypeDouble;
+				break;
+			case is_TypeGraph:
+				aux->Type = Is_TypeGraph;
+				break;
+			default:
+				aux->Type = Is_TypeVoid;
+				break;
+			}
 			
 			aux->next = nova_linha->u.ident.param;
 			nova_linha->u.ident.param = aux;
@@ -160,7 +178,25 @@ void SymbolTable_ins_Fun(String identificador, int linha, int coluna, No tipo, N
 		{
 			aux = (Function_Param*) malloc(sizeof(Function_Param));
 			aux->name = strdup(curr_param->u.ident_.ident_);
-			aux->Type = curr_param->filhos->no->kind-9;
+			//aux->Type = curr_param->filhos->no->kind-9;
+			switch(curr_param->filhos->no->kind)
+			{
+			case is_TypeVoid:
+				aux->Type = Is_TypeVoid;
+				break;
+			case is_TypeInt:
+				aux->Type = Is_TypeInt;
+				break;
+			case is_TypeDouble:
+				aux->Type = Is_TypeDouble;
+				break;
+			case is_TypeGraph:
+				aux->Type = Is_TypeGraph;
+				break;
+			default:
+				aux->Type = Is_TypeVoid;
+				break;
+			}
 			
 			aux->next = nova_linha->u.ident.param;
 			nova_linha->u.ident.param = aux;

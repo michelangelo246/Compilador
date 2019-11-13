@@ -28,6 +28,9 @@ void count();
 extern void yyerror(int tipo);
 extern int yy_mylinenumber, yy_mycolumnnumber;
 
+//utilizado para inserir os parametros da função assim que entra no escopo
+extern int recent_type;
+
 //utilizados para nomear as tabelas. 1. No léxico, ao identificar '{', empilha um contexto
 //com o último nome guardado no recent_identifier 2. No sintático é definido o valor de
 //recent_identifier ao ler uma regra no estilo int num(), com o nome da função declarada
@@ -98,13 +101,13 @@ EOL		[\r\n]
 <YYINITIAL>";"      		count(); return SEMICOLN;
 <YYINITIAL>"{"      		count(); SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); return OPN_CRLY;
 <YYINITIAL>"}"      		count(); SymbolTable = SymbolTable->next; return CLS_CRLY;
-<YYINITIAL>"double"     	count(); return DOUBLE;
-<YYINITIAL>"else"      		count(); return ELSE;
-<YYINITIAL>"graph"      	count(); return GRAPH;
+<YYINITIAL>"double"     	count(); recent_type = Is_TypeDouble; return DOUBLE;
+<YYINITIAL>"graph"      	count(); recent_type = Is_TypeGraph; return GRAPH;
+<YYINITIAL>"int"      		count(); recent_type = Is_TypeInt; return INT;
+<YYINITIAL>"void"      		count(); recent_type = Is_TypeVoid; return VOID;
+<YYINITIAL>"else"      		count(); ; return ELSE;
 <YYINITIAL>"if"      		count(); return IF;
-<YYINITIAL>"int"      		count(); return INT;
 <YYINITIAL>"return"     	count(); return RETURN;
-<YYINITIAL>"void"      		count(); return VOID;
 <YYINITIAL>"while"      	count(); return WHILE;
 
 <YYINITIAL>"//"[^\n]*\n 	count(); /*Comentário de linha única.*/
