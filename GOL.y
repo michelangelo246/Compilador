@@ -160,7 +160,7 @@ Unary_Operator
 					;
 	
 Type 	
-/*TypeVoid*/		: "void"	{ $$ = make_No(is_TypeVoid, NULL, NULL); SymbolTable_Show();} 
+/*TypeVoid*/		: "void"	{ $$ = make_No(is_TypeVoid, NULL, NULL); } 
 /*TypeInt*/			| "int" 	{ $$ = make_No(is_TypeInt, NULL, NULL); }
 /*TypeDouble*/		| "double" 	{ $$ = make_No(is_TypeDouble, NULL, NULL); }
 /*TypeGraph*/		| "graph" 	{ $$ = make_No(is_TypeGraph, NULL, NULL); }
@@ -328,9 +328,9 @@ Simple_Stm
 	
 Declarator 	
 /*DecIdParam*/		: _IDENT_ "(" Parameter_List ")"	{ $$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); recent_identifier = $1; recent_identifier_index = 0; 
-														  SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, $3); } 
+														  SymbolTable_ins_Fun( $1, yy_mylinenumber+1, yy_mycolumnnumber, recent_type, $3); } 
 /*DecId*/			| _IDENT_ "(" ")" 					{ $$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); recent_identifier = $1; recent_identifier_index = 0;
-														  SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, NULL); }
+														  SymbolTable_ins_Fun( $1, yy_mylinenumber+1, yy_mycolumnnumber, recent_type, NULL); }
 					| error "(" Parameter_List ")" 		{ printf("Declaracao de funcao sem identificador"); }
 					| error "(" ")" 					{ printf("Declaracao de funcao sem identificador"); }
 					;

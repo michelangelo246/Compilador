@@ -28,6 +28,8 @@ void count();
 extern void yyerror(int tipo);
 extern int yy_mylinenumber, yy_mycolumnnumber;
 
+//utilizado junto do recent_type, para evitar que ele seja atribuido ao identificar o tipo de um parametro
+int flag_arg = 0;
 //utilizado para inserir os parametros da função assim que entra no escopo
 extern int recent_type;
 
@@ -80,8 +82,8 @@ EOL		[\r\n]
 <YYINITIAL>"-"      		count(); return SUB_OP;
 <YYINITIAL>"!"      		count(); return NOT_OP;
 <YYINITIAL>","      		count(); return COMMA;
-<YYINITIAL>"("      		count(); return OPN_PRTS;
-<YYINITIAL>")"      		count(); return CLS_PRTS;
+<YYINITIAL>"("      		count(); flag_arg = 1; return OPN_PRTS;
+<YYINITIAL>")"      		count(); flag_arg = 0; return CLS_PRTS;
 <YYINITIAL>"["      		count(); return OPN_BRK;
 <YYINITIAL>"]"      		count(); return CLS_BRK;
 <YYINITIAL>"@"      		count(); return AT_SYM;
@@ -99,12 +101,12 @@ EOL		[\r\n]
 <YYINITIAL>"&&"      		count(); return AND_OP;
 <YYINITIAL>"||"      		count(); return OR_OP;
 <YYINITIAL>";"      		count(); return SEMICOLN;
-<YYINITIAL>"{"      		count(); SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); return OPN_CRLY;
+<YYINITIAL>"{"      		count(); SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); if(recent_identifier_index == 1){SymbolTable_copy_args(recent_identifier);}; return OPN_CRLY;
 <YYINITIAL>"}"      		count(); SymbolTable = SymbolTable->next; return CLS_CRLY;
-<YYINITIAL>"double"     	count(); recent_type = Is_TypeDouble; return DOUBLE;
-<YYINITIAL>"graph"      	count(); recent_type = Is_TypeGraph; return GRAPH;
-<YYINITIAL>"int"      		count(); recent_type = Is_TypeInt; return INT;
-<YYINITIAL>"void"      		count(); recent_type = Is_TypeVoid; return VOID;
+<YYINITIAL>"double"     	count(); if(!flag_arg){ recent_type = Is_TypeDouble; }; return DOUBLE;
+<YYINITIAL>"graph"      	count(); if(!flag_arg){ recent_type = Is_TypeGraph; }; return GRAPH;
+<YYINITIAL>"int"      		count(); if(!flag_arg){ recent_type = Is_TypeInt; }; return INT;
+<YYINITIAL>"void"      		count(); if(!flag_arg){ recent_type = Is_TypeVoid; }; return VOID;
 <YYINITIAL>"else"      		count(); ; return ELSE;
 <YYINITIAL>"if"      		count(); return IF;
 <YYINITIAL>"return"     	count(); return RETURN;

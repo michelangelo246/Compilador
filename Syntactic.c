@@ -249,6 +249,31 @@ void SymbolTable_ins_VarList(No tipo, No lista_dec_var, int linha, int coluna)
 	}
 }
 
+/*copia os argumentos da função lida mais recentemente para o seu escopo*/
+void SymbolTable_copy_args(String recent_identifier)
+{
+	Table_Line *funcao = NULL;
+	Function_Param *parametros = NULL;
+	No tipo = NULL;
+	
+	funcao = SymbolTable_lookup(recent_identifier);
+	if(funcao)
+	{
+		parametros = funcao->u.ident.param;
+	}
+	
+	
+	tipo = (No)malloc(sizeof(struct No_));
+	
+	while(parametros)
+	{
+		tipo->kind = parametros->Type;
+		SymbolTable_ins_Var(parametros->name,funcao->u.ident.line,funcao->u.ident.column,tipo);
+		
+		parametros = parametros->next;
+	}
+}
+
 /*busca o identificador informado em todos os contextos partindo do atual "para cima".
   retorno: referência para a linha correspondente ao identificador ou NULL*/
 Table_Line *SymbolTable_lookup(Ident p1)

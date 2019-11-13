@@ -1,10 +1,10 @@
 int teste;
-int main()
+
+int main(int a)
 {
 	graph G1; 		//Declaração de variável do tipo graph
 	graph G2;
 	graph G3;
-	
 	
 	G1 << a; 		//Inserção de vértice 13 no grafo G1
 	G1 << (a,14); 	//Inserção de aresta (13,14) no grafo G1
@@ -21,17 +21,18 @@ int main()
 	
 	while(1)
 	{
-		printf("hello world");
+		a("hello world");
 	}
 	return 0;
 }
-double Func(int num, double var, graph grafo)
+
+
+double Func(int num, double var, int grafo)
 {
 	double num = 3.0;
 	int numa = 3, numb = 4;
 	double num = 3.0;
-	void num;
-	printf();
+
 	if(num == 3)
 	{
 		numa = 3;
