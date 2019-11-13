@@ -27,6 +27,9 @@
 void count();
 extern void yyerror(int tipo);
 extern int yy_mylinenumber, yy_mycolumnnumber;
+extern char *recent_identifier;
+extern int recent_identifier_index ;
+
 int yy_comment_line, yy_comment_column;
 int yy_string_line, yy_string_column;
 char YY_PARSED_STRING[YY_BUFFER_LENGTH+1];
@@ -88,7 +91,7 @@ EOL		[\r\n]
 <YYINITIAL>"&&"      		count(); return AND_OP;
 <YYINITIAL>"||"      		count(); return OR_OP;
 <YYINITIAL>";"      		count(); return SEMICOLN;
-<YYINITIAL>"{"      		count(); SymbolTable = newSymbol_Table(); return OPN_CRLY;
+<YYINITIAL>"{"      		count(); SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); return OPN_CRLY;
 <YYINITIAL>"}"      		count(); SymbolTable = SymbolTable->next; return CLS_CRLY;
 <YYINITIAL>"double"     	count(); return DOUBLE;
 <YYINITIAL>"else"      		count(); return ELSE;

@@ -37,15 +37,16 @@ int main(int argc, char ** argv)
 	/** BEGIN **/
 	SymbolTable = NULL;
 	SymbolTableSet = NULL;
-	SymbolTable = newSymbol_Table();
+	SymbolTable = newSymbol_Table("global",0);
 	error = 0;
+	printf("\n");
 	parse_tree = pTrans_Unit(input);
 	if(parse_tree)
 	{
-		printf("\nAnalise concluida!\n\n");
+		printf("\nAnalise concluida!\n");
 		if(error == 0)
 		{
-			printf("A arvore pode ser vista de 3 formas:\n\n");
+			printf("\nA arvore pode ser vista de 3 formas:\n\n");
 			printf(" 1 - Texto puro no terminal;\n");
 			printf(" 2 - Grafico na Web; \n (Copiar manualmente codigo dot gerado e colar no site: http://www.webgraphviz.com/)\n");
 			printf(" 3 - Grafico em arquivo .png; \n (Digitar os comandos: \"sudo apt install graphviz\" e \"dot -Tpng Arvore.dot -o Arvore.png\")\n");
@@ -82,7 +83,7 @@ int main(int argc, char ** argv)
 				}
 			}
 		}
-		printf("\n\n[Tabela de simbolos]");
+		printf("\n[Tabela de simbolos]");
 		SymbolTable_Show(SymbolTable);
 		return 0;
 	}

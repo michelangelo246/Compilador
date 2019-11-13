@@ -1,19 +1,20 @@
+int teste;
 int main()
 {
-	graph G1; 		//DeclaraÁ„o de vari·vel do tipo graph
+	graph G1; 		//Declara√ß√£o de vari√°vel do tipo graph
 	graph G2;
 	graph G3;
 	
-	G1 << a; 		//InserÁ„o de vÈrtice 13 no grafo G1
-	G1 << (a,14); 		//InserÁ„o de aresta (13,14) no grafo G1
-	G2 << 15; 		//InserÁ„o de vÈrtice 15 no grafo G2
+	G1 << a; 		//Inser√ß√£o de v√©rtice 13 no grafo G1
+	G1 << (a,14); 	//Inser√ß√£o de aresta (13,14) no grafo G1
+	G2 << 15; 		//Inser√ß√£o de v√©rtice 15 no grafo G2
 	
-	G3 = G1 + G2; 	//G3 recebe uni„o dos grafos G1 e G2
-	
-	G2 = G3[G1]; 	//G2 recebe subgrafo de G3 composto por vÈrtices de G1
-	a  = G3@13#; 	//a recebe o grau de entrada do nÛ 13
-	a  = G3#13@; 	//a recebe o grau de saÌda do nÛ 13
-	G3 = G1&13&; 	//G3 recebe grafo composto pelos vizinhos do nÛ 13 no grafo G1
+	G3 = G1 + G2; 	//G3 recebe uni√£o dos grafos G1 e G2
+
+	G2 = G3[G1]; 	//G2 recebe subgrafo de G3 composto por v√©rtices de G1
+	a  = G3@13#; 	//a recebe o grau de entrada do n√≥ 13
+	a  = G3#13@; 	//a recebe o grau de sa√≠da do n√≥ 13
+	G3 = G1&13&; 	//G3 recebe grafo composto pelos vizinhos do n√≥ 13 no grafo G1
 
 	G3 = (G1&10&);
 	

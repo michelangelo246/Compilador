@@ -8,8 +8,8 @@
 
 typedef int Integer;
 typedef double Double;
-typedef char* String;
-typedef char* Ident;
+typedef char *String;
+typedef char *Ident;
 
 /********************   Declarações Adiantadas   ********************/
 
@@ -56,6 +56,8 @@ typedef struct Table_Line_
 
 typedef struct Symbol_Table_
 {
+	String name;
+	int index_name;
 	struct Table_Line_ *lines;
 	struct Symbol_Table_ *next;
 	
@@ -70,7 +72,7 @@ typedef struct Symbol_Table_Set_
 }Symbol_Table_Set;
 
 
-Symbol_Table *newSymbol_Table();
+Symbol_Table *newSymbol_Table(String nome, int index);
 
 void SymbolTable_ins_ConstInt(Integer symbol, int linha, int coluna);
 void SymbolTable_ins_ConstDouble(Double symbol, int linha, int coluna);

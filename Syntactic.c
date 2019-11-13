@@ -7,23 +7,29 @@
 
 
 /********************    Funcoes da tabela de simbolos    ********************/
-Symbol_Table *newSymbol_Table()
+/*Empilha uma nova tabela de símbolos que aponta para as anteriores.
+  Recebe um nome de contexto e indice (para os casos de contextos internos em uma mesma funcao)*/
+Symbol_Table *newSymbol_Table(String nome, int index)
 {
-	Symbol_Table *tmp = (Symbol_Table*) malloc(sizeof(Symbol_Table));
-	if (!tmp)
+	Symbol_Table *tabela = (Symbol_Table*) malloc(sizeof(Symbol_Table));
+	if (!tabela)
     {
         fprintf(stderr, "Erro: Faltou memoria ao tentar alocar tabela de simbolos!\n");
         exit(1);
     }
-	tmp->next = SymbolTable;
-	tmp->lines = NULL;
+
+	tabela->name = strdup(nome);
+	tabela->index_name = index;
+
+	tabela->next = SymbolTable;
+	tabela->lines = NULL;
 	
 	Symbol_Table_Set *aux = (Symbol_Table_Set *) malloc(sizeof(Symbol_Table_Set));
-	aux->table = tmp;
+	aux->table = tabela;
 	aux->next = SymbolTableSet;
 	SymbolTableSet = aux;
 	
-	return tmp;
+	return tabela;
 }
 
 void SymbolTable_ins_ConstInt(Integer symbol, int linha, int coluna)
@@ -113,7 +119,8 @@ void SymbolTable_ins_Var(String symbol, int linha, int coluna, No tipo)
 	contexto->lines = tmp;
 }
 
-/*Usada na regra de definição de função. */
+/*Usada na regra de definição de função. recebe o identificador a ser inserido e uma
+  lista de parametros, que será utilizada para inserir um a um os parametros na tabela*/
 void SymbolTable_ins_Fun(String identificador, int linha, int coluna, No tipo, No parametros)
 {
 	No curr_param;
@@ -206,7 +213,7 @@ void SymbolTable_ins_VarList(No tipo, No lista_dec_var, int linha, int coluna)
 	}
 }
 
-/*busca o identificador informado em todos os contextos partindo do atual "para cima"
+/*busca o identificador informado em todos os contextos partindo do atual "para cima".
   retorno: 1: achou; 0: nao achou*/
 int SymbolTable_lookup(Ident p1)
 {
@@ -248,7 +255,7 @@ void SymbolTable_Show()
 	
 	while(contexto)
 	{
-		printf("\n[ Tabela ]\n");
+		printf("\n[ Tabela %s %d]\n",contexto->table->name,contexto->table->index_name);
 		
 		linha = contexto->table->lines;
 		while(linha)
