@@ -83,7 +83,7 @@ void SymbolTable_ins_constStr(String symbol, int linha, int coluna)
 	contexto->lines = tmp;
 }
 
-void SymbolTable_ins_Var(String symbol, int linha, int coluna, No tipo)
+void SymbolTable_ins_Var(Ident identificador, int linha, int coluna, int tipo)
 {
 	Symbol_Table *contexto = SymbolTable;
 	Table_Line *tmp = (Table_Line*) malloc(sizeof(Table_Line));
@@ -93,28 +93,11 @@ void SymbolTable_ins_Var(String symbol, int linha, int coluna, No tipo)
         exit(1);
     }
 	tmp->Kind = Is_Ident;
-	tmp->u.ident.value = strdup(symbol);
+	tmp->u.ident.value = strdup(identificador);
 	tmp->u.ident.line = linha;
 	tmp->u.ident.column = coluna;
 	tmp->u.ident.Kind = Is_Var;
-	switch(tipo->kind)
-	{
-	case is_TypeVoid:
-		tmp->u.ident.Type = Is_TypeVoid;
-		break;
-	case is_TypeInt:
-		tmp->u.ident.Type = Is_TypeInt;
-		break;
-	case is_TypeDouble:
-		tmp->u.ident.Type = Is_TypeDouble;
-		break;
-	case is_TypeGraph:
-		tmp->u.ident.Type = Is_TypeGraph;
-		break;
-	default:
-		tmp->u.ident.Type = Is_TypeVoid;
-		break;
-	}
+	tmp->u.ident.Type = tipo;
 	tmp->next = contexto->lines;
 	contexto->lines = tmp;
 }
@@ -208,53 +191,11 @@ void SymbolTable_ins_Fun(String identificador, int linha, int coluna, int tipo, 
 	contexto->lines = nova_linha;
 }
 
-/*Usada na regra de declaração de variavel. Percorre a lista de declarações 
-  do código fonte (e.g. int a,b,c), inserindo na tabela de simbolos todos 
-  identificadores da lista com o tipo encontrado no comando de declaração*/
-void SymbolTable_ins_VarList(No tipo, No lista_dec_var, int linha, int coluna)
-{
-	No dec_atual = lista_dec_var;
-	String name;
-	while(dec_atual)
-	{
-		switch(dec_atual->kind)
-		{
-		case is_IniDecListIni:
-			if(dec_atual->filhos->no->kind == is_IniDecId)
-			{
-				name = dec_atual->filhos->no->u.ident_.ident_;
-			}
-			else
-			{
-				name = dec_atual->filhos->no->u.ident_.ident_;
-			}
-			SymbolTable_ins_Var(name , linha, coluna, tipo);
-			dec_atual = NULL;
-			break;
-		case is_IniDecList:
-			if(dec_atual->filhos->next->no->kind == is_IniDecId)
-			{
-				name = dec_atual->filhos->next->no->u.ident_.ident_;
-			}
-			else
-			{
-				name = dec_atual->filhos->next->no->u.ident_.ident_;
-			}
-			SymbolTable_ins_Var(name , linha, coluna, tipo);
-			dec_atual = dec_atual->filhos->no;
-			break;
-		default:
-			break;
-		}
-	}
-}
-
 /*copia os argumentos da função lida mais recentemente para dentro do seu escopo*/
 void SymbolTable_copy_args(String recent_identifier)
 {
 	Table_Line *funcao = NULL;
 	Function_Param *parametros = NULL;
-	No tipo = NULL;
 	
 	funcao = SymbolTable_lookup(recent_identifier).linha;
 	if(funcao)
@@ -262,13 +203,9 @@ void SymbolTable_copy_args(String recent_identifier)
 		parametros = funcao->u.ident.param;
 	}
 	
-	
-	tipo = (No)malloc(sizeof(struct No_));
-	
 	while(parametros)
 	{
-		tipo->kind = parametros->Type;
-		SymbolTable_ins_Var(parametros->name,funcao->u.ident.line,funcao->u.ident.column,tipo);
+		SymbolTable_ins_Var(parametros->name,funcao->u.ident.line,funcao->u.ident.column,parametros->Type);
 		
 		parametros = parametros->next;
 	}

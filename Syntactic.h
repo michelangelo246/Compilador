@@ -84,10 +84,9 @@ Symbol_Table *newSymbol_Table(String nome, int index);
 void SymbolTable_ins_ConstInt(Integer symbol, int linha, int coluna);
 void SymbolTable_ins_ConstDouble(Double symbol, int linha, int coluna);
 void SymbolTable_ins_constStr(String symbol, int linha, int coluna);
-void SymbolTable_ins_Var(String symbol, int linha, int coluna, No tipo);
 
+void SymbolTable_ins_Var(Ident identificador, int linha, int coluna, int tipo);
 void SymbolTable_ins_Fun(String identificador, int linha, int coluna, int tipo, No parametros);
-void SymbolTable_ins_VarList(No tipo, No lista_dec_var, int linha, int coluna);
 
 void SymbolTable_copy_args(String recent_identifier);
 LookUp_Return SymbolTable_lookup(Ident p1);

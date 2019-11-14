@@ -38,6 +38,7 @@ int main(int argc, char ** argv)
 	SymbolTable = NULL;
 	SymbolTableSet = NULL;
 	SymbolTable = newSymbol_Table("global",0);
+	
 	error = 0;
 	printf("\n");
 	parse_tree = pTrans_Unit(input);

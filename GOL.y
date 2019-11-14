@@ -14,8 +14,8 @@
 extern int yyparse(void);
 extern int yylex(void);
 
-int yy_mylinenumber;
-int yy_mycolumnnumber;
+int yy_mylinenumber = 1;
+int yy_mycolumnnumber = 1;
 
 int recent_type;
 //utilizados para nomear as tabelas. 1. No léxico, ao identificar '{', empilha um contexto
@@ -147,11 +147,11 @@ Assign_Operator
 	
 Constant 	
 /*ConstInt*/		: _INTEGER_	{ $$ = make_No(is_ConstInt, NULL, ins_Args_Int(is_ConstInt, $1, NULL)); 
-								  SymbolTable_ins_ConstInt($1, yy_mylinenumber+1, yy_mycolumnnumber); } 
+								  SymbolTable_ins_ConstInt($1, yy_mylinenumber, yy_mycolumnnumber); } 
 /*ConstDouble*/		| _DOUBLE_	{ $$ = make_No(is_ConstDouble, NULL, ins_Args_Double(is_ConstDouble, $1, NULL)); 
-								  SymbolTable_ins_ConstDouble($1, yy_mylinenumber+1, yy_mycolumnnumber); }
+								  SymbolTable_ins_ConstDouble($1, yy_mylinenumber, yy_mycolumnnumber); }
 /*ConstStr*/		| _STRING_	{ $$ = make_No(is_ConstStr, NULL, ins_Args_Str(is_ConstStr, $1, NULL)); 
-								  SymbolTable_ins_constStr($1, yy_mylinenumber+1, yy_mycolumnnumber); }
+								  SymbolTable_ins_constStr($1, yy_mylinenumber, yy_mycolumnnumber); }
 					;
 	
 Unary_Operator 	
@@ -259,16 +259,18 @@ Init_Declarator
 															  LookUp_Return retorno = SymbolTable_lookup($1);
 															  if(retorno.contexto == SymbolTable){ yyerror("syntax error"); 
 															  printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
-																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column); }} 
+																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column); }
+															  SymbolTable_ins_Var($1, yy_mylinenumber, yy_mycolumnnumber-1, recent_type); }
 /*IniDecIdE*/		| _IDENT_ Assign_Operator Log_Or_Exp 	{ $$ = make_No(is_IniDecIdE, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL)); 
 															  LookUp_Return retorno = SymbolTable_lookup($1);
 															  if(retorno.contexto == SymbolTable){ yyerror("syntax error"); 
 															  printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
-																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column); }} 
+																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column); }
+															  SymbolTable_ins_Var($1, yy_mylinenumber, yy_mycolumnnumber-1, recent_type); }
 					;
 	
 Var_Declaration 	
-/*VarDec*/			: Type Init_Decl_List ";" 	{ $$ = make_No(is_VarDec, ins_No($1, ins_No($2, NULL)), NULL); SymbolTable_ins_VarList($1, $2, yy_mylinenumber+1, yy_mycolumnnumber); } 
+/*VarDec*/			: Type Init_Decl_List ";" 	{ $$ = make_No(is_VarDec, ins_No($1, ins_No($2, NULL)), NULL); } 
 					| error Init_Decl_List ";" 	{ printf("Declarações de variáveis devem ser feitas no início do bloco.\n"); }
 					;
 	
@@ -335,10 +337,12 @@ Simple_Stm
 					;
 	
 Declarator 	
-/*DecIdParam*/		: _IDENT_ "(" Parameter_List ")"	{ $$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); recent_identifier = $1; recent_identifier_index = 0; 
-														  SymbolTable_ins_Fun( $1, yy_mylinenumber+1, yy_mycolumnnumber, recent_type, $3); } 
-/*DecId*/			| _IDENT_ "(" ")" 					{ $$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); recent_identifier = $1; recent_identifier_index = 0;
-														  SymbolTable_ins_Fun( $1, yy_mylinenumber+1, yy_mycolumnnumber, recent_type, NULL); }
+/*DecIdParam*/		: _IDENT_ "(" Parameter_List ")"	{ $$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL)); 
+														  recent_identifier = $1; recent_identifier_index = 0; 
+														  SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, $3); } 
+/*DecId*/			| _IDENT_ "(" ")" 					{ $$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); 
+														  recent_identifier = $1; recent_identifier_index = 0;
+														  SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, NULL); }
 					| error "(" Parameter_List ")" 		{ printf("Declaracao de funcao sem identificador"); }
 					| error "(" ")" 					{ printf("Declaracao de funcao sem identificador"); }
 					;
