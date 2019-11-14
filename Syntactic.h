@@ -71,6 +71,13 @@ typedef struct Symbol_Table_Set_
 	
 }Symbol_Table_Set;
 
+/*Container para retornar linha e contexto da função lookup*/
+typedef struct LookUp_Return_
+{
+	Table_Line *linha;
+	Symbol_Table *contexto;
+}LookUp_Return;
+
 
 Symbol_Table *newSymbol_Table(String nome, int index);
 
@@ -83,7 +90,7 @@ void SymbolTable_ins_Fun(String identificador, int linha, int coluna, int tipo, 
 void SymbolTable_ins_VarList(No tipo, No lista_dec_var, int linha, int coluna);
 
 void SymbolTable_copy_args(String recent_identifier);
-Table_Line * SymbolTable_lookup(Ident p1);
+LookUp_Return SymbolTable_lookup(Ident p1);
 void SymbolTable_Show();
 
 

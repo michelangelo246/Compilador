@@ -173,7 +173,7 @@ Arg_Exp_List
 	
 Primary_Exp 	
 /*PriExpId*/		: _IDENT_				{ $$ = make_No(is_PriExpId, NULL, ins_Args_Ident(Is_Ident, $1, NULL));
-											  if(!SymbolTable_lookup($1)){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+											  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 /*PriExpConst*/		| Constant 				{ $$ = $1; }
 /*PriExpExp*/		| "(" Expression ")" 	{ $$ = make_No(is_PriExpExp, ins_No($2, NULL), NULL); }
 					;
@@ -181,17 +181,17 @@ Primary_Exp
 Posfix_Exp 	
 /*PosExpPri*/		: Primary_Exp 					{ $$ = $1; } 
 /*PosExpSub*/		| _IDENT_ "[" Primary_Exp "]" 	{ $$ = make_No(is_PosExpSub, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL));
-													  if(!SymbolTable_lookup($1)){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 /*PosExpIn*/		| _IDENT_ "@" Primary_Exp "#" 	{ $$ = make_No(is_PosExpIn, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL));
-													  if(!SymbolTable_lookup($1)){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 /*PosExpOut*/		| _IDENT_ "#" Primary_Exp "@" 	{ $$ = make_No(is_PosExpOut, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL));
-													  if(!SymbolTable_lookup($1)){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 /*PosExpNeig*/		| _IDENT_ "&" Primary_Exp "&" 	{ $$ = make_No(is_PosExpNeig, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL));
-													  if(!SymbolTable_lookup($1)){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 /*PosExpCal*/		| _IDENT_ "(" ")" 			  	{ $$ = make_No(is_PosExpCal, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); 
-													  if(!SymbolTable_lookup($1)){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 /*PosExpCalArg*/	| _IDENT_ "(" Arg_Exp_List ")"  { $$ = make_No(is_PosExpCalArg, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL));
-													  if(!SymbolTable_lookup($1)){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 					| _IDENT_ "[" error "]" 		{ printf("sem expressao para subgrafo"); }
 					| _IDENT_ "@" error "#" 		{ printf("sem expressao para grau de entrada"); }
 					| _IDENT_ "#" error "@" 		{ printf("sem expressao para grau de saida"); }
@@ -242,9 +242,9 @@ Log_Or_Exp
 Expression 	
 /*ExpLogOr*/		: Log_Or_Exp 												{ $$ = $1; } 
 /*ExpAss*/			| _IDENT_ Assign_Operator Expression						{ $$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL));
-																				  if(!SymbolTable_lookup($1)){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+																				  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 /*ExpAssGraph*/		| _IDENT_ Assign_Operator "(" Expression "," Expression ")" { $$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($4, ins_No($6, NULL))), ins_Args_Ident(Is_Ident, $1, NULL));
-																				  if(!SymbolTable_lookup($1)){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+																				  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 					| _IDENT_ error Expression 									{ printf("Sem operador de atribuição"); }
 					| _IDENT_ error "(" Expression "," Expression ")" 			{ printf("Sem operador de atribuição"); }
 					;
@@ -255,8 +255,16 @@ Init_Decl_List
 					;
 	
 Init_Declarator 	
-/*IniDecId*/		: _IDENT_ 								{ $$ = make_No(is_IniDecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); } 
-/*IniDecIdE*/		| _IDENT_ Assign_Operator Log_Or_Exp 	{ $$ = make_No(is_IniDecIdE, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL)); }
+/*IniDecId*/		: _IDENT_ 								{ $$ = make_No(is_IniDecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL)); 
+															  LookUp_Return retorno = SymbolTable_lookup($1);
+															  if(retorno.contexto == SymbolTable){ yyerror("syntax error"); 
+															  printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
+																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column); }} 
+/*IniDecIdE*/		| _IDENT_ Assign_Operator Log_Or_Exp 	{ $$ = make_No(is_IniDecIdE, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL)); 
+															  LookUp_Return retorno = SymbolTable_lookup($1);
+															  if(retorno.contexto == SymbolTable){ yyerror("syntax error"); 
+															  printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
+																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column); }} 
 					;
 	
 Var_Declaration 	

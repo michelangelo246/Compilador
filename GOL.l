@@ -35,7 +35,7 @@ extern int recent_type;
 
 //utilizados para nomear as tabelas. 1. No léxico, ao identificar '{', empilha um contexto
 //com o último nome guardado no recent_identifier 2. No sintático é definido o valor de
-//recent_identifier ao ler uma regra no estilo int num(), com o nome da função declarada
+//recent_identifier ao ler uma regra no estilo int num([params]), com o nome da função declarada
 //com o index, pode-se manter o mesmo recent_identifier mas diferenciando o escopo interno
 extern char *recent_identifier;
 extern int recent_identifier_index ;
@@ -101,7 +101,10 @@ EOL		[\r\n]
 <YYINITIAL>"&&"      		count(); return AND_OP;
 <YYINITIAL>"||"      		count(); return OR_OP;
 <YYINITIAL>";"      		count(); return SEMICOLN;
-<YYINITIAL>"{"      		count(); SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); if(recent_identifier_index == 1){SymbolTable_copy_args(recent_identifier);}; return OPN_CRLY;
+<YYINITIAL>"{"      		{ count(); 
+							  SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); 
+							  if(recent_identifier_index == 1){SymbolTable_copy_args(recent_identifier);}; 
+							  return OPN_CRLY; }
 <YYINITIAL>"}"      		count(); SymbolTable = SymbolTable->next; return CLS_CRLY;
 <YYINITIAL>"double"     	count(); if(!flag_arg){ recent_type = Is_TypeDouble; }; return DOUBLE;
 <YYINITIAL>"graph"      	count(); if(!flag_arg){ recent_type = Is_TypeGraph; }; return GRAPH;

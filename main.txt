@@ -1,10 +1,11 @@
-int teste;
+int a;
 
-int main(int a)
+int main()
 {
 	graph G1; 		//Declaração de variável do tipo graph
 	graph G2;
 	graph G3;
+	int num;
 	
 	G1 << a; 		//Inserção de vértice 13 no grafo G1
 	G1 << (a,14); 	//Inserção de aresta (13,14) no grafo G1
@@ -29,7 +30,7 @@ int main(int a)
 
 double Func(int num, double var, int grafo)
 {
-	double num = 3.0;
+	double num = 3.0, numy = 4.0;
 	int numa = 3, numb = 4;
 	double num = 3.0;
 
