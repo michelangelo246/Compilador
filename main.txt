@@ -1,9 +1,14 @@
+double func(int a, double b, graph c)
+{
+	return b;
+}
+
 int main()
 {
-	int num;
-	double a;
-	int b;
+	double num = 3.0;
+	graph a;
+	int b = (num + 4);
 
-	num = 3 * 2.0;
+	num = func(b,num*3.5,a);
 	return 0;
 }

@@ -50,7 +50,7 @@ int main(int argc, char ** argv)
 			printf("\nA arvore pode ser vista de 3 formas:\n\n");
 			printf(" 1 - Texto puro no terminal;\n");
 			printf(" 2 - Grafico na Web; \n (Copiar manualmente codigo dot gerado e colar no site: http://www.webgraphviz.com/)\n");
-			printf(" 3 - Grafico em arquivo .png; \n (Digitar os comandos: \"sudo apt install graphviz\" e \"dot -Tpng Arvore.dot -o Arvore.png\")\n");
+			printf(" 3 - Grafico em arquivo .png; \n (Adicione suporte a extensao .dot com o comando: \" sudo apt install graphviz \")\n");
 			ok = 0;
 			while(!ok)
 			{
@@ -75,7 +75,8 @@ int main(int argc, char ** argv)
 					printf("\n[Plain text]\n");
 					fprintf(arvore,showTrans_Unit(parse_tree));
 					fclose(arvore);
-					printf("\n\n /!\\ Arquivo .dot gerado com sucesso! /!\\\nUtilize o comando dot -Tpng Arvore.dot -o Arvore.png para gerar a imagem \n");
+					printf("\n\n /!\\ Arquivo .dot gerado com sucesso! /!\\\nUtilize o comando \" dot -Tpng Arvore.dot -o Arvore.png \" para gerar a imagem \n");
+					system("dot -Tpng Arvore.dot -o Arvore.png");
 					ok = 1;
 					break;
 				default:

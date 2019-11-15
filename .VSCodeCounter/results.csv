@@ -1,0 +1,12 @@
+filename, language, YYLEX, Makefile, C++, C, Markdown, YACC, comment, blank, total
+GOL.l, YYLEX, 158, 0, 0, 0, 0, 0, 10, 20, 188
+GOL.y, YACC, 0, 0, 0, 0, 0, 639, 8, 46, 693
+Makefile, Makefile, 0, 21, 0, 0, 0, 0, 0, 9, 30
+Parser.h, C++, 0, 0, 52, 0, 0, 0, 12, 9, 73
+Printer.c, C, 0, 0, 0, 314, 0, 0, 1, 26, 341
+Printer.h, C++, 0, 0, 17, 0, 0, 0, 1, 10, 28
+README.md, Markdown, 0, 0, 0, 0, 40, 0, 0, 15, 55
+Syntactic.c, C, 0, 0, 0, 374, 0, 0, 32, 62, 468
+Syntactic.h, C++, 0, 0, 118, 0, 0, 0, 7, 40, 165
+Test.c, C, 0, 0, 0, 84, 0, 0, 2, 9, 95
+Total, -, 158, 21, 187, 772, 40, 639, 73, 246, 2136

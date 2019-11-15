@@ -137,7 +137,8 @@ No pTrans_Unit(FILE *inp)
 %%
 Trans_Unit 
 /*TraUniExtVar*/	: Ext_Var_Decl				{ $$ = $1; YY_RESULT_Trans_Unit_= $$; } 
-/*TraUniList*/		| Trans_Unit Ext_Var_Decl	{ $$ = make_No(is_TraUniList, ins_No($1, ins_No($2, NULL)), NULL, Is_TypeVoid); YY_RESULT_Trans_Unit_= $$; }
+/*TraUniList*/		| Trans_Unit Ext_Var_Decl	{ $$ = make_No(is_TraUniList, ins_No($1, ins_No($2, NULL)), NULL, Is_TypeVoid); 
+												  YY_RESULT_Trans_Unit_= $$; }
 					;
 
 Assign_Operator 
@@ -172,96 +173,393 @@ Arg_Exp_List
 					;
 	
 Primary_Exp 	
-/*PriExpId*/		: _IDENT_				{ $$ = make_No(is_PriExpId, NULL, ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
-											  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+/*PriExpId*/		: _IDENT_				{ 
+												$$ = make_No(is_PriExpId, NULL, ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
+												if(!SymbolTable_lookup($1).linha)
+												{//erro ao referenciar identificador nao declarado
+													yyerror("error"); 
+													printf("o identificador \"%s\" nao foi declarado\n",$1);
+												}
+											}
 /*PriExpConst*/		| Constant 				{ $$ = $1; }
 /*PriExpExp*/		| "(" Expression ")" 	{ $$ = $2; }
 					;
-	
-/*Verificar tipos de Primary_exp*/
+
 Posfix_Exp 	
 /*PosExpPri*/		: Primary_Exp 					{ $$ = $1; } 
-/*PosExpSub*/		| _IDENT_ "[" Primary_Exp "]" 	{ $$ = make_No(is_PosExpSub, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
-													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
-/*PosExpIn*/		| _IDENT_ "@" Primary_Exp "#" 	{ $$ = make_No(is_PosExpIn, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
-													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
-/*PosExpOut*/		| _IDENT_ "#" Primary_Exp "@" 	{ $$ = make_No(is_PosExpOut, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
-													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
-/*PosExpNeig*/		| _IDENT_ "&" Primary_Exp "&" 	{ $$ = make_No(is_PosExpNeig, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
-													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
-/*PosExpCal*/		| _IDENT_ "(" ")" 			  	{ $$ = make_No(is_PosExpCal, NULL, ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid)); 
-													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
-/*PosExpCalArg*/	| _IDENT_ "(" Arg_Exp_List ")"  { $$ = make_No(is_PosExpCalArg, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
-													  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+/*PosExpSub*/		| _IDENT_ "[" Primary_Exp "]" 	{
+														$$ = make_No(is_PosExpSub, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
+													  	Table_Line *linha = SymbolTable_lookup($1).linha;
+														if(!linha)
+														{//erro ao referenciar identificador nao declarado
+															yyerror("error"); 
+															printf("o identificador \"%s\" nao foi declarado\n",$1);
+														}
+														else if(linha->u.ident.Type != Is_TypeGraph)
+														{
+															yyerror("error"); 
+															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
+														}
+													  	if($3->type != Is_TypeGraph)
+														{//erro ao utilizar operação utilizando tipo diferente de grafo
+															yyerror("error"); 
+															printf("A operacao espera uma expressao do tipo 'graph'\n"); 
+														} 
+													}
+/*PosExpIn*/		| _IDENT_ "@" Primary_Exp "#" 	{
+														$$ = make_No(is_PosExpIn, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
+													  	Table_Line *linha = SymbolTable_lookup($1).linha;
+														if(!linha)
+														{//erro ao referenciar identificador nao declarado
+															yyerror("error"); 
+															printf("o identificador \"%s\" nao foi declarado\n",$1);
+														}
+														else if(linha->u.ident.Type != Is_TypeGraph)
+														{
+															yyerror("error"); 
+															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
+														}
+													  	if($3->type != Is_TypeInt)
+														{ //erro ao utilizar operação utilizando tipo diferente de int
+															yyerror("error");
+															printf("A operacao espera uma expressao do tipo 'int'\n");
+														}
+													}
+/*PosExpOut*/		| _IDENT_ "#" Primary_Exp "@" 	{
+														$$ = make_No(is_PosExpOut, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
+													  	Table_Line *linha = SymbolTable_lookup($1).linha;
+														if(!linha)
+														{//erro ao referenciar identificador nao declarado
+															yyerror("error"); 
+															printf("o identificador \"%s\" nao foi declarado\n",$1);
+														}
+														else if(linha->u.ident.Type != Is_TypeGraph)
+														{
+															yyerror("error"); 
+															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
+														}
+													  	if($3->type != Is_TypeInt)
+														{ //erro ao utilizar operação utilizando tipo diferente de int
+															yyerror("error"); 
+															printf("A operacao espera uma expressao do tipo 'int'\n"); 
+														}
+													}
+/*PosExpNeig*/		| _IDENT_ "&" Primary_Exp "&" 	{
+														$$ = make_No(is_PosExpNeig, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
+													  	Table_Line *linha = SymbolTable_lookup($1).linha;
+														if(!linha)
+														{//erro ao referenciar identificador nao declarado
+															yyerror("error"); 
+															printf("o identificador \"%s\" nao foi declarado\n",$1);
+														}
+														else if(linha->u.ident.Type != Is_TypeGraph)
+														{
+															yyerror("error"); 
+															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
+														}
+													  	if($3->type != Is_TypeInt)
+														{ 
+															yyerror("error"); 
+															printf("A operacao espera uma expressao do tipo 'int'\n"); 
+														}
+													}
+/*PosExpCal*/		| _IDENT_ "(" ")" 			  	{
+														$$ = make_No(is_PosExpCal, NULL, ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid)); 
+													  	Table_Line *linha = SymbolTable_lookup($1).linha;
+														if(!linha)
+														{//erro ao referenciar identificador nao declarado
+															yyerror("error"); 
+															printf("o identificador \"%s\" nao foi declarado\n",$1);
+														}
+														else if(linha->u.ident.param != NULL)
+														{//funcao chamada precisa de argumentos
+															yyerror("error"); 
+															printf("Função chamada com número incorreto de argumentos. Argumentos esperados: (");
+															Function_Param *param = linha->u.ident.param;
+															while(param)
+															{
+																printf("%s",printType(param->Type));
+																if(param->next) printf(", ");
+																param = param->next;
+															}
+															printf(")\n");
+														}
+													}
+/*PosExpCalArg*/	| _IDENT_ "(" Arg_Exp_List ")"  {
+														$$ = make_No(is_PosExpCalArg, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
+													  	Table_Line *linha = SymbolTable_lookup($1).linha;
+														if(!linha)
+														{//erro ao referenciar identificador nao declarado
+															yyerror("error"); 
+															printf("o identificador \"%s\" nao foi declarado\n",$1);
+														}
+														else if(linha->u.ident.param != NULL)
+														{//funcao chamada precisa de argumentos
+															if(!verifica_Params_Args(linha->u.ident.param,$3))
+															{//se parametros não batem com número ou tipo de argumentos, reporta erro
+																yyerror("error"); 
+																printf("Função chamada com número ou tipo incorreto de argumentos. Argumentos esperados: (");
+																Function_Param *param = linha->u.ident.param;
+																while(param)
+																{
+																	printf("%s",printType(param->Type));
+																	if(param->next) printf(", ");
+																	param = param->next;
+																}
+																printf("), ");
+																printf("Argumentos passados: (");
+																print_Arg_Exp_List($3);
+																printf(")\n");
+															}
+														}
+														else
+														{//funcao chamada nao possui parametros
+															yyerror("error"); 
+															printf("Função chamada com número incorreto de argumentos. Argumentos esperados: nenhum\n");
+														}
+														
+													}
 					| _IDENT_ "[" error "]" 		{ printf("sem expressao para subgrafo"); }
 					| _IDENT_ "@" error "#" 		{ printf("sem expressao para grau de entrada"); }
 					| _IDENT_ "#" error "@" 		{ printf("sem expressao para grau de saida"); }
 					| _IDENT_ "&" error "&" 		{ printf("sem expressao para vizinhanca"); }
 					;
 	
-/*Verificar tipo de operando unario*/
 Unary_Exp 	
-/*UnaExpPos*/		: Posfix_Exp 				{ $$ = $1; } 
-/*UnaExpOp*/		| Unary_Operator Unary_Exp	{ $$ = make_No(is_UnaExpOp, ins_No($1, ins_No($2, NULL)), NULL, $2->type); }
+/*UnaExpPos*/		: Posfix_Exp 				{ $$ = $1; }
+/*UnaExpOp*/		| Unary_Operator Unary_Exp	{
+													$$ = make_No(is_UnaExpOp, ins_No($1, ins_No($2, NULL)), NULL, $2->type);
+													if($1->kind == is_UnaOpMinus)
+													{
+														if(($2->type != Is_TypeInt) && ($2->type != Is_TypeDouble))
+														{
+															yyerror("error"); 
+															printf("Operador unario '-' com operando de tipo invalido. Esperado: 'int' ou 'double', Usado: '%s'\n", printType($2->type));
+														}
+													}
+													else if($1->kind == is_UnaOpNot)
+													{
+														if($2->type != Is_TypeBool)
+														{
+															yyerror("error"); 
+															printf("Operador unario '!' com operando de tipo invalido. Esperado: 'bool', Usado: '%s'\n", printType($2->type));
+														}
+													}
+												}
 					;
 	
 Multi_Exp 	
 /*MulExpUna*/		: Unary_Exp 				{ $$ = $1; } 
-/*MulExpMul*/		| Multi_Exp "*" Unary_Exp 	{ $$ = make_No(is_MulExpMul, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid);
-												  if($1->type == Is_TypeDouble || $3->type == Is_TypeDouble){ $$->type = Is_TypeDouble; } 
-												  else if($1->type == Is_TypeInt && $3->type == Is_TypeInt){ $$->type = Is_TypeInt; }
-												  else { yyerror("syntax error"); printf("operador '*' aplicado a operandos com tipos invalidos, tipos usados foram: %d e %d\n",$1->type, $3->type); } }
-/*MulExpDiv*/		| Multi_Exp "/" Unary_Exp 	{ $$ = make_No(is_MulExpDiv, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid);
-												  if($1->type == Is_TypeDouble || $3->type == Is_TypeDouble){ $$->type = Is_TypeDouble; } 
-												  else if($1->type == Is_TypeInt && $3->type == Is_TypeInt){ $$->type = Is_TypeInt; }
-												  else { yyerror("syntax error"); printf("operador '/' aplicado a operandos com tipos invalidos, tipos usados foram: %d e %d\n",$1->type, $3->type); } }
+/*MulExpMul*/		| Multi_Exp "*" Unary_Exp 	{ 
+													$$ = make_No(is_MulExpMul, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid);
+												  	if(($1->type == Is_TypeDouble && $3->type == Is_TypeInt) || ($1->type == Is_TypeInt && $3->type == Is_TypeDouble))
+													{//caso algum dos operandos seja double, expressão retorna double
+														$$->type = Is_TypeDouble;
+													} 
+												  	else if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
+													{//caso ambos operandos sejam int ou double, expressão retorna o tipo de ambos
+														$$->type = $1->type; 
+													}
+												 	else 
+													{//caso algum dos operandos não seja nem int nem double, expressão retorna void e reporta erro
+														yyerror("error"); 
+														printf("operador binario '*' com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													}
+												}
+/*MulExpDiv*/		| Multi_Exp "/" Unary_Exp 	{
+													$$ = make_No(is_MulExpDiv, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid);
+												  	if(($1->type == Is_TypeDouble && $3->type == Is_TypeInt) || ($1->type == Is_TypeInt && $3->type == Is_TypeDouble))
+													{//caso algum dos operandos seja double, expressão retorna double
+														$$->type = Is_TypeDouble;
+													} 
+												  	else if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
+													{//caso ambos operandos sejam int ou double, expressão retorna o tipo de ambos
+														$$->type = $1->type; 
+													}
+												 	else 
+													{//caso algum dos operandos não seja nem int nem double, expressão retorna void e reporta erro
+														yyerror("error"); 
+														printf("operador binario '/' com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													}
+												}
 					;
 	
 Add_Exp 	
 /*AddExpMul*/		: Multi_Exp 			{ $$ = $1; } 
-/*AddExpAdd*/		| Add_Exp "+" Multi_Exp	{ $$ = make_No(is_AddExpAdd, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid);
-												  if($1->type == Is_TypeDouble || $3->type == Is_TypeDouble){ $$->type = Is_TypeDouble; } 
-												  else if($1->type == Is_TypeInt && $3->type == Is_TypeInt){ $$->type = Is_TypeInt; }
-												  else { yyerror("syntax error"); printf("operador '+' aplicado a operandos com tipos invalidos, tipos usados foram: %d e %d\n",$1->type, $3->type); } }
-/*AddExpSub*/		| Add_Exp "-" Multi_Exp	{ $$ = make_No(is_AddExpSub, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid); 
-												  if($1->type == Is_TypeDouble || $3->type == Is_TypeDouble){ $$->type = Is_TypeDouble; } 
-												  else if($1->type == Is_TypeInt && $3->type == Is_TypeInt){ $$->type = Is_TypeInt; }
-												  else { yyerror("syntax error"); printf("operador '-' aplicado a operandos com tipos invalidos, tipos usados foram: %d e %d\n",$1->type, $3->type); } }
+/*AddExpAdd*/		| Add_Exp "+" Multi_Exp	{ 
+												$$ = make_No(is_AddExpAdd, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid);
+												if(($1->type == Is_TypeDouble && $3->type == Is_TypeInt) || ($1->type == Is_TypeInt && $3->type == Is_TypeDouble))
+												{//caso algum dos operandos seja double, expressão retorna double
+													$$->type = Is_TypeDouble;
+												} 
+												else if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
+												{//caso ambos operandos sejam int ou double, expressão retorna o tipo de ambos
+													$$->type = $1->type; 
+												}
+												else 
+												{//caso algum dos operandos não seja nem int nem double, expressão retorna void e reporta erro
+													yyerror("error"); 
+													printf("operador binario '+' com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+												}
+											}
+/*AddExpSub*/		| Add_Exp "-" Multi_Exp	{
+												$$ = make_No(is_AddExpSub, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid); 
+												if(($1->type == Is_TypeDouble && $3->type == Is_TypeInt) || ($1->type == Is_TypeInt && $3->type == Is_TypeDouble))
+												{//caso algum dos operandos seja double, expressão retorna double
+													$$->type = Is_TypeDouble;
+												} 
+												else if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
+												{//caso ambos operandos sejam int ou double, expressão retorna o tipo de ambos
+													$$->type = $1->type; 
+												}
+												else 
+												{//caso algum dos operandos não seja nem int nem double, expressão retorna void e reporta erro
+													yyerror("error"); 
+													printf("operador binario '-' com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+												}
+											}
 					;
 	
 Rel_Exp 	
 /*RelExpAdd*/		: Add_Exp 				{ $$ = $1; } 
-/*RelExpLT*/		| Rel_Exp "<" Add_Exp 	{ $$ = make_No(is_RelExpLT, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); }
-/*RelExpGT*/		| Rel_Exp ">" Add_Exp 	{ $$ = make_No(is_RelExpGT, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); }
-/*RelExpLE*/		| Rel_Exp "<=" Add_Exp 	{ $$ = make_No(is_RelExpLE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); }
-/*RelExpGE*/		| Rel_Exp ">=" Add_Exp 	{ $$ = make_No(is_RelExpGE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); }
+/*RelExpLT*/		| Rel_Exp "<" Add_Exp 	{ 
+												$$ = make_No(is_RelExpLT, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); 
+											  	if((($1->type != Is_TypeInt) && ($1->type != Is_TypeDouble)) || (($3->type != Is_TypeInt) && ($3->type != Is_TypeDouble)))
+											  	{//caso algum dos operandos não seja nem int nem double, reporta erro
+													yyerror("error"); 
+													printf("operador binario '<' com operandos de tipos invalidos. Esperado: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+												}
+											}
+/*RelExpGT*/		| Rel_Exp ">" Add_Exp 	{
+												$$ = make_No(is_RelExpGT, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); 
+											  	if((($1->type != Is_TypeInt) && ($1->type != Is_TypeDouble)) || (($3->type != Is_TypeInt) && ($3->type != Is_TypeDouble)))
+											  	{//caso algum dos operandos não seja nem int nem double, reporta erro
+													yyerror("error"); 
+													printf("operador binario '>' com operandos de tipos invalidos. Esperado: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+												}
+											}
+/*RelExpLE*/		| Rel_Exp "<=" Add_Exp 	{
+												$$ = make_No(is_RelExpLE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); 
+											  	if((($1->type != Is_TypeInt) && ($1->type != Is_TypeDouble)) || (($3->type != Is_TypeInt) && ($3->type != Is_TypeDouble)))
+											  	{//caso algum dos operandos não seja nem int nem double, reporta erro
+													yyerror("error"); 
+													printf("operador binario '<=' com operandos de tipos invalidos. Esperado: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+												}
+											}
+/*RelExpGE*/		| Rel_Exp ">=" Add_Exp 	{
+												$$ = make_No(is_RelExpGE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); 
+											  	if((($1->type != Is_TypeInt) && ($1->type != Is_TypeDouble)) || (($3->type != Is_TypeInt) && ($3->type != Is_TypeDouble)))
+											  	{//caso algum dos operandos não seja nem int nem double, reporta erro
+													yyerror("error"); 
+													printf("operador binario '>=' com operandos de tipos invalidos. Esperado: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+												}
+											}
 					;
 	
 Eq_Exp 	
 /*EqExpRel*/		: Rel_Exp 				{ $$ = $1; } 
-/*EqExpEQ*/			| Eq_Exp "==" Rel_Exp 	{ $$ = make_No(is_EqExpEQ, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); }
-/*EqExpNE*/			| Eq_Exp "!=" Rel_Exp	{ $$ = make_No(is_EqExpNE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); }
+/*EqExpEQ*/			| Eq_Exp "==" Rel_Exp 	{ 
+												$$ = make_No(is_EqExpEQ, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool);
+												if(($1->type != $3->type) && (($1->type != Is_TypeInt && $1->type != Is_TypeDouble)||($3->type != Is_TypeInt && $3->type != Is_TypeDouble)))
+												{//se os tipos forem diferentes e, ou $1 nao for nem 'int' e nem 'double' ou $3 nao for nem 'int' e nem 'double', reporta erro
+													if($1->type != $3->type)
+													{
+														yyerror("error"); 
+														printf("operador binario '==' com operandos de tipos diferentes. Tipo usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													}
+													else
+													{
+														yyerror("error"); 
+														printf("operador binario '==' com operandos de tipos invalidos. Esperados: 'int', 'double' ou 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													}
+												}
+											}
+/*EqExpNE*/			| Eq_Exp "!=" Rel_Exp	{
+												$$ = make_No(is_EqExpNE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool);
+												if(($1->type != $3->type) && (($1->type != Is_TypeInt && $1->type != Is_TypeDouble)||($3->type != Is_TypeInt && $3->type != Is_TypeDouble)))
+												{//se os tipos forem diferentes e, ou $1 nao for nem 'int' e nem 'double' ou $3 nao for nem 'int' e nem 'double', reporta erro
+													if($1->type != $3->type)
+													{
+														yyerror("error"); 
+														printf("operador binario '!=' com operandos de tipos diferentes. Tipo usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													}
+													else
+													{
+														yyerror("error"); 
+														printf("operador binario '!=' com operandos de tipos invalidos. Esperados: 'int', 'double' ou 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													}
+												}
+											}
 					;
 	
-/*verificar tipos de operandos*/
 Log_And_Exp 	
 /*LogAndExpEq*/		: Eq_Exp 					{ $$ = $1; } 
-/*LogAndExpAnd*/	| Log_And_Exp "&&" Eq_Exp 	{ $$ = make_No(is_LogAndExpAnd, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); }
+/*LogAndExpAnd*/	| Log_And_Exp "&&" Eq_Exp 	{
+													$$ = make_No(is_LogAndExpAnd, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool);
+													if($1->type != Is_TypeBool || $3->type != Is_TypeBool)
+													{//se algum operando não for booleano, reporta erro
+														yyerror("error"); 
+														printf("operador binario '&&' com operandos de tipos invalidos. Esperados: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													}
+												}
 					;
 	
-/*verificar tipos de operandos*/
 Log_Or_Exp 	
 /*LogOrExpLogAnd*/	: Log_And_Exp 					{ $$ = $1; } 
-/*LogOrExpLogOr*/	| Log_Or_Exp "||" Log_And_Exp 	{ $$ = make_No(is_LogOrExpLogOr, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); }
+/*LogOrExpLogOr*/	| Log_Or_Exp "||" Log_And_Exp 	{
+														$$ = make_No(is_LogOrExpLogOr, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool);
+														if($1->type != Is_TypeBool || $3->type != Is_TypeBool)
+														{//se algum operando não for booleano, reporta erro
+															yyerror("error"); 
+															printf("operador binario '||' com operandos de tipos invalidos. Esperados: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+														}
+													}
 					;
 	
-/*verificar tipos de assignm*/
 Expression 	
 /*ExpLogOr*/		: Log_Or_Exp 												{ $$ = $1; } 
-/*ExpAss*/			| _IDENT_ Assign_Operator Expression						{ $$ = make_No(is_ExpAss, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
-																				  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
-/*ExpAssGraph*/		| _IDENT_ Assign_Operator "(" Expression "," Expression ")" { $$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($4, ins_No($6, NULL))), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
-																				  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
+/*ExpAss*/			| _IDENT_ Assign_Operator Expression						{
+																					$$ = make_No(is_ExpAss, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
+																					Table_Line *linha = SymbolTable_lookup($1).linha;
+																					if(!linha)
+																					{//erro ao referenciar identificador nao declarado
+																						yyerror("error"); 
+																						printf("o identificador \"%s\" nao foi declarado\n",$1);
+																					} 
+																					else
+																					{
+																						if(linha->u.ident.Type != $3->type)
+																						{//se tipo de operandos forem distintos
+																							if(((linha->u.ident.Type != Is_TypeInt)&&(linha->u.ident.Type != Is_TypeDouble))||(($3->type != Is_TypeInt)&&($3->type != Is_TypeDouble)))
+																							{//e algum dos dois for diferente de int e double
+																								yyerror("error"); 
+																								printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
+																							}
+																						}
+																					}
+																				}
+/*ExpAssGraph*/		| _IDENT_ Assign_Operator "(" Expression "," Expression ")" {
+																					$$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($4, ins_No($6, NULL))), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
+																					Table_Line *linha = SymbolTable_lookup($1).linha;
+																					if(!linha)
+																					{//erro ao referenciar identificador nao declarado
+																						yyerror("error"); 
+																						printf("o identificador \"%s\" nao foi declarado\n",$1);
+																					} 
+																					else
+																					{
+																						if((($4->type != Is_TypeInt) && ($4->type != Is_TypeDouble)) || (($6->type != Is_TypeInt) && ($6->type != Is_TypeDouble)))
+																						{//se alguma das expressões não forem nem int nem double, reporta erro
+																							yyerror("error"); 
+																							printf("Inserção de arestas utilizando expressões com tipo não suportado. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n", printType($4->type), printType($6->type));
+																						}
+																					}
+																					if(linha->u.ident.Type != Is_TypeGraph)
+																					{
+																						yyerror("error"); 
+																						printf("Operador de inserção de arestas aplicado a identificador de tipo não suportado. Esperado: 'graph', Usado: '%s'\n", printType(linha->u.ident.Type));
+																					}
+																				}
 					| _IDENT_ error Expression 									{ printf("Sem operador de atribuição\n"); }
 					| _IDENT_ error "(" Expression "," Expression ")" 			{ printf("Sem operador de atribuição\n"); }
 					;
@@ -271,20 +569,38 @@ Init_Decl_List
 /*IniDecList*/		| Init_Decl_List "," Init_Declarator 	{ $$ = make_No(is_IniDecList, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid); }
 					;
 	
-/*verificar tipo do assignment*/
 Init_Declarator 	
-/*IniDecId*/		: _IDENT_ 								{ $$ = make_No(is_IniDecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid); 
-															  LookUp_Return retorno = SymbolTable_lookup($1);
-															  if(retorno.contexto == SymbolTable){ yyerror("syntax error"); 
-															  printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
-																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column); }
-															  SymbolTable_ins_Var($1, yy_mylinenumber, yy_mycolumnnumber-1, recent_type); }
-/*IniDecIdE*/		| _IDENT_ Assign_Operator Log_Or_Exp 	{ $$ = make_No(is_IniDecIdE, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid); 
-															  LookUp_Return retorno = SymbolTable_lookup($1);
-															  if(retorno.contexto == SymbolTable){ yyerror("syntax error"); 
-															  printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
-																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column); }
-															  SymbolTable_ins_Var($1, yy_mylinenumber, yy_mycolumnnumber-1, recent_type); }
+/*IniDecId*/		: _IDENT_ 								{
+																$$ = make_No(is_IniDecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid); 
+															  	LookUp_Return retorno = SymbolTable_lookup($1);
+																if(retorno.contexto == SymbolTable)
+																{
+																	yyerror("error"); 
+															  		printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
+																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column);
+																}
+															  	SymbolTable_ins_Var($1, yy_mylinenumber, yy_mycolumnnumber-1, recent_type);
+															}
+/*IniDecIdE*/		| _IDENT_ Assign_Operator Log_Or_Exp 	{
+																$$ = make_No(is_IniDecIdE, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid); 
+															  	LookUp_Return retorno = SymbolTable_lookup($1);
+															  	if(retorno.contexto == SymbolTable)
+																{
+																	yyerror("error"); 
+															  		printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
+																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column);
+																}
+															  	SymbolTable_ins_Var($1, yy_mylinenumber, yy_mycolumnnumber-1, recent_type);
+																Table_Line *linha = SymbolTable_lookup($1).linha;
+																if(linha->u.ident.Type != $3->type)
+																{//se tipo de operandos forem distintos
+																	if(((linha->u.ident.Type != Is_TypeInt)&&(linha->u.ident.Type != Is_TypeDouble))||(($3->type != Is_TypeInt)&&($3->type != Is_TypeDouble)))
+																	{//e algum dos dois for diferente de int e double
+																		yyerror("error"); 
+																		printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
+																	}
+																}
+															}
 					;
 	
 Var_Declaration 	
@@ -312,12 +628,39 @@ Statement
 /*StmClosed*/		| Closed_Stm 	{ $$ = $1; }
 					;
 	
-/*testa se exp é do tipo bool*/
 Open_Stm 	
-/*OpnStmIfSmp*/		: "if" "(" Expression ")" Simple_Stm 					{ $$ = make_No(is_OpnStmIfSmp, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid); } 
-/*OpnStmIfOpn*/		| "if" "(" Expression ")" Open_Stm 						{ $$ = make_No(is_OpnStmIfOpn, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid); }
-/*OpnStmIfCls*/		| "if" "(" Expression ")" Closed_Stm "else" Open_Stm 	{ $$ = make_No(is_OpnStmIfCls, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL, Is_TypeVoid); }
-/*OpnStmWhile*/		| "while" "(" Expression ")" Open_Stm 					{ $$ = make_No(is_OpnStmWhile, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid); }
+/*OpnStmIfSmp*/		: "if" "(" Expression ")" Simple_Stm 					{
+																				$$ = make_No(is_OpnStmIfSmp, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
+																				if($3->type != Is_TypeBool)
+																				{//se condição do if não é booleana, reporta erro.
+																					yyerror("error"); 
+																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
+																				}
+																			} 
+/*OpnStmIfOpn*/		| "if" "(" Expression ")" Open_Stm 						{
+																				$$ = make_No(is_OpnStmIfOpn, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
+																				if($3->type != Is_TypeBool)
+																				{//se condição do if não é booleana, reporta erro.
+																					yyerror("error"); 
+																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
+																				}
+																			}
+/*OpnStmIfCls*/		| "if" "(" Expression ")" Closed_Stm "else" Open_Stm 	{
+																				$$ = make_No(is_OpnStmIfCls, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL, Is_TypeVoid);
+																				if($3->type != Is_TypeBool)
+																				{//se condição do if não é booleana, reporta erro.
+																					yyerror("error"); 
+																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
+																				}
+																			}
+/*OpnStmWhile*/		| "while" "(" Expression ")" Open_Stm 					{
+																				$$ = make_No(is_OpnStmWhile, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
+																				if($3->type != Is_TypeBool)
+																				{//se condição do while não é booleana, reporta erro.
+																					yyerror("error"); 
+																					printf("Condição do 'while' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
+																				}
+																			}
 					| "if" "(" error ")" Simple_Stm 						{ printf("If sem expressao"); } 
 					| "if" "(" error ")" Open_Stm 							{ printf("If sem expressao"); }
 					| "if" "(" error ")" Closed_Stm "else" Open_Stm 		{ printf("If sem expressao"); } 
@@ -333,8 +676,24 @@ Block_Stm
 	
 /*verifica se tipo de ret é igual ao da funcao*/
 Return_Stm 	
-/*RetStmRet*/		: "return" ";"				{ $$ = make_No(is_RetStmRet, NULL, NULL, Is_TypeVoid); } 
-/*RetStmExp*/		| "return" Expression ";"	{ $$ = make_No(is_RetStmExp, ins_No($2, NULL), NULL, $2->type); }
+/*RetStmRet*/		: "return" ";"				{
+													$$ = make_No(is_RetStmRet, NULL, NULL, Is_TypeVoid);
+													Table_Line *linha= SymbolTable_lookup(SymbolTable->name).linha;
+													if(linha->u.ident.Type != Is_TypeVoid)
+													{//caso haja retorno vazio em função cujo tipo é diferente de void, reporta erro
+														yyerror("error"); 
+														printf("Função retornando tipo diferente de sua declaração. Tipo Esperado: '%s', Tipo usado: 'void' \n", printType(linha->u.ident.Type));
+													}
+												} 
+/*RetStmExp*/		| "return" Expression ";"	{
+													$$ = make_No(is_RetStmExp, ins_No($2, NULL), NULL, $2->type);
+													Table_Line *linha= SymbolTable_lookup(SymbolTable->name).linha;
+													if(linha->u.ident.Type != $2->type)
+													{//caso haja retorno de expressão em função com tipo diferente da declaração, reporta erro
+														yyerror("error"); 
+														printf("Função retornando tipo diferente de sua declaração. Tipo Esperado: '%s', Tipo usado: '%s' \n", printType(linha->u.ident.Type),printType($2->type));
+													}
+												}
 					;
 	
 Exp_Stm 	
@@ -344,8 +703,22 @@ Exp_Stm
 	
 Closed_Stm 	
 /*ClosedStmSmp*/	: Simple_Stm 											{ $$ = $1; } 
-/*ClosedStmIf*/		| "if" "(" Expression ")" Closed_Stm "else" Closed_Stm	{ $$ = make_No(is_ClosedStmIf, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL, Is_TypeVoid); }
-/*ClosedStmWhile*/	| "while" "(" Expression ")" Closed_Stm 				{ $$ = make_No(is_ClosedStmWhile, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid); }
+/*ClosedStmIf*/		| "if" "(" Expression ")" Closed_Stm "else" Closed_Stm	{
+																				$$ = make_No(is_ClosedStmIf, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL, Is_TypeVoid);
+																				if($3->type != Is_TypeBool)
+																				{//se condição do if não é booleana, reporta erro.
+																					yyerror("error"); 
+																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
+																				}
+																			}
+/*ClosedStmWhile*/	| "while" "(" Expression ")" Closed_Stm 				{
+																				$$ = make_No(is_ClosedStmWhile, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
+																				if($3->type != Is_TypeBool)
+																				{//se condição do while não é booleana, reporta erro.
+																					yyerror("error"); 
+																					printf("Condição do 'while' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
+																				}
+																			}
 					| "if" "(" error ")" Closed_Stm "else" Closed_Stm 		{ printf("If sem expressao"); }
 					| "while" "(" error ")" Closed_Stm 						{ printf("While sem expressao"); }
 					;
@@ -357,12 +730,17 @@ Simple_Stm
 					;
 	
 Declarator 	
-/*DecIdParam*/		: _IDENT_ "(" Parameter_List ")"	{ $$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid); 
-														  recent_identifier = $1; recent_identifier_index = 0; 
-														  SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, $3); } 
-/*DecId*/			| _IDENT_ "(" ")" 					{ $$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL),Is_TypeVoid);
-														  recent_identifier = $1; recent_identifier_index = 0;
-														  SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, NULL); }
+/*DecIdParam*/		: _IDENT_ "(" Parameter_List ")"	{ 
+															$$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid); 
+															recent_identifier = $1; 
+															recent_identifier_index = 0; 
+														  	SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, $3);
+														} 
+/*DecId*/			| _IDENT_ "(" ")" 					{ 
+															$$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL),Is_TypeVoid);
+														  	recent_identifier = $1; recent_identifier_index = 0;
+														  	SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, NULL);
+														}
 					| error "(" Parameter_List ")" 		{ printf("Declaracao de funcao sem identificador"); }
 					| error "(" ")" 					{ printf("Declaracao de funcao sem identificador"); }
 					;

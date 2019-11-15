@@ -191,6 +191,90 @@ void SymbolTable_ins_Fun(String identificador, int linha, int coluna, int tipo, 
 	contexto->lines = nova_linha;
 }
 
+int verifica_Params_Args(Function_Param * param, No no)
+{
+	Function_Param *aux = NULL, *aux2;
+	int igual = 1;
+	
+	while(no)
+	{
+		aux2 = (Function_Param*)malloc(sizeof(struct Function_Param_));
+
+		if(no->kind == is_ArgExpList)
+		{//se ainda não está no final da lista, olha o filho
+			aux2->Type = no->filhos->next->no->type;
+			aux2->next = aux;
+			aux = aux2;
+		}
+		else
+		{//se chegou ao fim da lista de argumentos
+			aux2->Type = no->type;
+			aux2->next = aux;
+			aux = aux2;
+			break;
+		}
+		no = no->filhos->no;
+	}
+	aux2 = aux;
+	while(param && aux2)
+	{
+		if(param->Type != aux2->Type)
+		{
+			igual = 0;
+			break;
+		}
+		param = param->next;
+		aux2 = aux2->next;
+	}
+	if((param && !aux2) || (aux2 && !param))
+	{
+		igual = 0;
+	}
+	while(aux)
+	{
+		aux2 = aux->next;
+		free(aux);
+		aux = aux2;
+	}
+	return (igual==1?1:0);
+}
+
+void print_Arg_Exp_List(No no)
+{
+	Function_Param *aux = NULL, *aux2;
+	
+	while(no)
+	{
+		aux2 = (Function_Param*)malloc(sizeof(struct Function_Param_));
+
+		if(no->kind == is_ArgExpList)
+		{//se ainda não está no final da lista, olha o filho
+			aux2->Type = no->filhos->next->no->type;
+			aux2->next = aux;
+			aux = aux2;
+		}
+		else
+		{//se chegou ao fim da lista de argumentos
+			aux2->Type = no->type;
+			aux2->next = aux;
+			aux = aux2;
+			break;
+		}
+		no = no->filhos->no;
+	}
+	while(aux)
+	{
+		printf("%s",printType(aux->Type));
+		if(aux->next)
+		{
+			printf(", ");
+		}
+		aux2 = aux->next;
+		free(aux);
+		aux = aux2;
+	}
+}
+
 /*copia os argumentos da função lida mais recentemente para dentro do seu escopo*/
 void SymbolTable_copy_args(String recent_identifier)
 {
