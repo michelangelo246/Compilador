@@ -4,6 +4,6 @@ int main()
 	double a;
 	int b;
 
-	num = a + (a + b);
+	num = 3 * 2.0;
 	return 0;
 }

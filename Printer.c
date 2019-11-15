@@ -28,7 +28,7 @@ void shTree(No p, int pos)
 {
 	Nos aux;
 	
-	printType(p->kind,0);
+	printKind(p->kind,0);
 	
 	switch(p->kind)
 	{
@@ -53,10 +53,10 @@ void shTree(No p, int pos)
 		printf(" %s ",p->u.ident_.ident_);
 		
 		aux_pos = pos+1;
-		sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+		sprintf(buffer, "\"%s [%s] (%d)\"", printKind(p->kind,1), printType(p->type), pos);
 		bufAppendS(buffer);
 		bufAppendS(" -> ");
-		sprintf(buffer, "\"%s (%d)\"", p->u.ident_.ident_, aux_pos);
+		sprintf(buffer, "\"%s [%s] (%d)\"", p->u.ident_.ident_, printType(p->type), aux_pos);
 		bufAppendS(buffer);
 		bufAppendS("; ");
 		aux_pos++;
@@ -70,59 +70,59 @@ void shTree(No p, int pos)
 		{
 		case is_ConstInt:
 			aux_pos = pos+1;
-			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", printKind(p->kind,1), printType(p->type), pos);
 			bufAppendS(buffer);
 			bufAppendS(" -> ");
-			sprintf(buffer, "\"%d (%d)\"", aux->no->u.constint_.integer_, aux_pos);
+			sprintf(buffer, "\"%d [%s] (%d)\"", aux->no->u.constint_.integer_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
 			aux_pos++;
 			break;
 		case is_ConstDouble:
 			aux_pos = pos+1;
-			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", printKind(p->kind,1), printType(p->type), pos);
 			bufAppendS(buffer);
 			bufAppendS(" -> ");
-			sprintf(buffer, "\"%g (%d)\"", aux->no->u.constdouble_.double_, aux_pos);
+			sprintf(buffer, "\"%g [%s] (%d)\"", aux->no->u.constdouble_.double_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
 			aux_pos++;
 			break;
 		case is_ConstStr:
 			aux_pos = pos+1;
-			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", printKind(p->kind,1), printType(p->type), pos);
 			bufAppendS(buffer);
 			bufAppendS(" -> ");
-			sprintf(buffer, "\"%s (%d)\"", aux->no->u.conststr_.string_, aux_pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", aux->no->u.conststr_.string_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
 			aux_pos++;
 			break;
 		case is_IniDecId:
 			aux_pos = pos+1;
-			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", printKind(p->kind,1), printType(p->type), pos);
 			bufAppendS(buffer);
 			bufAppendS(" -> ");
-			sprintf(buffer, "\"%s (%d)\"", aux->no->u.ident_.ident_, aux_pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", aux->no->u.ident_.ident_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
 			aux_pos++;
 			break;
 		case is_PriExpId:
 			aux_pos = pos+1;
-			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", printKind(p->kind,1), printType(p->type), pos);
 			bufAppendS(buffer);
 			bufAppendS(" -> ");
-			sprintf(buffer, "\"%s (%d)\"", aux->no->u.ident_.ident_, aux_pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", aux->no->u.ident_.ident_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
 			aux_pos++;
 			break;
 		default:
-			sprintf(buffer, "\"%s (%d)\"", printType(p->kind,1), pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", printKind(p->kind,1), printType(p->type), pos);
 			bufAppendS(buffer);
 			bufAppendS(" -> ");
-			sprintf(buffer, "\"%s (%d)\"", printType(aux->no->kind,1), aux_pos);
+			sprintf(buffer, "\"%s [%s] (%d)\"", printKind(aux->no->kind,1), printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
 			
@@ -163,7 +163,35 @@ void shIdent(String s)
   bufAppendC('\"');
 }
 
-char* printType(int kind, int modo)
+char* printType(_Type type)
+{
+	switch(type)
+	{
+	case Is_TypeVoid:
+		return "void";
+		break;
+	case Is_TypeInt:
+		return "int";
+		break;
+	case Is_TypeDouble:
+		return "double";
+		break;
+	case Is_TypeGraph:
+		return "graph";
+		break;
+	case Is_TypeString:
+		return "string";
+		break;
+	case Is_TypeBool:
+		return "bool";
+		break;
+	default:
+		return "void";
+		break;
+	}
+}
+
+char* printKind(int kind, int modo)
 {
 	switch(kind)
 	{

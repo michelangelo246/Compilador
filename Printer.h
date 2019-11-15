@@ -16,7 +16,8 @@ void shDouble(Double d);
 void shString(String s);
 void shIdent(String s);
 
-char* printType(int kind, int modo);
+char* printKind(int kind, int modo);
+char* printType(_Type type);
 
 void bufAppendS(const char *s);
 void bufAppendC(const char c);

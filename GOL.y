@@ -148,7 +148,7 @@ Assign_Operator
 Constant 	
 /*ConstInt*/		: _INTEGER_	{ $$ = make_No(is_ConstInt, NULL, ins_Args_Int(is_ConstInt, $1, NULL), Is_TypeInt); 
 								  SymbolTable_ins_ConstInt($1, yy_mylinenumber, yy_mycolumnnumber); } 
-/*ConstDouble*/		| _DOUBLE_	{ $$ = make_No(is_ConstDouble, NULL, ins_Args_Double(is_ConstDouble, $1, NULL), is_TypeDouble); 
+/*ConstDouble*/		| _DOUBLE_	{ $$ = make_No(is_ConstDouble, NULL, ins_Args_Double(is_ConstDouble, $1, NULL), Is_TypeDouble); 
 								  SymbolTable_ins_ConstDouble($1, yy_mylinenumber, yy_mycolumnnumber); }
 /*ConstStr*/		| _STRING_	{ $$ = make_No(is_ConstStr, NULL, ins_Args_Str(is_ConstStr, $1, NULL), Is_TypeString); 
 								  SymbolTable_ins_constStr($1, yy_mylinenumber, yy_mycolumnnumber); }
@@ -258,9 +258,9 @@ Log_Or_Exp
 /*verificar tipos de assignm*/
 Expression 	
 /*ExpLogOr*/		: Log_Or_Exp 												{ $$ = $1; } 
-/*ExpAss*/			| _IDENT_ Assign_Operator Expression						{ $$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid);
+/*ExpAss*/			| _IDENT_ Assign_Operator Expression						{ $$ = make_No(is_ExpAss, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
 																				  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
-/*ExpAssGraph*/		| _IDENT_ Assign_Operator "(" Expression "," Expression ")" { $$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($4, ins_No($6, NULL))), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid);
+/*ExpAssGraph*/		| _IDENT_ Assign_Operator "(" Expression "," Expression ")" { $$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($4, ins_No($6, NULL))), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
 																				  if(!SymbolTable_lookup($1).linha){ yyerror("syntax error"); printf("o identificador \"%s\" nao foi declarado\n",$1); } }
 					| _IDENT_ error Expression 									{ printf("Sem operador de atribuição\n"); }
 					| _IDENT_ error "(" Expression "," Expression ")" 			{ printf("Sem operador de atribuição\n"); }
