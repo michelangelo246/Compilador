@@ -282,6 +282,8 @@ void SymbolTable_Show()
 				case Is_TypeGraph:
 					printf("| type: graph  ");
 					break;
+				default:
+					break;
 				}
 				printf("| line: %d | column: %d ]\n",linha->u.ident.line, linha->u.ident.column);
 				if(linha->u.ident.Kind == Is_Proc)
@@ -303,6 +305,8 @@ void SymbolTable_Show()
 							break;
 						case Is_TypeGraph:
 							printf(" graph ");
+							break;
+						default:
 							break;
 						}
 						printf("%s",params->name);
@@ -342,13 +346,14 @@ Argumentos:
    p2: Filhos do no.
    p3: Outros argumentos que possam ser relevantes ao no.
 */
-No make_No(int p1, Nos p2, Args p3)
+No make_No(int p1, Nos p2, Args p3, _Type type)
 {
 	No no = (No) malloc(sizeof(struct No_));
 	Args aux;
 	
 	no->kind = p1;
 	no->filhos = p2;
+	no->type = type;
 	
 	switch(p1)
 	{

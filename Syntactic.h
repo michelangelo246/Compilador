@@ -19,7 +19,7 @@ int error;
 
 /********************   Tabela de simbolos    ********************/
 
-typedef enum { Is_TypeVoid, Is_TypeInt, Is_TypeDouble, Is_TypeGraph } _Type;
+typedef enum { Is_TypeVoid, Is_TypeInt, Is_TypeDouble, Is_TypeGraph, Is_TypeString, Is_TypeBool } _Type;
 typedef enum { Is_ConstInt, Is_ConstDouble, Is_ConstStr, Is_Ident, Is_No } _Kind;
 
 typedef struct Function_Param_
@@ -146,11 +146,13 @@ struct No_
 		struct { Double double_; } constdouble_;
 		struct { String string_; } conststr_;
 	} u;
+
+	_Type type;
 	
 	Nos filhos;
 };
 
-No make_No(int p1, Nos p2, Args p3);
+No make_No(int p1, Nos p2, Args p3, _Type type);
 Nos ins_No(No p1, Nos p2);
 Args ins_Args_Int(int kind, Integer p1, Args p2);
 Args ins_Args_Double(int kind, Double p1, Args p2);
