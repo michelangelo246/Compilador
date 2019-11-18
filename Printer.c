@@ -59,6 +59,10 @@ void shTree(No p, int pos)
 		sprintf(buffer, "\"%s [%s] (%d)\"", p->u.ident_.ident_, printType(p->type), aux_pos);
 		bufAppendS(buffer);
 		bufAppendS("; ");
+		sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", printKind(p->kind,1), printType(p->type), pos, printKind(p->kind,1), printType(p->type));
+		bufAppendS(buffer);
+		sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", p->u.ident_.ident_, printType(p->type), aux_pos, p->u.ident_.ident_, printType(p->type));
+		bufAppendS(buffer);
 		aux_pos++;
 	}
 	
@@ -76,6 +80,10 @@ void shTree(No p, int pos)
 			sprintf(buffer, "\"%d [%s] (%d)\"", aux->no->u.constint_.integer_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", printKind(p->kind,1), printType(p->type), pos, printKind(p->kind,1), printType(p->type));
+			bufAppendS(buffer);
+			sprintf(buffer, "\"%d [%s] (%d)\" [label = \" %d [%s] \"];", aux->no->u.constint_.integer_, printType(aux->no->type), aux_pos, aux->no->u.constint_.integer_, printType(aux->no->type));
+			bufAppendS(buffer);
 			aux_pos++;
 			break;
 		case is_ConstDouble:
@@ -86,6 +94,10 @@ void shTree(No p, int pos)
 			sprintf(buffer, "\"%g [%s] (%d)\"", aux->no->u.constdouble_.double_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", printKind(p->kind,1), printType(p->type), pos, printKind(p->kind,1), printType(p->type));
+			bufAppendS(buffer);
+			sprintf(buffer, "\"%g [%s] (%d)\" [label = \" %g [%s] \"];", aux->no->u.constdouble_.double_, printType(aux->no->type), aux_pos, aux->no->u.constdouble_.double_, printType(aux->no->type));
+			bufAppendS(buffer);
 			aux_pos++;
 			break;
 		case is_ConstStr:
@@ -96,6 +108,10 @@ void shTree(No p, int pos)
 			sprintf(buffer, "\"%s [%s] (%d)\"", aux->no->u.conststr_.string_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", printKind(p->kind,1), printType(p->type), pos, printKind(p->kind,1), printType(p->type));
+			bufAppendS(buffer);
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", aux->no->u.conststr_.string_, printType(aux->no->type), aux_pos, aux->no->u.conststr_.string_, printType(aux->no->type));
+			bufAppendS(buffer);
 			aux_pos++;
 			break;
 		case is_IniDecId:
@@ -106,6 +122,10 @@ void shTree(No p, int pos)
 			sprintf(buffer, "\"%s [%s] (%d)\"", aux->no->u.ident_.ident_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", printKind(p->kind,1), printType(p->type), pos, printKind(p->kind,1), printType(p->type));
+			bufAppendS(buffer);
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", aux->no->u.ident_.ident_, printType(aux->no->type), aux_pos, aux->no->u.ident_.ident_, printType(aux->no->type));
+			bufAppendS(buffer);
 			aux_pos++;
 			break;
 		case is_PriExpId:
@@ -116,6 +136,10 @@ void shTree(No p, int pos)
 			sprintf(buffer, "\"%s [%s] (%d)\"", aux->no->u.ident_.ident_, printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", printKind(p->kind,1), printType(p->type), pos, printKind(p->kind,1), printType(p->type));
+			bufAppendS(buffer);
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", aux->no->u.ident_.ident_, printType(aux->no->type), aux_pos, aux->no->u.ident_.ident_, printType(aux->no->type));
+			bufAppendS(buffer);
 			aux_pos++;
 			break;
 		default:
@@ -125,6 +149,10 @@ void shTree(No p, int pos)
 			sprintf(buffer, "\"%s [%s] (%d)\"", printKind(aux->no->kind,1), printType(aux->no->type), aux_pos);
 			bufAppendS(buffer);
 			bufAppendS("; ");
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", printKind(p->kind,1), printType(p->type), pos, printKind(p->kind,1), printType(p->type));
+			bufAppendS(buffer);
+			sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", printKind(aux->no->kind,1), printType(aux->no->type), aux_pos, printKind(aux->no->kind,1), printType(aux->no->type));
+			bufAppendS(buffer);
 			
 			shTree(aux->no,aux_pos);
 			aux_pos++;
@@ -223,11 +251,11 @@ char* printKind(int kind, int modo)
 	case is_UnaExpPos: if(modo==0)printf(" UnaExpPos ");else return " UnaExpPos "; break; 
 	case is_UnaExpOp: if(modo==0)printf(" UnaExpOp ");else return " UnaExpOp "; break; 
 	case is_MulExpUna: if(modo==0)printf(" MulExpUna ");else return " MulExpUna "; break; 
-	case is_MulExpMul: if(modo==0)printf(" MulExpMul ");else return " MulExpMul "; break; 
-	case is_MulExpDiv: if(modo==0)printf(" MulExpDiv ");else return " MulExpDiv "; break; 
+	case is_MulExpMul: if(modo==0)printf(" MulExpMul ");else return " * "; break; 
+	case is_MulExpDiv: if(modo==0)printf(" MulExpDiv ");else return " / "; break; 
 	case is_AddExpMul: if(modo==0)printf(" AddExpMul ");else return " AddExpMul "; break; 
-	case is_AddExpAdd: if(modo==0)printf(" AddExpAdd ");else return " AddExpAdd "; break; 
-	case is_AddExpSub: if(modo==0)printf(" AddExpSub ");else return " AddExpSub "; break; 
+	case is_AddExpAdd: if(modo==0)printf(" AddExpAdd ");else return " + "; break; 
+	case is_AddExpSub: if(modo==0)printf(" AddExpSub ");else return " - "; break; 
 	case is_RelExpAdd: if(modo==0)printf(" RelExpAdd ");else return " RelExpAdd "; break; 
 	case is_RelExpLT: if(modo==0)printf(" RelExpLT ");else return " RelExpLT "; break; 
 	case is_RelExpGT: if(modo==0)printf(" RelExpGT ");else return " RelExpGT "; break; 
