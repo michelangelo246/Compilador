@@ -1,16 +1,9 @@
-int main()
+int func1(int a, double b, graph c)
 {
-	graph teste,teste2;
-	int num;
-	
-	teste << 2;
-	teste << (1*2,20);
-	
-	num = teste@(1+2)#;
-	num = teste#(23)@;
-	
-	teste2 = teste[(teste2)];
-	teste2 = teste&(20)&;
+	return 0;
+}
 
+int func2()
+{
 	return 0;
 }
