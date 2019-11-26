@@ -187,8 +187,8 @@ Primary_Exp
 
 Posfix_Exp 	
 /*PosExpPri*/		: Primary_Exp 					{ $$ = $1; } 
-/*PosExpSub*/		| _IDENT_ "[" Primary_Exp "]" 	{
-														$$ = make_No(is_PosExpSub, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
+/*PosExpSub*/		| _IDENT_ "[" "(" Expression ")" "]" 	{
+														$$ = make_No(is_PosExpSub, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
 													  	Table_Line *linha = SymbolTable_lookup($1).linha;
 														if(!linha)
 														{//erro ao referenciar identificador nao declarado
@@ -200,14 +200,14 @@ Posfix_Exp
 															yyerror("error"); 
 															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
 														}
-													  	if($3->type != Is_TypeGraph)
+													  	if($4->type != Is_TypeGraph)
 														{//erro ao utilizar operação utilizando tipo diferente de grafo
 															yyerror("error"); 
 															printf("A operacao espera uma expressao do tipo 'graph'\n"); 
 														} 
 													}
-/*PosExpIn*/		| _IDENT_ "@" Primary_Exp "#" 	{
-														$$ = make_No(is_PosExpIn, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
+/*PosExpIn*/		| _IDENT_ "@" "(" Expression ")" "#" 	{
+														$$ = make_No(is_PosExpIn, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
 													  	Table_Line *linha = SymbolTable_lookup($1).linha;
 														if(!linha)
 														{//erro ao referenciar identificador nao declarado
@@ -219,14 +219,14 @@ Posfix_Exp
 															yyerror("error"); 
 															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
 														}
-													  	if($3->type != Is_TypeInt)
+													  	if($4->type != Is_TypeInt)
 														{ //erro ao utilizar operação utilizando tipo diferente de int
 															yyerror("error");
 															printf("A operacao espera uma expressao do tipo 'int'\n");
 														}
 													}
-/*PosExpOut*/		| _IDENT_ "#" Primary_Exp "@" 	{
-														$$ = make_No(is_PosExpOut, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
+/*PosExpOut*/		| _IDENT_ "#" "(" Expression ")" "@" 	{
+														$$ = make_No(is_PosExpOut, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
 													  	Table_Line *linha = SymbolTable_lookup($1).linha;
 														if(!linha)
 														{//erro ao referenciar identificador nao declarado
@@ -238,14 +238,14 @@ Posfix_Exp
 															yyerror("error"); 
 															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
 														}
-													  	if($3->type != Is_TypeInt)
+													  	if($4->type != Is_TypeInt)
 														{ //erro ao utilizar operação utilizando tipo diferente de int
 															yyerror("error"); 
 															printf("A operacao espera uma expressao do tipo 'int'\n"); 
 														}
 													}
-/*PosExpNeig*/		| _IDENT_ "&" Primary_Exp "&" 	{
-														$$ = make_No(is_PosExpNeig, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
+/*PosExpNeig*/		| _IDENT_ "&" "(" Expression ")" "&" 	{
+														$$ = make_No(is_PosExpNeig, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
 													  	Table_Line *linha = SymbolTable_lookup($1).linha;
 														if(!linha)
 														{//erro ao referenciar identificador nao declarado
@@ -257,7 +257,7 @@ Posfix_Exp
 															yyerror("error"); 
 															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
 														}
-													  	if($3->type != Is_TypeInt)
+													  	if($4->type != Is_TypeInt)
 														{ 
 															yyerror("error"); 
 															printf("A operacao espera uma expressao do tipo 'int'\n"); 
@@ -427,7 +427,7 @@ Rel_Exp
 											  	if((($1->type != Is_TypeInt) && ($1->type != Is_TypeDouble)) || (($3->type != Is_TypeInt) && ($3->type != Is_TypeDouble)))
 											  	{//caso algum dos operandos não seja nem int nem double, reporta erro
 													yyerror("error"); 
-													printf("operador binario '<' com operandos de tipos invalidos. Esperado: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													printf("operador binario '<' com operandos de tipos invalidos. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
 											}
 /*RelExpGT*/		| Rel_Exp ">" Add_Exp 	{
@@ -435,7 +435,7 @@ Rel_Exp
 											  	if((($1->type != Is_TypeInt) && ($1->type != Is_TypeDouble)) || (($3->type != Is_TypeInt) && ($3->type != Is_TypeDouble)))
 											  	{//caso algum dos operandos não seja nem int nem double, reporta erro
 													yyerror("error"); 
-													printf("operador binario '>' com operandos de tipos invalidos. Esperado: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													printf("operador binario '>' com operandos de tipos invalidos. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
 											}
 /*RelExpLE*/		| Rel_Exp "<=" Add_Exp 	{
@@ -443,7 +443,7 @@ Rel_Exp
 											  	if((($1->type != Is_TypeInt) && ($1->type != Is_TypeDouble)) || (($3->type != Is_TypeInt) && ($3->type != Is_TypeDouble)))
 											  	{//caso algum dos operandos não seja nem int nem double, reporta erro
 													yyerror("error"); 
-													printf("operador binario '<=' com operandos de tipos invalidos. Esperado: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													printf("operador binario '<=' com operandos de tipos invalidos. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
 											}
 /*RelExpGE*/		| Rel_Exp ">=" Add_Exp 	{
@@ -451,7 +451,7 @@ Rel_Exp
 											  	if((($1->type != Is_TypeInt) && ($1->type != Is_TypeDouble)) || (($3->type != Is_TypeInt) && ($3->type != Is_TypeDouble)))
 											  	{//caso algum dos operandos não seja nem int nem double, reporta erro
 													yyerror("error"); 
-													printf("operador binario '>=' com operandos de tipos invalidos. Esperado: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+													printf("operador binario '>=' com operandos de tipos invalidos. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
 											}
 					;
@@ -519,7 +519,7 @@ Log_Or_Exp
 Expression 	
 /*ExpLogOr*/		: Log_Or_Exp 												{ $$ = $1; } 
 /*ExpAss*/			| _IDENT_ Assign_Operator Expression						{
-																					$$ = make_No(is_ExpAss, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
+																					$$ = make_No(is_ExpAss, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid);
 																					Table_Line *linha = SymbolTable_lookup($1).linha;
 																					if(!linha)
 																					{//erro ao referenciar identificador nao declarado
@@ -531,15 +531,18 @@ Expression
 																						if(linha->u.ident.Type != $3->type)
 																						{//se tipo de operandos forem distintos
 																							if(((linha->u.ident.Type != Is_TypeInt)&&(linha->u.ident.Type != Is_TypeDouble))||(($3->type != Is_TypeInt)&&($3->type != Is_TypeDouble)))
-																							{//e algum dos dois for diferente de int e double
-																								yyerror("error"); 
-																								printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
+																							{//e se algum dos dois for diferente de int e double
+																								if(!((linha->u.ident.Type == Is_TypeGraph)&&($3->type == Is_TypeInt)&&($2->kind == is_AssOpINS)))
+																								{//e nao for insercao de vertice
+																									yyerror("error"); 
+																									printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
+																								}
 																							}
 																						}
 																					}
 																				}
 /*ExpAssGraph*/		| _IDENT_ Assign_Operator "(" Expression "," Expression ")" {
-																					$$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($4, ins_No($6, NULL))), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
+																					$$ = make_No(is_ExpAssGraph, ins_No($2, ins_No($4, ins_No($6, NULL))), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid);
 																					Table_Line *linha = SymbolTable_lookup($1).linha;
 																					if(!linha)
 																					{//erro ao referenciar identificador nao declarado

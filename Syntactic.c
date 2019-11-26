@@ -332,6 +332,49 @@ LookUp_Return SymbolTable_lookup(Ident p1)
 	return retorno;
 }
 
+/*busca o identificador informado em todos os contextos já criados.
+  retorno: referência para a linha correspondente ao identificador ou NULL*/
+LookUp_Return SymbolTable_lookup_all(Ident p1)
+{
+	Table_Line *linha;
+	Symbol_Table *contexto;
+	LookUp_Return retorno;
+	Symbol_Table_Set *SymbolTableSet_search = SymbolTableSet;
+
+	while(SymbolTableSet_search)
+	{
+		contexto = SymbolTableSet_search->table;
+		//percorre os contextos
+		while(contexto)
+		{
+			linha = contexto->lines;
+			
+			//percorre as linha do contexto atual
+			while(linha)
+			{
+				//se o simbolo atual for do tipo identificador
+				if(linha->Kind == Is_Ident)
+				{
+					//se o identificador na linha analisada for igual ao procurado, retorna 1
+					if(!strcmp(linha->u.ident.value,p1))
+					{
+						retorno.contexto = contexto;
+						retorno.linha = linha;
+						return retorno;
+					}
+				}
+				linha = linha->next;
+			}
+			contexto = contexto->next;
+		}
+		SymbolTableSet_search = SymbolTableSet_search->next;
+	}
+	//nao encontrou o identificador
+	retorno.contexto = NULL;
+	retorno.linha = NULL;
+	return retorno;
+}
+
 /*Imprime todas as tabelas de símbolos criadas*/
 void SymbolTable_Show()
 {

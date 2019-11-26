@@ -33,5 +33,6 @@
 
 # Misc
 *.dot
+*.stackdump
 
 .vscode

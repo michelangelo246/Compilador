@@ -73,7 +73,7 @@ int main(int argc, char ** argv)
 				case 3:
 					arvore = fopen("Arvore.dot","w");
 					printf("\n[Plain text]\n");
-					fprintf(arvore,showTrans_Unit(parse_tree));
+					fputs(showTrans_Unit(parse_tree),arvore);
 					fclose(arvore);
 					printf("\n\n /!\\ Arquivo .dot gerado com sucesso! /!\\\nUtilize o comando \" dot -Tpng Arvore.dot -o Arvore.png \" para gerar a imagem \n");
 					system("dot -Tpng Arvore.dot -o Arvore.png");

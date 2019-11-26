@@ -45,6 +45,7 @@ void shTree(No p, int pos)
 		break;
 	}
 	
+	//Caso regra possua um identificador no corpo, imprime um nó para o identificador
 	if((p->kind == is_PosExpSub ) || (p->kind == is_PosExpIn ) || (p->kind == is_PosExpOut ) ||
 	(p->kind == is_PosExpNeig ) || (p->kind == is_PosExpCal ) || (p->kind == is_PosExpCalArg ) ||
 	(p->kind == is_ExpAss ) || (p->kind == is_ExpAssGraph ) || (p->kind == is_IniDecIdE ) || 
@@ -56,12 +57,12 @@ void shTree(No p, int pos)
 		sprintf(buffer, "\"%s [%s] (%d)\"", printKind(p->kind,1), printType(p->type), pos);
 		bufAppendS(buffer);
 		bufAppendS(" -> ");
-		sprintf(buffer, "\"%s [%s] (%d)\"", p->u.ident_.ident_, printType(p->type), aux_pos);
+		sprintf(buffer, "\"%s [%s] (%d)\"", p->u.ident_.ident_, printType(SymbolTable_lookup_all(p->u.ident_.ident_).linha!=NULL?SymbolTable_lookup_all(p->u.ident_.ident_).linha->u.ident.Type:Is_TypeVoid), aux_pos);
 		bufAppendS(buffer);
 		bufAppendS("; ");
 		sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", printKind(p->kind,1), printType(p->type), pos, printKind(p->kind,1), printType(p->type));
 		bufAppendS(buffer);
-		sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", p->u.ident_.ident_, printType(p->type), aux_pos, p->u.ident_.ident_, printType(p->type));
+		sprintf(buffer, "\"%s [%s] (%d)\" [label = \" %s [%s] \"];", p->u.ident_.ident_, printType(SymbolTable_lookup_all(p->u.ident_.ident_).linha!=NULL?SymbolTable_lookup_all(p->u.ident_.ident_).linha->u.ident.Type:Is_TypeVoid), aux_pos, p->u.ident_.ident_, printType(SymbolTable_lookup_all(p->u.ident_.ident_).linha!=NULL?SymbolTable_lookup_all(p->u.ident_.ident_).linha->u.ident.Type:Is_TypeVoid));
 		bufAppendS(buffer);
 		aux_pos++;
 	}

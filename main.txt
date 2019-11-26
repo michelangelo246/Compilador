@@ -1,14 +1,16 @@
-double func(int a, double b, graph c)
-{
-	return b;
-}
-
 int main()
 {
-	double num = 3.0;
-	graph a;
-	int b = (num + 4);
+	graph teste,teste2;
+	int num;
+	
+	teste << 2;
+	teste << (1*2,20);
+	
+	num = teste@(1+2)#;
+	num = teste#(23)@;
+	
+	teste2 = teste[(teste2)];
+	teste2 = teste&(20)&;
 
-	num = func(b,num*3.5,a);
 	return 0;
 }

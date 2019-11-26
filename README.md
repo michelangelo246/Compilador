@@ -1,4 +1,4 @@
-![Screenshot](Capturar.JPG)
+![Screenshot](Figures/Capturar.JPG)
 
 Projeto de uma linguagem denominada GOL e de seu respectivo compilador (fase de síntese) com geração de código de três endereços.
 
@@ -50,5 +50,5 @@ AST gerada a partir de código exemplo:
 
 | Codigo        | AST           |
 | ------------- |:-------------:|
-| <img src="https://github.com/michelangelo246/Compilador/blob/master/Codigo.PNG" width="250">      | <img src="https://github.com/michelangelo246/Compilador/blob/master/Arvore.png" width="500">
+| <img src="https://github.com/michelangelo246/Compilador/blob/master/Figures/Codigo.PNG" width="250">      | <img src="https://github.com/michelangelo246/Compilador/blob/master/Figures/Arvore.png" width="500">
 

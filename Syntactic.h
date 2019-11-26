@@ -90,6 +90,7 @@ void SymbolTable_ins_Fun(String identificador, int linha, int coluna, int tipo, 
 
 void SymbolTable_copy_args(String recent_identifier);
 LookUp_Return SymbolTable_lookup(Ident p1);
+LookUp_Return SymbolTable_lookup_all(Ident p1);
 void SymbolTable_Show();
 
 
