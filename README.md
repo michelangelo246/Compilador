@@ -2,9 +2,9 @@
 
 Projeto de uma linguagem denominada GOL e de seu respectivo compilador (fase de síntese) com geração de código de três endereços.
 
-Autor: Michelangelo da Rocha Machado
+Autor: Michelangelo da Rocha Machado.
 
-# Todo
+# Andamento do projeto
 - [x] Análise Léxica
 - [x] Análise sintática
 - [x] Análise semântica
