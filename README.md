@@ -4,6 +4,12 @@ Projeto de uma linguagem denominada GOL e de seu respectivo compilador (fase de 
 
 Autor: Michelangelo da Rocha Machado
 
+# Todo
+- [x] Análise Léxica
+- [x] Análise sintática
+- [x] Análise semântica
+- [ ] Geração de código intermediário
+
 # Linguagem
 ## Efeito de algumas operações:
 
@@ -40,7 +46,7 @@ constar antes dos statements;
 
 O programa pode gerar a árvore sintática abstrata (AST) nas seguintes formas:
 1. Texto puro
-2. Codigo .dot que pode ser copiado para algum site (e.g. ) 
+2. Codigo .dot que pode ser copiado para algum site (e.g. [webgraphviz](http://www.webgraphviz.com/)) 
 3. Arquivo .dot que pode ser usado para gerar uma imagem com comando graphviz: ```dot -Tpng Arvore.dot -o Arvore.png ```
 
 \*Para utilizar o graphviz, instale-o na sua máquina através do comando: ```sudo apt install graphviz```
