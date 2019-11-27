@@ -1,0 +1,13 @@
+int main()
+{
+	int a,b,c;
+	graph a2,b2,c2;
+
+	while(a<a2)
+	{
+	}
+	
+	c = b*b2;
+	
+	return 0;
+}

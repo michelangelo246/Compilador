@@ -1,0 +1,18 @@
+int f(double num)
+{
+	return 0;
+}
+
+int main()
+{
+	graph teste,teste2;
+	int num;
+
+	teste << (1,20);
+	teste[(1==2)];
+	num = teste@(1==2)#;
+	num = teste#(1==2)@;
+	teste2 = teste&(1==2)&;
+
+	return 0;
+}

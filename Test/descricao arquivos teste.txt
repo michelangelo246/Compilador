@@ -1,0 +1,21 @@
+erro_1:
+a) uso de função declarada somente após a instrução de chamada; função 'g()' é chamada na linha 3, mas só é declarada na linha 7.
+b) uso de variável não declarada; variável teste2 é usada na linha 20, porém, nunca foi declarada.
+c) redeclaração de variável. variável num é declarada inicialmente na linha 15 e novamente na linha 17
+
+erro_2:
+uso de operações sobre grafos com tipos incorretos; Operações nas linhas 12,13,14 e 15 receberam valor do tipo bool, mas operação espera tipo int (linhas 13,14) e grafo (12 e 15)
+
+erro_3:
+a) comparação entre tipos diferentes (int e graph); na linha 6, variavel a (int) é comparada com variável a2 (graph).
+b) multiplicação de tipos diferentes (int e graph); na linha 10, variavel b (int) é multiplicada com variável b2 (graph).
+*) todas variações (+,-,/,<=,>=,!=) apresentam mesmo comportamento.
+
+erro_4:
+atribuição entre tipos inválidos (int e graph); na linha 7, variável a (int) é atribuído com valor de variável b (graph).
+
+funcionando_1:
+algumas operacoes tradicionais do c.
+
+funcionando_2:
+algumas operacoes unicas do GOL.

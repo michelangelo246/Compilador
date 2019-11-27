@@ -1,0 +1,25 @@
+int f(double num)
+{
+	g();
+	return 0;
+}
+
+void g()
+{
+	return;
+}
+
+int main()
+{
+	double teste;
+	int num=0;
+
+	int num;
+
+	teste = 3.9;
+	if(teste == 0)
+	{
+		num = f(teste2);
+	}
+	return 0;
+}
