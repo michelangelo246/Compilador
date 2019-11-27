@@ -196,12 +196,12 @@ Posfix_Exp
 															printf("o identificador \"%s\" nao foi declarado\n",$1);
 														}
 														else if(linha->u.ident.Type != Is_TypeGraph)
-														{
+														{//erro ao utilizar operação com tipo diferente de grafo
 															yyerror("error"); 
 															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
 														}
 													  	if($4->type != Is_TypeGraph)
-														{//erro ao utilizar operação utilizando tipo diferente de grafo
+														{//erro ao utilizar operação com tipo diferente de grafo
 															yyerror("error"); 
 															printf("A operacao espera uma expressao do tipo 'graph'\n"); 
 														} 
@@ -215,12 +215,12 @@ Posfix_Exp
 															printf("o identificador \"%s\" nao foi declarado\n",$1);
 														}
 														else if(linha->u.ident.Type != Is_TypeGraph)
-														{
+														{//erro ao utilizar operação com tipo diferente de int
 															yyerror("error"); 
 															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
 														}
 													  	if($4->type != Is_TypeInt)
-														{ //erro ao utilizar operação utilizando tipo diferente de int
+														{//erro ao utilizar operação com tipo diferente de int
 															yyerror("error");
 															printf("A operacao espera uma expressao do tipo 'int'\n");
 														}
@@ -272,7 +272,7 @@ Posfix_Exp
 															printf("o identificador \"%s\" nao foi declarado\n",$1);
 														}
 														else if(linha->u.ident.param != NULL)
-														{//funcao chamada precisa de argumentos
+														{//funcao chamada com argumentos errados
 															yyerror("error"); 
 															printf("Função chamada com número incorreto de argumentos. Argumentos esperados: (");
 															Function_Param *param = linha->u.ident.param;

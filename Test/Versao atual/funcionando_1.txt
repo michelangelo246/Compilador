@@ -20,17 +20,14 @@ int main()
 	a2 << b+1;
 	a2 << (a,b+1);
 
-	a2 = -a2;
-	a = !b;
-
-	if(g())
+	if(g == 2)
 	{
 		b2 = a2[(b2)];
 		c = a2@(a)#;
 		c2 = a2&(b+1)&;
 	}
 
-	while(a2)
+	while(a>b)
 	{
 		int a = 2;
 		f(a);
