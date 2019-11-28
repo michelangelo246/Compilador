@@ -1,7 +1,7 @@
 erro_1:
-a) função chamada com parâmetros inválidos (número e tipo); a função g foi chamada na linha 17 com passagem de parâmetros, porém, a função não exige parâmetros.
-b) função chamada com parâmetros inválidos (tipo); a função f foi chamada na linha 36 com argumentos do tipo graph, porém, f deve receber um parâmetro do tipo int.
-c) função chamada com parâmetro inválidos (número e tipo); a função f foi chamada na linha 37 sem argumentos, porém, f deve receber um parâmetro do tipo int.
+a) função chamada com argumentos inválidos (número e tipo); a função g foi chamada na linha 17 com uso de argumentos, porém, a função não possui parâmetros.
+b) função chamada com argumentos inválidos (tipo); a função f foi chamada na linha 36 com argumentos do tipo graph, porém, f deve receber um argumento do tipo int.
+c) função chamada com argumentos inválidos (número e tipo); a função f foi chamada na linha 37 sem argumentos, porém, f deve receber um argumento do tipo int.
 
 erro_2:
 a) operador usado com tipo inválido; o operador unário '-' (para numeros) foi aplicado ao tipo grafo na linha 23.
