@@ -226,79 +226,55 @@ Posfix_Exp
 														}
 													}
 /*PosExpOut*/		| _IDENT_ "#" "(" Expression ")" "@" 	{
-														$$ = make_No(is_PosExpOut, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
-													  	Table_Line *linha = SymbolTable_lookup($1).linha;
-														if(!linha)
-														{//erro ao referenciar identificador nao declarado
-															yyerror("error"); 
-															printf("o identificador \"%s\" nao foi declarado\n",$1);
-														}
-														else if(linha->u.ident.Type != Is_TypeGraph)
-														{
-															yyerror("error"); 
-															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
-														}
-													  	if($4->type != Is_TypeInt)
-														{ //erro ao utilizar operação utilizando tipo diferente de int
-															yyerror("error"); 
-															printf("A operacao espera uma expressao do tipo 'int'\n"); 
-														}
-													}
-/*PosExpNeig*/		| _IDENT_ "&" "(" Expression ")" "&" 	{
-														$$ = make_No(is_PosExpNeig, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
-													  	Table_Line *linha = SymbolTable_lookup($1).linha;
-														if(!linha)
-														{//erro ao referenciar identificador nao declarado
-															yyerror("error"); 
-															printf("o identificador \"%s\" nao foi declarado\n",$1);
-														}
-														else if(linha->u.ident.Type != Is_TypeGraph)
-														{
-															yyerror("error"); 
-															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
-														}
-													  	if($4->type != Is_TypeInt)
-														{ 
-															yyerror("error"); 
-															printf("A operacao espera uma expressao do tipo 'int'\n"); 
-														}
-													}
-/*PosExpCal*/		| _IDENT_ "(" ")" 			  	{
-														$$ = make_No(is_PosExpCal, NULL, ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid)); 
-													  	Table_Line *linha = SymbolTable_lookup($1).linha;
-														if(!linha)
-														{//erro ao referenciar identificador nao declarado
-															yyerror("error"); 
-															printf("o identificador \"%s\" nao foi declarado\n",$1);
-														}
-														else if(linha->u.ident.param != NULL)
-														{//funcao chamada com argumentos errados
-															yyerror("error"); 
-															printf("Função chamada com número incorreto de argumentos. Argumentos esperados: (");
-															Function_Param *param = linha->u.ident.param;
-															while(param)
-															{
-																printf("%s",printType(param->Type));
-																if(param->next) printf(", ");
-																param = param->next;
+																$$ = make_No(is_PosExpOut, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
+															  	Table_Line *linha = SymbolTable_lookup($1).linha;
+																if(!linha)
+																{//erro ao referenciar identificador nao declarado
+																	yyerror("error"); 
+																	printf("o identificador \"%s\" nao foi declarado\n",$1);
+																}
+																else if(linha->u.ident.Type != Is_TypeGraph)
+																{
+																	yyerror("error"); 
+																	printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
+																}
+															  	if($4->type != Is_TypeInt)
+																{ //erro ao utilizar operação utilizando tipo diferente de int
+																	yyerror("error"); 
+																	printf("A operacao espera uma expressao do tipo 'int'\n"); 
+																}
 															}
-															printf(")\n");
-														}
-													}
-/*PosExpCalArg*/	| _IDENT_ "(" Arg_Exp_List ")"  {
-														$$ = make_No(is_PosExpCalArg, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
-													  	Table_Line *linha = SymbolTable_lookup($1).linha;
-														if(!linha)
-														{//erro ao referenciar identificador nao declarado
-															yyerror("error"); 
-															printf("o identificador \"%s\" nao foi declarado\n",$1);
-														}
-														else if(linha->u.ident.param != NULL)
-														{//funcao chamada precisa de argumentos
-															if(!verifica_Params_Args(linha->u.ident.param,$3))
-															{//se parametros não batem com número ou tipo de argumentos, reporta erro
+/*PosExpNeig*/		| _IDENT_ "&" "(" Expression ")" "&" 	{
+																$$ = make_No(is_PosExpNeig, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
+															  	Table_Line *linha = SymbolTable_lookup($1).linha;
+																if(!linha)
+																{//erro ao referenciar identificador nao declarado
+																	yyerror("error"); 
+																	printf("o identificador \"%s\" nao foi declarado\n",$1);
+																}
+																else if(linha->u.ident.Type != Is_TypeGraph)
+																{
+																	yyerror("error"); 
+																	printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
+																}
+															  	if($4->type != Is_TypeInt)
+																{ 
+																	yyerror("error"); 
+																	printf("A operacao espera uma expressao do tipo 'int'\n"); 
+																}
+															}
+/*PosExpCal*/		| _IDENT_ "(" ")" 			  		{
+															$$ = make_No(is_PosExpCal, NULL, ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid)); 
+														  	Table_Line *linha = SymbolTable_lookup($1).linha;
+															if(!linha)
+															{//erro ao referenciar identificador nao declarado
 																yyerror("error"); 
-																printf("Função chamada com número ou tipo incorreto de argumentos. Argumentos esperados: (");
+																printf("o identificador \"%s\" nao foi declarado\n",$1);
+															}
+															else if(linha->u.ident.param != NULL)
+															{//funcao chamada com argumentos errados
+																yyerror("error"); 
+																printf("Função chamada com número incorreto de argumentos. Argumentos esperados: (");
 																Function_Param *param = linha->u.ident.param;
 																while(param)
 																{
@@ -306,23 +282,47 @@ Posfix_Exp
 																	if(param->next) printf(", ");
 																	param = param->next;
 																}
-																printf("), ");
-																printf("Argumentos passados: (");
-																print_Arg_Exp_List($3);
 																printf(")\n");
 															}
 														}
-														else
-														{//funcao chamada nao possui parametros
-															yyerror("error"); 
-															printf("Função chamada com número incorreto de argumentos. Argumentos esperados: nenhum\n");
+/*PosExpCalArg*/	| _IDENT_ "(" Arg_Exp_List ")"  	{
+															$$ = make_No(is_PosExpCalArg, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
+														  	Table_Line *linha = SymbolTable_lookup($1).linha;
+															if(!linha)
+															{//erro ao referenciar identificador nao declarado
+																yyerror("error"); 
+																printf("o identificador \"%s\" nao foi declarado\n",$1);
+															}
+															else if(linha->u.ident.param != NULL)
+															{//funcao chamada precisa de argumentos
+																if(!verifica_Params_Args(linha->u.ident.param,$3))
+																{//se parametros não batem com número ou tipo de argumentos, reporta erro
+																	yyerror("error"); 
+																	printf("Função chamada com número ou tipo incorreto de argumentos. Argumentos esperados: (");
+																	Function_Param *param = linha->u.ident.param;
+																	while(param)
+																	{
+																		printf("%s",printType(param->Type));
+																		if(param->next) printf(", ");
+																		param = param->next;
+																	}
+																	printf("), ");
+																	printf("Argumentos passados: (");
+																	print_Arg_Exp_List($3);
+																	printf(")\n");
+																}
+															}
+															else
+															{//funcao chamada nao possui parametros
+																yyerror("error"); 
+																printf("Função chamada com número incorreto de argumentos. Argumentos esperados: nenhum\n");
+															}
+
 														}
-														
-													}
-					| _IDENT_ "[" error "]" 		{ printf("sem expressao para subgrafo"); }
-					| _IDENT_ "@" error "#" 		{ printf("sem expressao para grau de entrada"); }
-					| _IDENT_ "#" error "@" 		{ printf("sem expressao para grau de saida"); }
-					| _IDENT_ "&" error "&" 		{ printf("sem expressao para vizinhanca"); }
+					| _IDENT_ "[" error "]" 			{ printf("sem expressao para subgrafo"); }
+					| _IDENT_ "@" error "#" 			{ printf("sem expressao para grau de entrada"); }
+					| _IDENT_ "#" error "@" 			{ printf("sem expressao para grau de saida"); }
+					| _IDENT_ "&" error "&" 			{ printf("sem expressao para vizinhanca"); }
 					;
 	
 Unary_Exp 	
@@ -676,8 +676,7 @@ Block_Stm
 /*BlkStmVar*/		| "{" Var_Decl_List "}"					{ $$ = $2; }
 /*BlkStmVarStm*/	| "{" Var_Decl_List Statement_List "}"	{ $$ = make_No(is_BlkStmVarStm, ins_No($2, ins_No($3, NULL)), NULL, Is_TypeVoid); }
 					;
-	
-/*verifica se tipo de ret é igual ao da funcao*/
+
 Return_Stm 	
 /*RetStmRet*/		: "return" ";"				{
 													$$ = make_No(is_RetStmRet, NULL, NULL, Is_TypeVoid);

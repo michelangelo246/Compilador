@@ -1,40 +1,9 @@
-void f(int num)
+void func()
 {
-	return;
-}
-
-int g()
-{
-	f(2);
-	return 0;
+	return ;
 }
 
 int main()
 {
-	int a,b=1,c;
-	graph a2, b2, c2;
-
-	a = g();
-
-	a2 << a;
-	a2 << b+1;
-	a2 << (a,b+1);
-
-	a2 = -a2;
-	a = !b;
-
-	if(g())
-	{
-		b2 = a2[(b2)];
-		c = a2@(a)#;
-		c2 = a2&(b+1)&;
-	}
-
-	while(a2)
-	{
-		int a = 2;
-		f(a);
-	}
-
 	return 0;
 }
