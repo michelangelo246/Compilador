@@ -36,6 +36,8 @@ extern int cur_Code;
 extern int cur_Table;
 extern int buf_code_size;
 extern int buf_table_size;
+extern char lastAddr1[99];
+extern char lastAddr2[99];
 
 extern int initialize_lexer(FILE * inp);
 
@@ -198,9 +200,11 @@ Arg_Exp_List
 					;
 	
 Primary_Exp 	
-/*PriExpId*/		: _IDENT_				{ 
-												$$ = make_No(is_PriExpId, NULL, ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
-												if(!SymbolTable_lookup($1).linha)
+/*PriExpId*/		: _IDENT_				{
+												LookUp_Return retorno = SymbolTable_lookup($1);
+												Table_Line *linha = retorno.linha;
+												$$ = make_No(is_PriExpId, NULL, ins_Args_Ident(Is_Ident, $1, NULL), (linha?linha->u.ident.Type:Is_TypeVoid));
+												if(!linha)
 												{//erro ao referenciar identificador nao declarado
 													yyerror("error"); 
 													printf("o identificador \"%s\" nao foi declarado\n",$1);
@@ -361,8 +365,9 @@ Unary_Exp
 															yyerror("error"); 
 															printf("Operador unario '-' com operando de tipo invalido. Esperado: 'int' ou 'double', Usado: '%s'\n", printType($2->type));
 														}
-														$$->temp = $2->temp;
-														sprintf(buffer,"minus $%d, $%d\n", $$->temp, $2->temp);
+														$$->temp = genTemp();
+														getAddr1($2);
+														sprintf(buffer,"minus $%d, %s\n", $$->temp, lastAddr1);
 														bufAppendCode(buffer);
 													}
 													else if($1->kind == is_UnaOpNot)
@@ -380,21 +385,35 @@ Multi_Exp
 /*MulExpUna*/		: Unary_Exp 				{ $$ = $1; } 
 /*MulExpMul*/		| Multi_Exp "*" Unary_Exp 	{ 
 													$$ = make_No(is_MulExpMul, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid);
-												  	if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
+												  	$$->temp = genTemp();
+													if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
 													{//caso ambos operandos sejam int ou double, expressão retorna o tipo de ambos
-														$$->type = $1->type; 
+														$$->type = $1->type;
+														getAddr1($1);
+														getAddr2($3);
+														sprintf(buffer,"mul $%d, %s, %s\n", $$->temp, lastAddr1, lastAddr2);
+														bufAppendCode(buffer);
 													}
 												  	else if(($1->type == Is_TypeDouble && $3->type == Is_TypeInt) || ($1->type == Is_TypeInt && $3->type == Is_TypeDouble))
 													{//caso algum dos operandos seja double, expressão retorna double
 														$$->type = Is_TypeDouble;
+														int temp = genTemp();
 														if($1->type == Is_TypeInt)
 														{
-															sprintf(buffer, "inttofl $%d, $%d\n",$1->temp,$1->temp);
+															getAddr1($1);
+															sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+															bufAppendCode(buffer);
+															getAddr1($3);
+															sprintf(buffer,"mul $%d, $%d, %s\n", $$->temp, temp, lastAddr1);
 															bufAppendCode(buffer);
 														}
 														else
 														{
-															sprintf(buffer, "inttofl $%d, $%d\n",$3->temp,$3->temp);
+															getAddr1($3);
+															sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+															bufAppendCode(buffer);
+															getAddr1($1);
+															sprintf(buffer,"mul $%d, %s, $%d\n", $$->temp, lastAddr1, temp);
 															bufAppendCode(buffer);
 														}
 													}
@@ -403,27 +422,38 @@ Multi_Exp
 														yyerror("error"); 
 														printf("operador binario '*' com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 													}
-													$$->temp = $1->temp;
-													sprintf(buffer,"mul $%d, $%d, $%d\n", $$->temp, $1->temp, $3->temp);
-													bufAppendCode(buffer);
 												}
 /*MulExpDiv*/		| Multi_Exp "/" Unary_Exp 	{
 													$$ = make_No(is_MulExpDiv, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid);
-												  	if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
+												  	$$->temp = genTemp();
+													if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
 													{//caso ambos operandos sejam int ou double, expressão retorna o tipo de ambos
-														$$->type = $1->type; 
+														$$->type = $1->type;
+														getAddr1($1);
+														getAddr2($3);
+														sprintf(buffer,"div $%d, %s, %s\n", $$->temp, lastAddr1, lastAddr2);
+														bufAppendCode(buffer);
 													}
 												  	else if(($1->type == Is_TypeDouble && $3->type == Is_TypeInt) || ($1->type == Is_TypeInt && $3->type == Is_TypeDouble))
 													{//caso algum dos operandos seja double, expressão retorna double
 														$$->type = Is_TypeDouble;
+														int temp = genTemp();
 														if($1->type == Is_TypeInt)
 														{
-															sprintf(buffer, "inttofl $%d, $%d\n",$1->temp,$1->temp);
+															getAddr1($1);
+															sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+															bufAppendCode(buffer);
+															getAddr1($3);
+															sprintf(buffer,"div $%d, $%d, %s\n", $$->temp, temp, lastAddr1);
 															bufAppendCode(buffer);
 														}
 														else
 														{
-															sprintf(buffer, "inttofl $%d, $%d\n",$3->temp,$3->temp);
+															getAddr1($3);
+															sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+															bufAppendCode(buffer);
+															getAddr1($1);
+															sprintf(buffer,"div $%d, %s, $%d\n", $$->temp, lastAddr1, temp);
 															bufAppendCode(buffer);
 														}
 													} 
@@ -432,9 +462,6 @@ Multi_Exp
 														yyerror("error"); 
 														printf("operador binario '/' com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 													}
-													$$->temp = $1->temp;
-													sprintf(buffer,"div $%d, $%d, $%d\n", $$->temp, $1->temp, $3->temp);
-													bufAppendCode(buffer);
 												}
 					;
 	
@@ -442,21 +469,35 @@ Add_Exp
 /*AddExpMul*/		: Multi_Exp 			{ $$ = $1; } 
 /*AddExpAdd*/		| Add_Exp "+" Multi_Exp	{ 
 												$$ = make_No(is_AddExpAdd, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid);
+												$$->temp = genTemp();
 												if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
 												{//caso ambos operandos sejam int ou double, expressão retorna o tipo de ambos
-													$$->type = $1->type; 
+													$$->type = $1->type;
+													getAddr1($1);
+													getAddr2($3);
+													sprintf(buffer,"add $%d, %s, %s\n", $$->temp, lastAddr1, lastAddr2);
+													bufAppendCode(buffer);
 												}
 												else if(($1->type == Is_TypeDouble && $3->type == Is_TypeInt) || ($1->type == Is_TypeInt && $3->type == Is_TypeDouble))
 												{//caso algum dos operandos seja double, expressão retorna double
 													$$->type = Is_TypeDouble;
+													int temp = genTemp();
 													if($1->type == Is_TypeInt)
 													{
-														sprintf(buffer, "inttofl $%d, $%d\n",$1->temp,$1->temp);
+														getAddr1($1);
+														sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+														bufAppendCode(buffer);
+														getAddr1($3);
+														sprintf(buffer,"add $%d, $%d, %s\n", $$->temp, temp, lastAddr1);
 														bufAppendCode(buffer);
 													}
 													else
 													{
-														sprintf(buffer, "inttofl $%d, $%d\n",$3->temp,$3->temp);
+														getAddr1($3);
+														sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+														bufAppendCode(buffer);
+														getAddr1($1);
+														sprintf(buffer,"add $%d, %s, $%d\n", $$->temp, lastAddr1, temp);
 														bufAppendCode(buffer);
 													}
 												} 
@@ -465,27 +506,38 @@ Add_Exp
 													yyerror("error"); 
 													printf("operador binario '+' com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
-												$$->temp = $1->temp;
-												sprintf(buffer,"add $%d, $%d, $%d\n", $$->temp, $1->temp, $3->temp);
-												bufAppendCode(buffer);
 											}
 /*AddExpSub*/		| Add_Exp "-" Multi_Exp	{
 												$$ = make_No(is_AddExpSub, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeVoid); 
+												$$->temp = genTemp();
 												if((($1->type == Is_TypeInt) && ($3->type == Is_TypeInt))||(($1->type == Is_TypeDouble) && ($3->type == Is_TypeDouble)))
 												{//caso ambos operandos sejam int ou double, expressão retorna o tipo de ambos
-													$$->type = $1->type; 
+													$$->type = $1->type;
+													getAddr1($1);
+													getAddr2($3);
+													sprintf(buffer,"sub $%d, %s, %s\n", $$->temp, lastAddr1, lastAddr2);
+													bufAppendCode(buffer);
 												}
 												else if(($1->type == Is_TypeDouble && $3->type == Is_TypeInt) || ($1->type == Is_TypeInt && $3->type == Is_TypeDouble))
 												{//caso algum dos operandos seja double, expressão retorna double
 													$$->type = Is_TypeDouble;
+													int temp = genTemp();
 													if($1->type == Is_TypeInt)
 													{
-														sprintf(buffer, "inttofl $%d, $%d\n",$1->temp,$1->temp);
+														getAddr1($1);
+														sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+														bufAppendCode(buffer);
+														getAddr1($3);
+														sprintf(buffer,"sub $%d, $%d, %s\n", $$->temp, temp, lastAddr1);
 														bufAppendCode(buffer);
 													}
 													else
 													{
-														sprintf(buffer, "inttofl $%d, $%d\n",$3->temp,$3->temp);
+														getAddr1($3);
+														sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+														bufAppendCode(buffer);
+														getAddr1($1);
+														sprintf(buffer,"sub $%d, %s, $%d\n", $$->temp, lastAddr1, temp);
 														bufAppendCode(buffer);
 													}
 												} 
@@ -494,9 +546,6 @@ Add_Exp
 													yyerror("error"); 
 													printf("operador binario '-' com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
-												$$->temp = $1->temp;
-												sprintf(buffer,"sub $%d, $%d, $%d\n", $$->temp, $1->temp, $3->temp);
-												bufAppendCode(buffer);
 											}
 					;
 	
@@ -618,6 +667,33 @@ Expression
 																									printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
 																								}
 																							}
+																							else if(linha->u.ident.Type == Is_TypeInt)
+																							{//identifier é int e expression é double
+																								int temp = genTemp();
+																								getAddr1($3);
+																								sprintf(buffer,"fltoint $%d, %s\n",temp, lastAddr1);
+																								bufAppendCode(buffer);
+																								getAddr1($$);
+																								sprintf(buffer,"mov %s, $%d\n", lastAddr1, temp);
+																								bufAppendCode(buffer);
+																							}
+																							else
+																							{//identifier é double e expression é int
+																								int temp = genTemp();
+																								getAddr1($3);
+																								sprintf(buffer,"inttofl $%d, %s\n",temp, lastAddr1);
+																								bufAppendCode(buffer);
+																								getAddr1($$);
+																								sprintf(buffer,"mov %s, $%d\n", lastAddr1, temp);
+																								bufAppendCode(buffer);
+																							}
+																						}
+																						else
+																						{//se tipos sao iguais
+																							getAddr1($$);
+																							getAddr2($3);
+																							sprintf(buffer,"mov %s, %s\n", lastAddr1, lastAddr2);
+																							bufAppendCode(buffer);
 																						}
 																					}
 																				}
@@ -657,7 +733,7 @@ Init_Declarator
 																$$ = make_No(is_IniDecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid); 
 															  	LookUp_Return retorno = SymbolTable_lookup($1);
 																if(retorno.contexto == SymbolTable)
-																{
+																{//se já foi declarado, reporta erro
 																	yyerror("error"); 
 															  		printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
 																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column);
@@ -668,18 +744,24 @@ Init_Declarator
 																	sprintf(buffer,"%s %s\n",(!strcmp(printType(recent_type),"double")?"float":printType(recent_type)),$1);
 																	bufAppendTable(buffer);
 																}
+																else
+																{//senão, reserva temporário
+																	SymbolTable_lookup($1).linha->u.ident.temp = genTemp();
+																}
 															}
 /*IniDecIdE*/		| _IDENT_ Assign_Operator Log_Or_Exp 	{
 																$$ = make_No(is_IniDecIdE, ins_No($2, ins_No($3, NULL)), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid); 
 															  	LookUp_Return retorno = SymbolTable_lookup($1);
 															  	if(retorno.contexto == SymbolTable)
-																{
+																{//se já foi declarado, reporta erro
 																	yyerror("error"); 
 															  		printf("o identificador \"%s\" já foi declarado anteriormente, linha: %d coluna: %d\n",$1,
 																	 retorno.linha->u.ident.line, retorno.linha->u.ident.column);
 																}
 															  	SymbolTable_ins_Var($1, yy_mylinenumber, yy_mycolumnnumber-1, recent_type);
 																Table_Line *linha = SymbolTable_lookup($1).linha;
+																//reserva um temporário
+																linha->u.ident.temp = genTemp();
 																if(linha->u.ident.Type != $3->type)
 																{//se tipo de operandos forem distintos
 																	if(((linha->u.ident.Type != Is_TypeInt)&&(linha->u.ident.Type != Is_TypeDouble))||(($3->type != Is_TypeInt)&&($3->type != Is_TypeDouble)))
@@ -687,11 +769,35 @@ Init_Declarator
 																		yyerror("error"); 
 																		printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
 																	}
+																	else if(linha->u.ident.Type == Is_TypeInt)
+																	{//identifier é int e expression é double
+																		int temp = genTemp();
+																		getAddr1($3);
+																		sprintf(buffer,"fltoint $%d, %s\n",temp, lastAddr1);
+																		bufAppendCode(buffer);
+																		sprintf(buffer,"mov $%d, $%d\n", linha->u.ident.temp, temp);
+																		bufAppendCode(buffer);
+																	}
+																	else
+																	{//identifier é double e expression é int
+																		int temp = genTemp();
+																		getAddr1($3);
+																		sprintf(buffer,"inttofl $%d, %s\n",temp, lastAddr1);
+																		bufAppendCode(buffer);
+																		sprintf(buffer,"mov $%d, $%d\n", linha->u.ident.temp, temp);
+																		bufAppendCode(buffer);
+																	}
+																}
+																else
+																{//se tipos sao iguais
+																	getAddr1($3);
+																	sprintf(buffer,"mov $%d, %s\n", linha->u.ident.temp, lastAddr1);
+																	bufAppendCode(buffer);
 																}
 																if(!strcmp(SymbolTable->name,"global"))
-																{//se for variável global, não pode receber atribuição
+																{//se for variável global, não pode receber atribuição na inicialização
 																	yyerror("error");
-																	printf("Definição de variável global sendo feita no escopo global. ");
+																	printf("Definição de variável global com inicialização. ");
 																	printf("Variáveis globais só podem ser definidas no escopo de funções\n");
 																}
 															}
@@ -777,7 +883,7 @@ Return_Stm
 														yyerror("error"); 
 														printf("Função retornando tipo diferente de sua declaração. Tipo Esperado: '%s', Tipo usado: 'void' \n", printType(linha->u.ident.Type));
 													}
-													if(strcmp(SymbolTable->name,"main"))printf("return\n");
+													if(strcmp(SymbolTable->name,"main"))bufAppendCode("return\n");
 												} 
 /*RetStmExp*/		| "return" Expression ";"	{
 													$$ = make_No(is_RetStmExp, ins_No($2, NULL), NULL, $2->type);
@@ -789,7 +895,8 @@ Return_Stm
 													}
 													if(strcmp(SymbolTable->name,"main"))
 													{
-														sprintf(buffer,"return $%d\n",$2->temp);
+														getAddr1($2);
+														sprintf(buffer,"return %s\n",lastAddr1);
 														bufAppendCode(buffer);
 													}
 												}

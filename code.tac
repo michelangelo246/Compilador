@@ -1,20 +1,12 @@
 .table
-int num
-float num2
+int a
 
 .code
-func:
-mov $0, 2
-mov $1, 3.500000
-mov $2, 2
-inttofl $2, $2
-div $1, $1, $2
-inttofl $0, $0
-add $0, $0, $1
-minus $0, $0
-print $0
-return $0
 main:
-mov $3, 1
-call func
+mov $1, 10
+mov a, $1
+mov $2, 2
+mul $3, a, $2
+mov $0, $3
+println $0
 nop

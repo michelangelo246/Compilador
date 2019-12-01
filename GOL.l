@@ -109,12 +109,12 @@ EOL		[\r\n]
 								SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); 
 								if(recent_identifier_index == 1)
 								{
-									SymbolTable_copy_args(recent_identifier);
 									if(SymbolTable->index_name==0)
 									{
 										sprintf(buffer,"%s:\n",SymbolTable->name);
 										bufAppendCode(buffer);
 									}
+									SymbolTable_copy_args(recent_identifier);
 								}; 
 								return OPN_CRLY;
 							}

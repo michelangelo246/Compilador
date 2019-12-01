@@ -45,6 +45,7 @@ typedef struct Table_Line_
 			_Type Type; 
 			enum { Is_Var, Is_Proc } Kind; 
 			Function_Param *param;
+			int temp;
 			int line;
 			int column;
 		} ident;
@@ -178,12 +179,15 @@ int cur_Code;
 int cur_Table;
 int buf_code_size;
 int buf_table_size;
-
+char lastAddr1[99];
+char lastAddr2[99];
 
 int genTemp();
 void bufAppendCode(char *s);
 void bufAppendTable(char *s);
 void bufCodeResize(void);
 void bufTableResize(void);
+void getAddr1(No no);
+void getAddr2(No no);
 
 #endif

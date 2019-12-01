@@ -95,6 +95,7 @@ void SymbolTable_ins_Var(Ident identificador, int linha, int coluna, int tipo)
         exit(1);
     }
 	tmp->Kind = Is_Ident;
+	tmp->u.ident.temp = -1;
 	tmp->u.ident.value = strdup(identificador);
 	tmp->u.ident.line = linha;
 	tmp->u.ident.column = coluna;
@@ -119,6 +120,7 @@ void SymbolTable_ins_Fun(String identificador, int linha, int coluna, int tipo, 
     }
 
 	nova_linha->Kind = Is_Ident;
+	nova_linha->u.ident.temp = -1;
 	nova_linha->u.ident.value = strdup(identificador);
 	nova_linha->u.ident.line = linha;
 	nova_linha->u.ident.column = coluna;
@@ -280,8 +282,10 @@ void print_Arg_Exp_List(No no)
 /*copia os argumentos da função lida mais recentemente para dentro do seu escopo*/
 void SymbolTable_copy_args(String recent_identifier)
 {
+	char buffer[99] = "";
 	Table_Line *funcao = NULL;
 	Function_Param *parametros = NULL;
+	int aux = 0;
 	
 	funcao = SymbolTable_lookup(recent_identifier).linha;
 	if(funcao)
@@ -293,6 +297,11 @@ void SymbolTable_copy_args(String recent_identifier)
 	{
 		SymbolTable_ins_Var(parametros->name,funcao->u.ident.line,funcao->u.ident.column,parametros->Type);
 		
+		Table_Line *linha = SymbolTable_lookup(parametros->name).linha;
+		linha->u.ident.temp = genTemp();
+		sprintf(buffer,"mov $%d, #%d\n", linha->u.ident.temp, aux++);
+		bufAppendCode(buffer);
+
 		parametros = parametros->next;
 	}
 }
@@ -483,6 +492,7 @@ No make_No(int p1, Nos p2, Args p3, _Type type)
 	no->kind = p1;
 	no->filhos = p2;
 	no->type = type;
+	no->temp = -1;
 	
 	switch(p1)
 	{
@@ -671,4 +681,64 @@ void bufTableResize(void)
 		free(buf_Table);
 	}
 	buf_Table = temp;
+}
+
+void getAddr1(No no)
+{
+	LookUp_Return retorno;
+
+	if(no->temp > -1)
+	{//é expressão
+		sprintf(lastAddr1, "$%d",no->temp);
+	}
+	else
+	{
+		retorno = SymbolTable_lookup(no->u.ident_.ident_);
+		if(retorno.linha)
+		{//é variável
+			if(!strcmp(retorno.contexto->name,"global"))
+			{//é global
+				sprintf(lastAddr1, "%s",retorno.linha->u.ident.value);
+			}
+			else
+			{//é local
+				sprintf(lastAddr1, "$%d",retorno.linha->u.ident.temp);
+			}
+		}
+		else
+		{//?
+			printf("ERRO!\n");
+			exit(-3);
+		}
+	}
+}
+
+void getAddr2(No no)
+{
+	LookUp_Return retorno;
+
+	if(no->temp > -1)
+	{//é expressão
+		sprintf(lastAddr2, "$%d",no->temp);
+	}
+	else
+	{
+		retorno = SymbolTable_lookup(no->u.ident_.ident_);
+		if(retorno.linha)
+		{//é variável
+			if(!strcmp(retorno.contexto->name,"global"))
+			{//é global
+				sprintf(lastAddr2, "%s",retorno.linha->u.ident.value);
+			}
+			else
+			{//é local
+				sprintf(lastAddr2, "$%d",retorno.linha->u.ident.temp);
+			}
+		}
+		else
+		{//?
+			printf("ERRO!\n");
+			exit(-3);
+		}
+	}
 }

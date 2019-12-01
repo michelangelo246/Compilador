@@ -1,12 +1,9 @@
-int num;
-double num2;
-
-double func()
-{
-	return -(2+(3.5/2));
-}
+int a;
 
 int main()
 {
-	return 1;
+	int b;
+	a = 10;
+	b = a*2;
+
 }
