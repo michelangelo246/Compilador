@@ -14,6 +14,7 @@ int main(int argc, char ** argv)
 	No parse_tree;
 	char *filename = NULL;
 	int pick,ok;
+	char *aux;
 	
 	if(argc > 1)
 	{
@@ -38,11 +39,36 @@ int main(int argc, char ** argv)
 	SymbolTable = NULL;
 	SymbolTableSet = NULL;
 	SymbolTable = newSymbol_Table("global",0);
-	
 	error = 0;
-	printf("\n");
+	TempCount = 0;
+	_n_Code = 0;
+	_n_Table = 0;
+	buf_Code = NULL;
+	buf_Table = NULL;
+	cur_Code = 0;
+	cur_Table = 0;
+	buf_code_size = 1;
+	buf_table_size = 1;
+
+	bufAppendCode("\n.code\n");
+	bufAppendTable("\n.table\n");
 	parse_tree = pTrans_Unit(input);
-	if(parse_tree)
+	bufAppendCode("nop\n");
+
+	aux = buf_Table;
+	while(aux && *aux != '\0')
+	{
+		printf("%c",*aux);
+		aux++;
+	}
+	aux = buf_Code;
+	while(aux && *aux != '\0')
+	{
+		printf("%c",*aux);
+		aux++;
+	}
+
+	if(0)//if(parse_tree)
 	{
 		printf("\nAnalise concluida!\n");
 		if(error == 0)
@@ -89,6 +115,6 @@ int main(int argc, char ** argv)
 		SymbolTable_Show(SymbolTable);
 		return 0;
 	}
-	return 1;
+	return 0;//retornar 1!
 }
 

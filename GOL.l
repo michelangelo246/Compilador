@@ -40,6 +40,9 @@ extern int recent_type;
 extern char *recent_identifier;
 extern int recent_identifier_index ;
 
+//geração de código
+extern char buffer [99];
+
 int yy_comment_line, yy_comment_column;
 int yy_string_line, yy_string_column;
 char YY_PARSED_STRING[YY_BUFFER_LENGTH+1];
@@ -101,16 +104,26 @@ EOL		[\r\n]
 <YYINITIAL>"&&"      		count(); return AND_OP;
 <YYINITIAL>"||"      		count(); return OR_OP;
 <YYINITIAL>";"      		count(); return SEMICOLN;
-<YYINITIAL>"{"      		{ count(); 
-							  SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); 
-							  if(recent_identifier_index == 1){SymbolTable_copy_args(recent_identifier);}; 
-							  return OPN_CRLY; }
+<YYINITIAL>"{"      		{ 
+								count(); 
+								SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); 
+								if(recent_identifier_index == 1)
+								{
+									SymbolTable_copy_args(recent_identifier);
+									if(SymbolTable->index_name==0)
+									{
+										sprintf(buffer,"%s:\n",SymbolTable->name);
+										bufAppendCode(buffer);
+									}
+								}; 
+								return OPN_CRLY;
+							}
 <YYINITIAL>"}"      		count(); SymbolTable = SymbolTable->next; return CLS_CRLY;
 <YYINITIAL>"double"     	count(); if(!flag_arg){ recent_type = Is_TypeDouble; }; return DOUBLE;
 <YYINITIAL>"graph"      	count(); if(!flag_arg){ recent_type = Is_TypeGraph; }; return GRAPH;
 <YYINITIAL>"int"      		count(); if(!flag_arg){ recent_type = Is_TypeInt; }; return INT;
 <YYINITIAL>"void"      		count(); if(!flag_arg){ recent_type = Is_TypeVoid; }; return VOID;
-<YYINITIAL>"else"      		count(); ; return ELSE;
+<YYINITIAL>"else"      		count(); return ELSE;
 <YYINITIAL>"if"      		count(); return IF;
 <YYINITIAL>"return"     	count(); return RETURN;
 <YYINITIAL>"while"      	count(); return WHILE;

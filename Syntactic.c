@@ -6,6 +6,8 @@
 #include "Syntactic.h"
 
 
+
+
 /********************    Funcoes da tabela de simbolos    ********************/
 /*Empilha uma nova tabela de símbolos que aponta para as anteriores.
   Recebe um nome de contexto e indice (para os casos de contextos internos em uma mesma funcao)*/
@@ -592,4 +594,81 @@ Args ins_Args_Ident(int kind, Ident p1, Args p2)
 	args->next = p2;
 	
 	return args;
+}
+
+char UltimoEscopo[30];
+
+int genTemp()
+{
+	/*if(strcmp(SymbolTable->name,UltimoEscopo))
+	{
+		TempCount = 0;
+	}*/
+	return TempCount++;
+}
+
+void bufAppendCode(char *s)
+{
+	int len = strlen(s);
+	int n;
+	while (cur_Code + len > buf_code_size)
+	{
+		buf_code_size *= 2; /* Dobra tamanho do buffer */
+		bufCodeResize();
+	}
+	for(n = 0; n < len; n++)
+	{
+		buf_Code[cur_Code + n] = s[n];
+	}
+	cur_Code += len;
+	buf_Code[cur_Code] = 0;
+}
+
+void bufAppendTable(char *s)
+{
+	int len = strlen(s);
+	int n;
+	while (cur_Table + len > buf_table_size)
+	{
+		buf_table_size *= 2; /* Dobra tamanho do buffer */
+		bufTableResize();
+	}
+	for(n = 0; n < len; n++)
+	{
+		buf_Table[cur_Table + n] = s[n];
+	}
+	cur_Table += len;
+	buf_Table[cur_Table] = 0;
+}
+
+void bufCodeResize(void)
+{
+	char *temp = (char *) malloc(buf_code_size);
+	if (!temp)
+	{
+		fprintf(stderr, "Erro: Faltou memoria ao tentar expandir buffer!\n");
+		exit(1);
+	}
+	if (buf_Code)
+	{
+		strncpy(temp, buf_Code, buf_code_size);
+		free(buf_Code);
+	}
+	buf_Code = temp;
+}
+
+void bufTableResize(void)
+{
+	char *temp = (char *) malloc(buf_table_size);
+	if (!temp)
+	{
+		fprintf(stderr, "Erro: Faltou memoria ao tentar expandir buffer!\n");
+		exit(1);
+	}
+	if (buf_Table)
+	{
+		strncpy(temp, buf_Table, buf_table_size);
+		free(buf_Table);
+	}
+	buf_Table = temp;
 }

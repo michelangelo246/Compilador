@@ -1,22 +1,20 @@
 .table
-char word[] = "Hello World"
-int n = 11
+int num
+float num2
 
 .code
-_imprime:
-	mov $0, #0
-	begin:
-	slt $1, $0, 0
-	brnz end, $1
-	mov $2, &word
-	sub $1, n, $0
-	mov $2, $2[$1]
-	print $2
-	sub $0, $0, 1
-	jump begin
-	end:
-	return
-
+func:
+mov $0, 2
+mov $1, 3.500000
+mov $2, 2
+inttofl $2, $2
+div $1, $1, $2
+inttofl $0, $0
+add $0, $0, $1
+minus $0, $0
+print $0
+return $0
 main:
-	param n
-	call _imprime, 1
+mov $3, 1
+call func
+nop

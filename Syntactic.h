@@ -97,7 +97,7 @@ void SymbolTable_Show();
 Symbol_Table *SymbolTable;
 Symbol_Table_Set *SymbolTableSet;
 
-/********************   Classes    ********************/
+/********************   Arvore    ********************/
 
 typedef struct Nos_ *Nos;
 typedef struct Args_ *Args;
@@ -148,6 +148,8 @@ struct No_
 		struct { String string_; } conststr_;
 	} u;
 
+	int temp;
+
 	_Type type;
 	
 	Nos filhos;
@@ -163,5 +165,25 @@ extern char* printType(_Type type);
 int verifica_Params_Args(Function_Param * param, No no);
 void print_Arg_Exp_List(No no);
 
+
+/********************   3 Addr Code    ********************/
+
+
+int TempCount;
+int _n_Code;
+int _n_Table;
+char *buf_Code;
+char *buf_Table;
+int cur_Code;
+int cur_Table;
+int buf_code_size;
+int buf_table_size;
+
+
+int genTemp();
+void bufAppendCode(char *s);
+void bufAppendTable(char *s);
+void bufCodeResize(void);
+void bufTableResize(void);
 
 #endif
