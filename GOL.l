@@ -109,9 +109,15 @@ EOL		[\r\n]
 								SymbolTable = newSymbol_Table(recent_identifier,recent_identifier_index++); 
 								if(recent_identifier_index == 1)
 								{
+									//geração de código 3-addr
 									if(SymbolTable->index_name==0)
 									{
 										sprintf(buffer,"%s:\n",SymbolTable->name);
+										bufAppendCode(buffer);
+									}
+									else
+									{
+										sprintf(buffer,"_%s_%d:\n",SymbolTable->name,SymbolTable->index_name);
 										bufAppendCode(buffer);
 									}
 									SymbolTable_copy_args(recent_identifier);
@@ -126,7 +132,13 @@ EOL		[\r\n]
 <YYINITIAL>"else"      		count(); return ELSE;
 <YYINITIAL>"if"      		count(); return IF;
 <YYINITIAL>"return"     	count(); return RETURN;
-<YYINITIAL>"while"      	count(); return WHILE;
+<YYINITIAL>"while"      	{
+								count(); 
+								//geração de código 3-addr
+								sprintf(buffer,"_%s_%d_Begin:\n",SymbolTable->name,SymbolTable->index_name+1); //trocar index_name por while cont
+								bufAppendCode(buffer);
+								return WHILE;
+							}
 
 <YYINITIAL>"//"[^\n]*\n 	count(); /*Comentário de linha única.*/
 <YYINITIAL>"/*" 			count(); yy_comment_line = yy_mylinenumber; yy_comment_column = yy_mycolumnnumber; BEGIN COMMENT;

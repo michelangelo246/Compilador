@@ -163,7 +163,7 @@ Args ins_Args_Double(int kind, Double p1, Args p2);
 Args ins_Args_Str(int kind, String p1, Args p2);
 Args ins_Args_Ident(int kind, Ident p1, Args p2);
 extern char* printType(_Type type);
-int verifica_Params_Args(Function_Param * param, No no);
+int verifica_Params_Args(Function_Param * param, No no, Ident p1);
 void print_Arg_Exp_List(No no);
 
 

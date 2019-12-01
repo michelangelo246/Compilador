@@ -215,7 +215,7 @@ Primary_Exp
 					;
 
 Posfix_Exp 	
-/*PosExpPri*/		: Primary_Exp 					{ $$ = $1; } 
+/*PosExpPri*/		: Primary_Exp 							{ $$ = $1; } 
 /*PosExpSub*/		| _IDENT_ "[" "(" Expression ")" "]" 	{
 														$$ = make_No(is_PosExpSub, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
 													  	Table_Line *linha = SymbolTable_lookup($1).linha;
@@ -313,6 +313,21 @@ Posfix_Exp
 																}
 																printf(")\n");
 															}
+															else
+															{
+																//geração de código 3-addr
+																int temp;
+																sprintf(buffer,"call %s\n", $1);
+																bufAppendCode(buffer);
+
+																if(SymbolTable_lookup($1).linha->u.ident.Type != Is_TypeVoid)
+																{
+																	temp = genTemp();
+																	sprintf(buffer,"pop $%d\n", temp);
+																	$$->temp = temp;
+																	bufAppendCode(buffer);
+																}
+															}
 														}
 /*PosExpCalArg*/	| _IDENT_ "(" Arg_Exp_List ")"  	{
 															$$ = make_No(is_PosExpCalArg, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), (SymbolTable_lookup($1).linha?SymbolTable_lookup($1).linha->u.ident.Type:Is_TypeVoid));
@@ -323,8 +338,8 @@ Posfix_Exp
 																printf("o identificador \"%s\" nao foi declarado\n",$1);
 															}
 															else if(linha->u.ident.param != NULL)
-															{//funcao chamada precisa de argumentos
-																if(!verifica_Params_Args(linha->u.ident.param,$3))
+															{//se precisa de argumentos
+																if(!verifica_Params_Args(linha->u.ident.param,$3,$1)) //verifica_Params_Args realiza a chamada à função em cód 3-addr
 																{//se parametros não batem com número ou tipo de argumentos, reporta erro
 																	yyerror("error"); 
 																	printf("Função chamada com número ou tipo incorreto de argumentos. Argumentos esperados: (");
@@ -340,13 +355,24 @@ Posfix_Exp
 																	print_Arg_Exp_List($3);
 																	printf(")\n");
 																}
+																else
+																{
+																	//geração de código 3-addr
+																	int temp;
+																	if(SymbolTable_lookup($1).linha->u.ident.Type != Is_TypeVoid)
+																	{
+																		temp = genTemp();
+																		sprintf(buffer,"pop $%d\n", temp);
+																		$$->temp = temp;
+																		bufAppendCode(buffer);
+																	}
+																}
 															}
 															else
 															{//funcao chamada nao possui parametros
 																yyerror("error"); 
 																printf("Função chamada com número incorreto de argumentos. Argumentos esperados: nenhum\n");
 															}
-
 														}
 					| _IDENT_ "[" error "]" 			{ printf("sem expressao para subgrafo"); }
 					| _IDENT_ "@" error "#" 			{ printf("sem expressao para grau de entrada"); }

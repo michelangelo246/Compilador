@@ -195,10 +195,12 @@ void SymbolTable_ins_Fun(String identificador, int linha, int coluna, int tipo, 
 	contexto->lines = nova_linha;
 }
 
-int verifica_Params_Args(Function_Param * param, No no)
+int verifica_Params_Args(Function_Param * param, No no, Ident p1)
 {
 	Function_Param *aux = NULL, *aux2;
-	int igual = 1;
+	int igual = 1, count = 0, i;
+	char buffer[31][99] = {{0}};
+
 	
 	while(no)
 	{
@@ -206,12 +208,21 @@ int verifica_Params_Args(Function_Param * param, No no)
 
 		if(no->kind == is_ArgExpList)
 		{//se ainda não está no final da lista, olha o filho
+
+			//geraçao de código 3-addr
+			getAddr1(no->filhos->next->no);
+			sprintf(buffer[count++],"param %s\n", lastAddr1);
 			aux2->Type = no->filhos->next->no->type;
 			aux2->next = aux;
 			aux = aux2;
 		}
 		else
 		{//se chegou ao fim da lista de argumentos
+			
+			//geraçao de código 3-addr
+			getAddr1(no);
+			sprintf(buffer[count++],"param %s\n", lastAddr1);
+
 			aux2->Type = no->type;
 			aux2->next = aux;
 			aux = aux2;
@@ -219,6 +230,17 @@ int verifica_Params_Args(Function_Param * param, No no)
 		}
 		no = no->filhos->no;
 	}
+
+	//geraçao de código 3-addr
+	for(i=count;i>=0;i--)
+	{
+		bufAppendCode(buffer[i]);
+	}
+
+	sprintf(buffer[0],"call %s, %d\n", p1, count);
+	bufAppendCode(buffer[0]);
+
+	//verifica se tipos são iguais, não verifica antes pois a leitura é invertida
 	aux2 = aux;
 	while(param && aux2)
 	{
