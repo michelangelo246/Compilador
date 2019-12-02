@@ -147,6 +147,7 @@ No pTrans_Unit(FILE *inp)
 %type <no_> Ext_Var_Decl
 
 %type <no_> WHILE
+%type <no_> IF
 
 %start Trans_Unit
 %%
@@ -985,22 +986,41 @@ While_Stm
 															sprintf(buffer,"_While_End_%d:\n", temp);
 															bufAppendCode(buffer);
 														}
+					;
 If_Stm
-/*IfStmIf*/			: "if" "(" Expression ")" Block_Stm						{
-																				$$ = make_No(is_IfStmIf, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
-																				if($3->type != Is_TypeBool)
-																				{//se condição do if não é booleana, reporta erro.
-																					yyerror("error"); 
-																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
-																				}
+/*IfStmIf*/			: "if" "(" Expression ")" 								{
+						  														//geração de código 3-addr
+																				$1 = (No) malloc(sizeof(struct No_));
+																				$1->temp = IfCont++;
+						  														getAddr1($3);
+						  														sprintf(buffer,"brz _If_End_%d, %s\n", $1->temp, lastAddr1);
+																				bufAppendCode(buffer);
 																			} 
-/*IfStmElse*/		| "if" "(" Expression ")" Block_Stm "else" Block_Stm	{
-																				$$ = make_No(is_IfStmElse, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL, Is_TypeVoid);
+					  Block_Stm												{
+																				$$ = make_No(is_IfStmIf, ins_No($3, ins_No($6, NULL)), NULL, Is_TypeVoid);
 																				if($3->type != Is_TypeBool)
 																				{//se condição do if não é booleana, reporta erro.
 																					yyerror("error"); 
 																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
 																				}
+																				//geração de código 3-addr
+																				int temp = $1->temp;
+																				free($1);
+						  														sprintf(buffer,"_If_End_%d:\n", temp);
+																				bufAppendCode(buffer);
+																				$$->temp = $3->temp;
+																				$$->aux = temp;
+																			} 
+/*IfStmElse*/		| If_Stm "else" 										{
+																				sprintf(buffer, "not $%d, $%d\n",$1->temp, $1->temp);
+																				bufAppendCode(buffer);
+																				sprintf(buffer,"brz _If_End2_%d, $%d\n", $1->aux, $1->temp);
+																				bufAppendCode(buffer);
+																			}
+					  Block_Stm												{
+																				$$ = make_No(is_IfStmElse, ins_No($1, ins_No($4, NULL)), NULL, Is_TypeVoid);
+																				sprintf(buffer,"_If_End2_%d:\n", $1->aux);
+																				bufAppendCode(buffer);
 																			}
 					;
 	

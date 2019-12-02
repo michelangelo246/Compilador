@@ -41,6 +41,8 @@ int main(int argc, char ** argv)
 	SymbolTable = newSymbol_Table("global",0);
 	error = 0;
 	TempCount = 0;
+	whileCont = 0;
+	IfCont = 0;
 	_n_Code = 0;
 	_n_Table = 0;
 	buf_Code = NULL;
