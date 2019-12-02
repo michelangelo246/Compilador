@@ -73,7 +73,7 @@ No pTrans_Unit(FILE *inp)
   No no_;
 }
 
-%token _ERROR_
+%token _ERROR_ PRINT
 %token ASG_OP  		"="
 %token INS_OP  		"<<"
 %token SUB_OP  		"-"

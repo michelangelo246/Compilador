@@ -4,8 +4,8 @@ TestGOL: Syntactic.o Lexer.o Parser.o Printer.o Test.o
 	@echo "Linking TestGOL..."
 	gcc -g -W -Wall Syntactic.o Lexer.o Parser.o Printer.o Test.o -o parser
 	rm *.o
-	rm Lexer.c
-	rm Parser.c
+	#rm Lexer.c
+	#rm Parser.c
 
 Syntactic.o: Syntactic.c Syntactic.h
 	gcc -g -W -Wall -c Syntactic.c
