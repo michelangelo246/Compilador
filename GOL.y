@@ -600,6 +600,85 @@ Expression
 																									yyerror("error"); 
 																									printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
 																								}
+																								else if((linha->u.ident.Type == Is_TypeGraph)&&($3->type == Is_TypeInt)&&($2->kind == is_AssOpINS))
+																								{//se for isercao de vertice
+																									int temp, temp1, temp2, temp3, temp9, exp, i;
+																									exp = genTemp();
+																									getAddr1($3);
+																									sprintf(buffer, "mov $%d, %s\n",exp, lastAddr1);
+																									bufAppendCode(buffer);
+																									
+																									getAddrIdent($1);
+																									temp = genTemp();
+																									sprintf(buffer, "mov $%d, %s[0]\n",temp, lastAddr1);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "mov $%d, *$%d\n", temp, temp);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "add $%d, $%d, 2\n",temp, temp);
+																									bufAppendCode(buffer);
+																									
+																									temp1 = genTemp();
+																									sprintf(buffer, "mema $%d, $%d\n", temp1, temp);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "sub $%d, $%d, 2\n", temp, temp);
+																									bufAppendCode(buffer);
+																									
+																									getAddrIdent($1);
+																									temp2 = genTemp();
+																									sprintf(buffer, "mov $%d, %s[0]\n",temp2,lastAddr1);
+																									bufAppendCode(buffer);
+																									
+																									i = genTemp();
+																									sprintf(buffer, "mov $%d, $%d\n", i, temp);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "add $%d, $%d, 1\n", temp, temp);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "mov $%d[$%d], $%d\n", temp1, temp, exp);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "mov $%d[0], $%d\n",temp1,temp);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "_While_Begin__%d:\n", while_grafo);
+																									bufAppendCode(buffer);
+																									
+																									temp9 = genTemp();
+																									sprintf(buffer, "slt $%d, 0, $%d\n",temp9,i);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "brz _While_End__%d, $%d\n", while_grafo,temp9);
+																									bufAppendCode(buffer);
+																									
+																									temp3 = genTemp();
+																									sprintf(buffer, "mov $%d, $%d[$%d]\n", temp3, temp2, i);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "mov $%d[$%d], $%d\n", temp1, i, temp3);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "sub $%d, $%d, 1\n",i,i);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "jump _While_Begin__%d\n", while_grafo);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "_While_End__%d:\n", while_grafo);
+																									bufAppendCode(buffer);
+																									
+																									getAddrIdent($1);
+																									sprintf(buffer, "mov %s[0], $%d\n",lastAddr1, temp1);
+																									bufAppendCode(buffer);
+																									
+																									sprintf(buffer, "memf $%d\n",temp2);
+																									bufAppendCode(buffer);
+																									
+																									while_grafo++;
+																								}
 																							}
 																							else if(linha->u.ident.Type == Is_TypeInt)
 																							{//identifier é int e expression é double
@@ -745,12 +824,46 @@ Init_Declarator
 															  	SymbolTable_ins_Var($1, yy_mylinenumber, yy_mycolumnnumber-1, recent_type);
 																if(!strcmp(SymbolTable->name,"global"))
 																{//se for variável global, coloca na sessão table
-																	sprintf(buffer,"%s %s\n",(!strcmp(printType(recent_type),"double")?"float":printType(recent_type)),$1);
-																	bufAppendTable(buffer);
+																	if(recent_type == Is_TypeGraph)
+																	{
+																		yyerror("error");
+																		printf("grafos nao podem ser declarados no escopo global\n");
+																	}
+																	else
+																	{
+																		sprintf(buffer,"%s %s\n",(!strcmp(printType(recent_type),"double")?"float":printType(recent_type)),$1);
+																		bufAppendTable(buffer);
+																	}
 																}
 																else
 																{//senão, reserva temporário
-																	SymbolTable_lookup($1).linha->u.ident.temp = genTemp();
+																	if(recent_type == Is_TypeGraph)
+																	{
+																		int temp = genTemp();
+																		SymbolTable_lookup($1).linha->u.ident.temp = temp;
+																		sprintf(buffer,"mema $%d, 2\n",temp);
+																		bufAppendCode(buffer);
+
+																		temp = genTemp();
+																		sprintf(buffer,"mema $%d, 1\n",temp);
+																		bufAppendCode(buffer);
+																		sprintf(buffer,"mov *$%d, 0\n",temp);
+																		bufAppendCode(buffer);
+																		sprintf(buffer,"mov $%d[0], $%d\n",SymbolTable_lookup($1).linha->u.ident.temp, temp);
+																		bufAppendCode(buffer);
+
+																		temp = genTemp();
+																		sprintf(buffer,"mema $%d, 1\n",temp);
+																		bufAppendCode(buffer);
+																		sprintf(buffer,"mov *$%d, 0\n",temp);
+																		bufAppendCode(buffer);
+																		sprintf(buffer,"mov $%d[1], $%d\n",SymbolTable_lookup($1).linha->u.ident.temp, temp);
+																		bufAppendCode(buffer);
+																	}
+																	else
+																	{
+																		SymbolTable_lookup($1).linha->u.ident.temp = genTemp();
+																	}
 																}
 															}
 /*IniDecIdE*/		| _IDENT_ Assign_Operator Log_Or_Exp 	{
@@ -766,6 +879,11 @@ Init_Declarator
 																Table_Line *linha = SymbolTable_lookup($1).linha;
 																//reserva um temporário
 																linha->u.ident.temp = genTemp();
+																if(linha->u.ident.Type == Is_TypeGraph)
+																{
+																	yyerror("error");
+																	printf("grafos não podem ser definidos na inicialização\n");
+																}
 																if(linha->u.ident.Type != $3->type)
 																{//se tipo de operandos forem distintos
 																	if(((linha->u.ident.Type != Is_TypeInt)&&(linha->u.ident.Type != Is_TypeDouble))||(($3->type != Is_TypeInt)&&($3->type != Is_TypeDouble)))

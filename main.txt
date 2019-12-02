@@ -1,20 +1,9 @@
-
 int main()
 {
-	int num;
+	graph g1;
 
-	print("digite um numero: ");
-	scan(num);
+	g1 << 32;
 
-	if(num>10)
-	{
-		print("\nO numero é maior que 10\n");
-	}
-	else
-	{
-		print("\nO numero é menor que 10\n");
-	}
 	
-
-	return 0;
+	
 }

@@ -10,7 +10,8 @@
 
 int main(int argc, char ** argv)
 {
-	FILE *input, *arvore, *codigo;
+	FILE *input, *arvore;
+	//FILE *codigo;
 	No parse_tree;
 	char *filename = NULL;
 	int pick, ok;
@@ -51,26 +52,29 @@ int main(int argc, char ** argv)
 	cur_Table = 0;
 	buf_code_size = 1;
 	buf_table_size = 1;
+	while_grafo = 0;
 
 	bufAppendCode("\n.code\n");
 	bufAppendTable("\n.table\n");
 	parse_tree = pTrans_Unit(input);
 	bufAppendCode("nop\n");
 
-	codigo = fopen("code.tac","w");
+	//codigo = fopen("code.tac","w");
 	aux = buf_Table;
 	while(aux && *aux != '\0')
 	{
-		fputc(*aux,codigo);
+		//fputc(*aux,codigo);
+		printf("%c",*aux);
 		aux++;
 	}
 	aux = buf_Code;
 	while(aux && *aux != '\0')
 	{
-		fputc(*aux,codigo);
+		//fputc(*aux,codigo);
+		printf("%c",*aux);
 		aux++;
 	}
-	fclose(codigo);
+	//fclose(codigo);
 
 	if(0)//if(parse_tree)
 	{
@@ -119,7 +123,7 @@ int main(int argc, char ** argv)
 		SymbolTable_Show(SymbolTable);
 		return 0;
 	}
-	system("tac code.tac");
+	//system("tac code.tac");
 	return 0;//retornar 1!
 }
 

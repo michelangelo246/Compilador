@@ -181,6 +181,7 @@ int buf_code_size;
 int buf_table_size;
 int whileCont;
 int IfCont;
+int while_grafo;
 char lastAddr1[99];
 char lastAddr2[99];
 
