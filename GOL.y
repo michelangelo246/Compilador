@@ -386,7 +386,7 @@ Unary_Exp
 /*UnaExpOp*/		| Unary_Operator Unary_Exp	{
 													$$ = make_No(is_UnaExpOp, ins_No($1, ins_No($2, NULL)), NULL, $2->type);
 													if($1->kind == is_UnaOpMinus)
-													{
+													{//se operador for minus
 														if(($2->type != Is_TypeInt) && ($2->type != Is_TypeDouble))
 														{
 															yyerror("error"); 
@@ -398,12 +398,16 @@ Unary_Exp
 														bufAppendCode(buffer);
 													}
 													else if($1->kind == is_UnaOpNot)
-													{
+													{//se operador for not
 														if($2->type != Is_TypeBool)
 														{
 															yyerror("error"); 
 															printf("Operador unario '!' com operando de tipo invalido. Esperado: 'bool', Usado: '%s'\n", printType($2->type));
 														}
+														$$->temp = genTemp();
+														getAddr1($2);
+														sprintf(buffer,"not $%d, %s\n", $$->temp, lastAddr1);
+														bufAppendCode(buffer);
 													}
 												}
 					;
@@ -599,6 +603,12 @@ Rel_Exp
 													yyerror("error"); 
 													printf("operador binario '>' com operandos de tipos invalidos. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
+												//geração código 3-addr
+												$$->temp = genTemp();
+												getAddr1($1);
+												getAddr2($3);
+												sprintf(buffer,"slt $%d, %s, %s\n",$$->temp, lastAddr2, lastAddr1);
+												bufAppendCode(buffer);
 											}
 /*RelExpLE*/		| Rel_Exp "<=" Add_Exp 	{
 												$$ = make_No(is_RelExpLE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); 
@@ -607,6 +617,12 @@ Rel_Exp
 													yyerror("error"); 
 													printf("operador binario '<=' com operandos de tipos invalidos. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
+												//geração código 3-addr
+												$$->temp = genTemp();
+												getAddr1($1);
+												getAddr2($3);
+												sprintf(buffer,"sleq $%d, %s, %s\n",$$->temp, lastAddr1, lastAddr2);
+												bufAppendCode(buffer);
 											}
 /*RelExpGE*/		| Rel_Exp ">=" Add_Exp 	{
 												$$ = make_No(is_RelExpGE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); 
@@ -615,6 +631,12 @@ Rel_Exp
 													yyerror("error"); 
 													printf("operador binario '>=' com operandos de tipos invalidos. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
+												//geração código 3-addr
+												$$->temp = genTemp();
+												getAddr1($1);
+												getAddr2($3);
+												sprintf(buffer,"sleq $%d, %s, %s\n",$$->temp, lastAddr2, lastAddr1);
+												bufAppendCode(buffer);
 											}
 					;
 	
@@ -635,6 +657,12 @@ Eq_Exp
 														printf("operador binario '==' com operandos de tipos invalidos. Esperados: 'int', 'double' ou 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 													}
 												}
+												//geração código 3-addr
+												$$->temp = genTemp();
+												getAddr1($1);
+												getAddr2($3);
+												sprintf(buffer,"seq $%d, %s, %s\n",$$->temp, lastAddr1, lastAddr2);
+												bufAppendCode(buffer);
 											}
 /*EqExpNE*/			| Eq_Exp "!=" Rel_Exp	{
 												$$ = make_No(is_EqExpNE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool);
@@ -650,7 +678,14 @@ Eq_Exp
 														yyerror("error"); 
 														printf("operador binario '!=' com operandos de tipos invalidos. Esperados: 'int', 'double' ou 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 													}
-												}
+												}//geração código 3-addr
+												$$->temp = genTemp();
+												getAddr1($1);
+												getAddr2($3);
+												sprintf(buffer,"seq $%d, %s, %s\n",$$->temp, lastAddr1, lastAddr2);
+												bufAppendCode(buffer);
+												sprintf(buffer,"not $%d, $%d\n",$$->temp, $$->temp);
+												bufAppendCode(buffer);
 											}
 					;
 	
@@ -662,7 +697,12 @@ Log_And_Exp
 													{//se algum operando não for booleano, reporta erro
 														yyerror("error"); 
 														printf("operador binario '&&' com operandos de tipos invalidos. Esperados: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
-													}
+													}//geração código 3-addr
+													$$->temp = genTemp();
+													getAddr1($1);
+													getAddr2($3);
+													sprintf(buffer,"and $%d, %s, %s\n",$$->temp, lastAddr1, lastAddr2);
+													bufAppendCode(buffer);
 												}
 					;
 	
@@ -674,7 +714,11 @@ Log_Or_Exp
 														{//se algum operando não for booleano, reporta erro
 															yyerror("error"); 
 															printf("operador binario '||' com operandos de tipos invalidos. Esperados: 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
-														}
+														}$$->temp = genTemp();
+														getAddr1($1);
+														getAddr2($3);
+														sprintf(buffer,"or $%d, %s, %s\n",$$->temp, lastAddr1, lastAddr2);
+														bufAppendCode(buffer);
 													}
 					;
 	
