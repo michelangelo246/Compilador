@@ -122,6 +122,8 @@ EOL		[\r\n]
 <YYINITIAL>"if"      		count(); return IF;
 <YYINITIAL>"return"     	count(); return RETURN;
 <YYINITIAL>"while"      	count(); return WHILE;
+<YYINITIAL>"print"      	count(); return PRINT;
+<YYINITIAL>"scan"	      	count(); return SCAN;
 
 <YYINITIAL>"//"[^\n]*\n 	count(); /*Comentário de linha única.*/
 <YYINITIAL>"/*" 			count(); yy_comment_line = yy_mylinenumber; yy_comment_column = yy_mycolumnnumber; BEGIN COMMENT;

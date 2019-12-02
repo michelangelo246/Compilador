@@ -1,7 +1,85 @@
+
 .table
 
 .code
 main:
-println
-println 1
+print 'd'
+print 'i'
+print 'g'
+print 'i'
+print 't'
+print 'e'
+print ' '
+print 'u'
+print 'm'
+print ' '
+print 'n'
+print 'u'
+print 'm'
+print 'e'
+print 'r'
+print 'o'
+print ':'
+print ' '
+scani $0
+mov $1, 10
+slt $2, $1, $0
+brz _If_End_0, $2
+print '\n'
+print 'O'
+print ' '
+print 'n'
+print 'u'
+print 'm'
+print 'e'
+print 'r'
+print 'o'
+print ' '
+print 'Ã'
+print '©'
+print ' '
+print 'm'
+print 'a'
+print 'i'
+print 'o'
+print 'r'
+print ' '
+print 'q'
+print 'u'
+print 'e'
+print ' '
+print '1'
+print '0'
+print '\n'
+_If_End_0:
+not $2, $2
+brz _If_End2_0, $2
+print '\n'
+print 'O'
+print ' '
+print 'n'
+print 'u'
+print 'm'
+print 'e'
+print 'r'
+print 'o'
+print ' '
+print 'Ã'
+print '©'
+print ' '
+print 'm'
+print 'e'
+print 'n'
+print 'o'
+print 'r'
+print ' '
+print 'q'
+print 'u'
+print 'e'
+print ' '
+print '1'
+print '0'
+print '\n'
+_If_End2_0:
+mov $3, 0
 nop

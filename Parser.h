@@ -59,10 +59,12 @@ typedef struct YYLTYPE
 #define RETURN 290
 #define VOID 291
 #define WHILE 292
-#define _STRING_ 293
-#define _INTEGER_ 294
-#define _DOUBLE_ 295
-#define _IDENT_ 296
+#define PRINT 293
+#define SCAN 294
+#define _STRING_ 295
+#define _INTEGER_ 296
+#define _DOUBLE_ 297
+#define _IDENT_ 298
 
 extern YYSTYPE yylval;
 /*extern YYLTYPE yylloc;*/

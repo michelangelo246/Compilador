@@ -765,3 +765,148 @@ void getAddr2(No no)
 		}
 	}
 }
+
+void getAddrIdent(Ident ident)
+{
+	LookUp_Return retorno = SymbolTable_lookup(ident);
+	if(!strcmp(retorno.contexto->name,"global"))
+	{//é global
+		sprintf(lastAddr1, "%s",retorno.linha->u.ident.value);
+	}
+	else
+	{//é local
+		sprintf(lastAddr1, "$%d",retorno.linha->u.ident.temp);
+	}
+}
+
+int widen(No p0,No p1, No p3, int kind)
+{
+	char buffer[99] = "";
+
+	if(((p1->type == Is_TypeInt) && (p3->type == Is_TypeInt))||((p1->type == Is_TypeDouble) && (p3->type == Is_TypeDouble)))
+	{//caso ambos operandos sejam int ou double, expressão retorna o tipo de ambos
+		p0->type = p1->type;
+		getAddr1(p1);
+		getAddr2(p3);
+		switch(kind)
+		{
+		case is_RelExpGE:
+			sprintf(buffer,"sleq $%d, %s, %s\n", p0->temp, lastAddr2, lastAddr1);
+			p0->type = Is_TypeBool;
+			break;
+		case is_RelExpLE:
+			p0->type = Is_TypeBool;
+			sprintf(buffer,"sleq $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
+			break;
+		case is_RelExpGT:
+			sprintf(buffer,"slt $%d, %s, %s\n", p0->temp, lastAddr2, lastAddr1);
+			p0->type = Is_TypeBool;
+			break;
+		case is_RelExpLT:
+			sprintf(buffer,"slt $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
+			p0->type = Is_TypeBool;
+			break;
+		case is_AddExpSub:
+			sprintf(buffer,"sub $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
+			break;
+		case is_AddExpAdd:
+			sprintf(buffer,"add $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
+			break;
+		case is_MulExpDiv:
+			sprintf(buffer,"div $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
+			break;
+		case is_MulExpMul:
+			sprintf(buffer,"mul $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
+			break;
+		}
+		bufAppendCode(buffer);
+	}
+	else if((p1->type == Is_TypeDouble && p3->type == Is_TypeInt) || (p1->type == Is_TypeInt && p3->type == Is_TypeDouble))
+	{//caso algum dos operandos seja double, expressão retorna double
+		p0->type = Is_TypeDouble;
+		int temp = genTemp();
+		if(p1->type == Is_TypeInt)
+		{
+			getAddr1(p1);
+			sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+			bufAppendCode(buffer);
+			getAddr1(p3);
+			switch(kind)
+			{
+			case is_RelExpGE:
+				sprintf(buffer,"sleq $%d, %s, $%d\n", p0->temp, lastAddr1, temp);
+				p0->type = Is_TypeBool;
+				break;
+			case is_RelExpLE:
+				sprintf(buffer,"sleq $%d, $%d, %s\n", p0->temp, temp, lastAddr1);
+				p0->type = Is_TypeBool;
+				break;
+			case is_RelExpGT:
+				sprintf(buffer,"slt $%d, %s, $%d\n", p0->temp, lastAddr1, temp);
+				p0->type = Is_TypeBool;
+				break;
+			case is_RelExpLT:
+				sprintf(buffer,"slt $%d, $%d, %s\n", p0->temp, temp, lastAddr1);
+				p0->type = Is_TypeBool;
+				break;
+			case is_AddExpSub:
+				sprintf(buffer,"sub $%d, $%d, %s\n", p0->temp, temp, lastAddr1);
+				break;
+			case is_AddExpAdd:
+				sprintf(buffer,"add $%d, $%d, %s\n", p0->temp, temp, lastAddr1);
+				break;
+			case is_MulExpDiv:
+				sprintf(buffer,"div $%d, $%d, %s\n", p0->temp, temp, lastAddr1);
+				break;
+			case is_MulExpMul:
+				sprintf(buffer,"mul $%d, $%d, %s\n", p0->temp, temp, lastAddr1);
+				break;
+			}
+			bufAppendCode(buffer);
+		}
+		else
+		{
+			getAddr1(p3);
+			sprintf(buffer, "inttofl $%d, %s\n",temp,lastAddr1);
+			bufAppendCode(buffer);
+			getAddr1(p1);
+			switch(kind)
+			{
+			case is_RelExpGE:
+				sprintf(buffer,"sleq $%d, $%d, %s\n", p0->temp, temp, lastAddr1);
+				p0->type = Is_TypeBool;
+				break;
+			case is_RelExpLE:
+				sprintf(buffer,"sleq $%d, %s, $%d\n", p0->temp, lastAddr1, temp);
+				p0->type = Is_TypeBool;
+				break;
+			case is_RelExpGT:
+				sprintf(buffer,"slt $%d, $%d, %s\n", p0->temp, temp, lastAddr1);
+				p0->type = Is_TypeBool;
+				break;
+			case is_RelExpLT:
+				sprintf(buffer,"slt $%d, %s, $%d\n", p0->temp, lastAddr1, temp);
+				p0->type = Is_TypeBool;
+				break;
+			case is_AddExpSub:
+				sprintf(buffer,"sub $%d, %s, $%d\n", p0->temp, lastAddr1, temp);
+				break;
+			case is_AddExpAdd:
+				sprintf(buffer,"add $%d, %s, $%d\n", p0->temp, lastAddr1, temp);
+				break;
+			case is_MulExpDiv:
+				sprintf(buffer,"div $%d, %s, $%d\n", p0->temp, lastAddr1, temp);
+				break;
+			case is_MulExpMul:
+				sprintf(buffer,"mul $%d, %s, $%d\n", p0->temp, lastAddr1, temp);
+				break;
+			}
+			bufAppendCode(buffer);
+		}
+	} 
+	else 
+	{//caso algum dos operandos não seja nem int nem double, expressão retorna void e reporta erro
+		return 0;
+	}
+	return 1;
+}

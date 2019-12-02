@@ -273,6 +273,8 @@ char* printKind(int kind, int modo)
 	case is_ExpAss: if(modo==0)printf(" ExpAss ");else return " ExpAss "; break; 
 	case is_ExpAssGraph: if(modo==0)printf(" ExpAssGraph ");else return " ExpAssGraph "; break; 
 	case is_IniDecListIni: if(modo==0)printf(" IniDecListIni ");else return " IniDecListIni "; break; 
+	case is_ExpPRINT: if(modo==0)printf(" PRINT ");else return " PRINT "; break; 
+	case is_ExpSCAN: if(modo==0)printf(" SCAN ");else return " SCAN "; break; 
 	case is_IniDecList: if(modo==0)printf(" IniDecList ");else return " IniDecList "; break; 
 	case is_IniDecId: if(modo==0)printf(" IniDecId ");else return " IniDecId "; break; 
 	case is_IniDecIdE: if(modo==0)printf(" IniDecIdE ");else return " IniDecIdE "; break; 

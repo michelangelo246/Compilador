@@ -134,10 +134,10 @@ struct No_
 		   is_UnaExpPos, is_UnaExpOp, is_MulExpUna, is_MulExpMul, is_MulExpDiv, is_AddExpMul, is_AddExpAdd, 
 		   is_AddExpSub, is_RelExpAdd, is_RelExpLT, is_RelExpGT, is_RelExpLE, is_RelExpGE, is_EqExpRel, 
 		   is_EqExpEQ, is_EqExpNE, is_LogAndExpEq, is_LogAndExpAnd, is_LogOrExpLogAnd, is_LogOrExpLogOr, 
-		   is_ExpLogOr, is_ExpAss, is_ExpAssGraph, is_IniDecListIni, is_IniDecList, is_IniDecId, 
+		   is_ExpLogOr, is_ExpAss, is_ExpAssGraph, is_IniDecListIni, is_IniDecList, is_IniDecId, is_ExpPRINT,
 		   is_IniDecIdE, is_VarDec, is_VarDecListVar, is_VarDecList, is_ParamListId, is_ParamList, is_ExpStmNul,
 		   is_StmListStm, is_StmList, is_BlkStm, is_BlkStmList, is_BlkStmVar, is_BlkStmVarStm, is_RetStmRet, is_RetStmExp, 
-		   is_ExpStmExp, is_IfStmIf, is_IfStmElse, is_WhileStm, is_StmBlock, 
+		   is_ExpStmExp, is_IfStmIf, is_IfStmElse, is_WhileStm, is_StmBlock, is_ExpSCAN,
 		   is_StmExp, is_StmRet, is_DecIdParam, is_DecId, is_FunDef, is_ExtVarDecFun, is_ExtVarDecVar } kind;
 		   
 	union
@@ -191,6 +191,8 @@ void bufCodeResize(void);
 void bufTableResize(void);
 void getAddr1(No no);
 void getAddr2(No no);
+void getAddrIdent(Ident ident);
 void getLabelWhile();
+int widen(No p0,No p1, No p3, int kind);
 
 #endif
