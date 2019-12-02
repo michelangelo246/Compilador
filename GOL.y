@@ -146,6 +146,8 @@ No pTrans_Unit(FILE *inp)
 %type <no_> Function_Def
 %type <no_> Ext_Var_Decl
 
+%type <no_> WHILE
+
 %start Trans_Unit
 %%
 Trans_Unit 
@@ -583,6 +585,12 @@ Rel_Exp
 													yyerror("error"); 
 													printf("operador binario '<' com operandos de tipos invalidos. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
+												//geração código 3-addr
+												$$->temp = genTemp();
+												getAddr1($1);
+												getAddr2($3);
+												sprintf(buffer,"slt $%d, %s, %s\n",$$->temp, lastAddr1, lastAddr2);
+												bufAppendCode(buffer);
 											}
 /*RelExpGT*/		| Rel_Exp ">" Add_Exp 	{
 												$$ = make_No(is_RelExpGT, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool); 
@@ -905,14 +913,34 @@ Exp_Stm
 
 
 While_Stm
-/*WhileStm*/		: "while" "(" Expression ")" Block_Stm		{
-																	$$ = make_No(is_WhileStm, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
-																	if($3->type != Is_TypeBool)
-																	{//se condição do while não é booleana, reporta erro.
-																		yyerror("error"); 
-																		printf("Condição do 'while' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
-																	}
-																}
+/*WhileStm*/		: "while" 							{
+															//geração de código 3-addr
+															$1 = (No) malloc(sizeof(struct No_));
+															$1->temp = whileCont++;
+															sprintf(buffer,"_While_Begin_%d:\n", $1->temp);
+															bufAppendCode(buffer);
+														}
+					  "(" Expression ")" 				{
+						  									//geração de código 3-addr
+						  									getAddr1($4);
+						  									sprintf(buffer,"brz _While_End_%d, %s\n", $1->temp, lastAddr1);
+															bufAppendCode(buffer);
+					  									}
+					  Block_Stm							{
+						  									int temp = $1->temp;
+															free($1);
+															$$ = make_No(is_WhileStm, ins_No($4, ins_No($7, NULL)), NULL, Is_TypeVoid);
+															if($4->type != Is_TypeBool)
+															{//se condição do while não é booleana, reporta erro.
+																yyerror("error"); 
+																printf("Condição do 'while' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($4->type));
+															}
+															//geração de código 3-addr
+															sprintf(buffer,"jump _While_Begin_%d\n", temp);
+															bufAppendCode(buffer);
+															sprintf(buffer,"_While_End_%d:\n", temp);
+															bufAppendCode(buffer);
+														}
 If_Stm
 /*IfStmIf*/			: "if" "(" Expression ")" Block_Stm						{
 																				$$ = make_No(is_IfStmIf, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
@@ -937,12 +965,18 @@ Declarator
 															$$ = make_No(is_DecIdParam, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeVoid); 
 															recent_identifier = $1; 
 															recent_identifier_index = 0; 
-														  	SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, $3);
+														  	SymbolTable_ins_Fun($1, yy_mylinenumber, yy_mycolumnnumber, recent_type, $3);
+															//geração de código 3-addr
+															sprintf(buffer,"%s:\n",$1);
+															bufAppendCode(buffer);
 														} 
 /*DecId*/			| _IDENT_ "(" ")" 					{ 
 															$$ = make_No(is_DecId, NULL, ins_Args_Ident(Is_Ident, $1, NULL),Is_TypeVoid);
 														  	recent_identifier = $1; recent_identifier_index = 0;
 														  	SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, NULL);
+															//geração de código 3-addr
+															sprintf(buffer,"%s:\n",$1);
+															bufAppendCode(buffer);
 														}
 					| error "(" Parameter_List ")" 		{ printf("Declaracao de funcao sem identificador"); }
 					| error "(" ")" 					{ printf("Declaracao de funcao sem identificador"); }

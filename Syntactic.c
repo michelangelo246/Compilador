@@ -319,6 +319,7 @@ void SymbolTable_copy_args(String recent_identifier)
 	{
 		SymbolTable_ins_Var(parametros->name,funcao->u.ident.line,funcao->u.ident.column,parametros->Type);
 		
+		//geração de código 3-addr
 		Table_Line *linha = SymbolTable_lookup(parametros->name).linha;
 		linha->u.ident.temp = genTemp();
 		sprintf(buffer,"mov $%d, #%d\n", linha->u.ident.temp, aux++);

@@ -178,6 +178,7 @@ int cur_Code;
 int cur_Table;
 int buf_code_size;
 int buf_table_size;
+int whileCont;
 char lastAddr1[99];
 char lastAddr2[99];
 
@@ -188,5 +189,6 @@ void bufCodeResize(void);
 void bufTableResize(void);
 void getAddr1(No no);
 void getAddr2(No no);
+void getLabelWhile();
 
 #endif
