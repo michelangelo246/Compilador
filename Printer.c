@@ -283,12 +283,6 @@ char* printKind(int kind, int modo)
 	case is_ParamList: if(modo==0)printf(" ParamList ");else return " ParamList "; break; 
 	case is_StmListStm: if(modo==0)printf(" StmListStm ");else return " StmListStm "; break; 
 	case is_StmList: if(modo==0)printf(" StmList ");else return " StmList "; break; 
-	case is_StmOpen: if(modo==0)printf(" StmOpen ");else return " StmOpen "; break; 
-	case is_StmClosed: if(modo==0)printf(" StmClosed ");else return " StmClosed "; break; 
-	case is_OpnStmIfSmp: if(modo==0)printf(" OpnStmIfSmp ");else return " OpnStmIfSmp "; break; 
-	case is_OpnStmIfOpn: if(modo==0)printf(" OpnStmIfOpn ");else return " OpnStmIfOpn "; break; 
-	case is_OpnStmIfCls: if(modo==0)printf(" OpnStmIfCls ");else return " OpnStmIfCls "; break; 
-	case is_OpnStmWhile: if(modo==0)printf(" OpnStmWhile ");else return " OpnStmWhile "; break; 
 	case is_BlkStm: if(modo==0)printf(" BlkStm \"{}\"");else return " BlkStm {}"; break; 
 	case is_BlkStmList: if(modo==0)printf(" BlkStmList ");else return " BlkStmList "; break; 
 	case is_BlkStmVar: if(modo==0)printf(" BlkStmVar ");else return " BlkStmVar "; break; 
@@ -297,17 +291,17 @@ char* printKind(int kind, int modo)
 	case is_RetStmExp: if(modo==0)printf(" RetStmExp ");else return " return "; break; 
 	case is_ExpStmNul: if(modo==0)printf(" ExpStmNul \";\" ");else return " ExpStmNul ; "; break; 
 	case is_ExpStmExp: if(modo==0)printf(" ExpStmExp ");else return " ExpStmExp "; break; 
-	case is_ClosedStmSmp: if(modo==0)printf(" ClosedStmSmp ");else return " ClosedStmSmp "; break; 
-	case is_ClosedStmIf: if(modo==0)printf(" ClosedStmIf ");else return " ClosedStmIf "; break; 
-	case is_ClosedStmWhile: if(modo==0)printf(" ClosedStmWhile ");else return " ClosedStmWhile "; break; 
-	case is_SmpStmBlock: if(modo==0)printf(" SmpStmBlock ");else return " SmpStmBlock "; break; 
-	case is_SmpStmExp: if(modo==0)printf(" SmpStmExp ");else return " SmpStmExp "; break; 
-	case is_SmpStmRet: if(modo==0)printf(" SmpStmRet ");else return " SmpStmRet "; break; 
+	case is_WhileStm: if(modo==0)printf(" WhileStm ");else return " WhileStm "; break; 
+	case is_StmBlock: if(modo==0)printf(" StmBlock ");else return " StmBlock "; break; 
+	case is_StmExp: if(modo==0)printf(" StmExp ");else return " StmExp "; break; 
+	case is_StmRet: if(modo==0)printf(" StmRet ");else return " StmRet "; break; 
 	case is_DecIdParam: if(modo==0)printf(" DecIdParam ");else return " DecIdParam "; break; 
 	case is_DecId: if(modo==0)printf(" DecId ");else return " DecId "; break; 
 	case is_FunDef: if(modo==0)printf(" FunDef ");else return " FunDef "; break; 
 	case is_ExtVarDecFun: if(modo==0)printf(" ExtVarDecFun ");else return " ExtVarDecFun "; break; 
 	case is_ExtVarDecVar : if(modo==0)printf(" ExtVarDecVar  ");else return " ExtVarDecVar  "; break; 
+	case is_IfStmIf : if(modo==0)printf(" IfStmIf  ");else return " IfStmIf  "; break; 
+	case is_IfStmElse : if(modo==0)printf(" IfStmElse  ");else return " IfStmElse  "; break; 
 	} 
 	return NULL; 
 }

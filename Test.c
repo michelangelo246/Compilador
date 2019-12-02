@@ -68,7 +68,7 @@ int main(int argc, char ** argv)
 		aux++;
 	}
 
-	if(0)//if(parse_tree)
+	if(parse_tree)//if(0)//if(parse_tree)
 	{
 		printf("\nAnalise concluida!\n");
 		if(error == 0)

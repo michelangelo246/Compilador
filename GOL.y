@@ -137,12 +137,11 @@ No pTrans_Unit(FILE *inp)
 %type <no_> Parameter_List
 %type <no_> Statement_List
 %type <no_> Statement
-%type <no_> Open_Stm
+%type <no_> While_Stm
+%type <no_> If_Stm
 %type <no_> Block_Stm
 %type <no_> Return_Stm
 %type <no_> Exp_Stm
-%type <no_> Closed_Stm
-%type <no_> Simple_Stm
 %type <no_> Declarator
 %type <no_> Function_Def
 %type <no_> Ext_Var_Decl
@@ -830,8 +829,15 @@ Init_Declarator
 					;
 	
 Var_Declaration 	
-/*VarDec*/			: Type Init_Decl_List ";" 	{ $$ = make_No(is_VarDec, ins_No($1, ins_No($2, NULL)), NULL, Is_TypeVoid); } 
-					| error Init_Decl_List ";" 	{ printf("Declarações de variáveis devem ser feitas no início do bloco.\n"); }
+/*VarDec*/			: Type Init_Decl_List ";" 	{
+													$$ = make_No(is_VarDec, ins_No($1, ins_No($2, NULL)), NULL, Is_TypeVoid);
+													if(SymbolTable->index_name>0)
+													{
+														yyerror("error");
+														printf("declarações de variáveis só podem ser feitas no início da função\n");
+													}
+												} 
+					| error Init_Decl_List ";" 	{ printf("declaração de variável sem informar tipo.\n"); }
 					;
 	
 Var_Decl_List 	
@@ -850,49 +856,13 @@ Statement_List
 					;
 	
 Statement 	
-/*StmOpen*/			: Open_Stm 		{ $$ = $1; } 
-/*StmClosed*/		| Closed_Stm 	{ $$ = $1; }
+/*StmIf*/			: If_Stm 		{ $$ = $1; }
+/*StmWhile*/		| While_Stm 	{ $$ = $1; }
+/*StmBlock*/		| Block_Stm 	{ $$ = $1; } 
+/*StmExp*/			| Exp_Stm		{ $$ = $1; }
+/*StmRet*/			| Return_Stm	{ $$ = $1; }
 					;
-	
-Open_Stm 	
-/*OpnStmIfSmp*/		: "if" "(" Expression ")" Simple_Stm 					{
-																				$$ = make_No(is_OpnStmIfSmp, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
-																				if($3->type != Is_TypeBool)
-																				{//se condição do if não é booleana, reporta erro.
-																					yyerror("error"); 
-																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
-																				}
-																			} 
-/*OpnStmIfOpn*/		| "if" "(" Expression ")" Open_Stm 						{
-																				$$ = make_No(is_OpnStmIfOpn, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
-																				if($3->type != Is_TypeBool)
-																				{//se condição do if não é booleana, reporta erro.
-																					yyerror("error"); 
-																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
-																				}
-																			}
-/*OpnStmIfCls*/		| "if" "(" Expression ")" Closed_Stm "else" Open_Stm 	{
-																				$$ = make_No(is_OpnStmIfCls, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL, Is_TypeVoid);
-																				if($3->type != Is_TypeBool)
-																				{//se condição do if não é booleana, reporta erro.
-																					yyerror("error"); 
-																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
-																				}
-																			}
-/*OpnStmWhile*/		| "while" "(" Expression ")" Open_Stm 					{
-																				$$ = make_No(is_OpnStmWhile, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
-																				if($3->type != Is_TypeBool)
-																				{//se condição do while não é booleana, reporta erro.
-																					yyerror("error"); 
-																					printf("Condição do 'while' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
-																				}
-																			}
-					| "if" "(" error ")" Simple_Stm 						{ printf("If sem expressao"); } 
-					| "if" "(" error ")" Open_Stm 							{ printf("If sem expressao"); }
-					| "if" "(" error ")" Closed_Stm "else" Open_Stm 		{ printf("If sem expressao"); } 
-					| "while" "(" error ")" Open_Stm 						{ printf("While sem expressao"); }
-					;
-	
+
 Block_Stm 	
 /*BlkStm*/			: "{" "}"								{ $$ = make_No(is_BlkStm, NULL, NULL, Is_TypeVoid); } 
 /*BlkStmList*/		| "{" Statement_List "}"				{ $$ = $2; }
@@ -932,33 +902,34 @@ Exp_Stm
 /*ExpStmNul*/		: ";"				{ $$ = make_No(is_ExpStmNul, NULL, NULL, Is_TypeVoid); } 
 /*ExpStmExp*/		| Expression ";" 	{ $$ = $1; }
 					;
-	
-Closed_Stm 	
-/*ClosedStmSmp*/	: Simple_Stm 											{ $$ = $1; } 
-/*ClosedStmIf*/		| "if" "(" Expression ")" Closed_Stm "else" Closed_Stm	{
-																				$$ = make_No(is_ClosedStmIf, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL, Is_TypeVoid);
+
+
+While_Stm
+/*WhileStm*/		: "while" "(" Expression ")" Block_Stm		{
+																	$$ = make_No(is_WhileStm, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
+																	if($3->type != Is_TypeBool)
+																	{//se condição do while não é booleana, reporta erro.
+																		yyerror("error"); 
+																		printf("Condição do 'while' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
+																	}
+																}
+If_Stm
+/*IfStmIf*/			: "if" "(" Expression ")" Block_Stm						{
+																				$$ = make_No(is_IfStmIf, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
+																				if($3->type != Is_TypeBool)
+																				{//se condição do if não é booleana, reporta erro.
+																					yyerror("error"); 
+																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
+																				}
+																			} 
+/*IfStmElse*/		| "if" "(" Expression ")" Block_Stm "else" Block_Stm	{
+																				$$ = make_No(is_IfStmElse, ins_No($3, ins_No($5, ins_No($7, NULL))), NULL, Is_TypeVoid);
 																				if($3->type != Is_TypeBool)
 																				{//se condição do if não é booleana, reporta erro.
 																					yyerror("error"); 
 																					printf("Condição do 'if' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
 																				}
 																			}
-/*ClosedStmWhile*/	| "while" "(" Expression ")" Closed_Stm 				{
-																				$$ = make_No(is_ClosedStmWhile, ins_No($3, ins_No($5, NULL)), NULL, Is_TypeVoid);
-																				if($3->type != Is_TypeBool)
-																				{//se condição do while não é booleana, reporta erro.
-																					yyerror("error"); 
-																					printf("Condição do 'while' não é do tipo 'bool'. Tipo usado: '%s' \n",printType($3->type));
-																				}
-																			}
-					| "if" "(" error ")" Closed_Stm "else" Closed_Stm 		{ printf("If sem expressao"); }
-					| "while" "(" error ")" Closed_Stm 						{ printf("While sem expressao"); }
-					;
-	
-Simple_Stm 	
-/*SmpStmBlock*/		: Block_Stm { $$ = $1; } 
-/*SmpStmExp*/		| Exp_Stm { $$ = $1; }
-/*SmpStmRet*/		| Return_Stm { $$ = $1; }
 					;
 	
 Declarator 	
