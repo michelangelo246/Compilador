@@ -1,9 +1,20 @@
 int main()
 {
-	int i = 0, vertice;
 	graph g1;
 
+	g1 << 579;
+	g1 << 2+3;
+	g1 << 741;
+
 	print(g1);
+
+	print("\n");
+
+	print(g1,v);
+
+	print("\n");
+
+	print(g1,vn);
 	
 	return 0;
 }

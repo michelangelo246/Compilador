@@ -46,7 +46,9 @@ void shTree(No p, int pos)
 	}
 	
 	//Caso regra possua um identificador no corpo, imprime um nó para o identificador
-	if((p->kind == is_PosExpSub ) || (p->kind == is_PosExpIn ) || (p->kind == is_PosExpOut ) ||
+	if((p->kind == is_PosExpSub ) || (p->kind == is_ExpSCAN) || (p->kind == is_ExpPRINTV) || 
+	(p->kind == is_ExpPRINT) || (p->kind == is_PosExpIn ) || (p->kind == is_PosExpOut ) ||
+	(p->kind == is_ExpPRINTVN) ||
 	(p->kind == is_PosExpNeig ) || (p->kind == is_PosExpCal ) || (p->kind == is_PosExpCalArg ) ||
 	(p->kind == is_ExpAss ) || (p->kind == is_ExpAssGraph ) || (p->kind == is_IniDecIdE ) || 
 	(p->kind == is_ParamListId ) || (p->kind == is_ParamList ) || (p->kind == is_DecIdParam ) || (p->kind == is_DecId ))
@@ -274,6 +276,8 @@ char* printKind(int kind, int modo)
 	case is_ExpAssGraph: if(modo==0)printf(" ExpAssGraph ");else return " ExpAssGraph "; break; 
 	case is_IniDecListIni: if(modo==0)printf(" IniDecListIni ");else return " IniDecListIni "; break; 
 	case is_ExpPRINT: if(modo==0)printf(" PRINT ");else return " PRINT "; break; 
+	case is_ExpPRINTV: if(modo==0)printf(" PRINTV ");else return " PRINTV "; break; 
+	case is_ExpPRINTVN: if(modo==0)printf(" PRINTVN ");else return " PRINTVN "; break; 
 	case is_ExpSCAN: if(modo==0)printf(" SCAN ");else return " SCAN "; break; 
 	case is_IniDecList: if(modo==0)printf(" IniDecList ");else return " IniDecList "; break; 
 	case is_IniDecId: if(modo==0)printf(" IniDecId ");else return " IniDecId "; break; 
