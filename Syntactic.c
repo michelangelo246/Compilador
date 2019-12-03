@@ -781,6 +781,7 @@ void getAddrIdent(Ident ident)
 
 int widen(No p0,No p1, No p3, int kind)
 {
+	int temp;
 	char buffer[99] = "";
 
 	if(((p1->type == Is_TypeInt) && (p3->type == Is_TypeInt))||((p1->type == Is_TypeDouble) && (p3->type == Is_TypeDouble)))
@@ -813,7 +814,22 @@ int widen(No p0,No p1, No p3, int kind)
 			sprintf(buffer,"add $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
 			break;
 		case is_MulExpDiv:
-			sprintf(buffer,"div $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
+			if((p1->type == Is_TypeInt)&&(p3->type == Is_TypeInt))
+			{
+				temp = genTemp();
+
+				sprintf(buffer,"inttofl $%d, %s\n", temp, lastAddr1);
+				bufAppendCode(buffer);
+				sprintf(buffer,"inttofl $%d, %s\n", p0->temp, lastAddr2);
+				bufAppendCode(buffer);
+				
+				sprintf(buffer,"div $%d, $%d, $%d\n", p0->temp, temp, p0->temp);
+				p0->type = Is_TypeDouble;
+			}
+			else
+			{
+				sprintf(buffer,"div $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
+			}
 			break;
 		case is_MulExpMul:
 			sprintf(buffer,"mul $%d, %s, %s\n", p0->temp, lastAddr1, lastAddr2);
@@ -824,7 +840,7 @@ int widen(No p0,No p1, No p3, int kind)
 	else if((p1->type == Is_TypeDouble && p3->type == Is_TypeInt) || (p1->type == Is_TypeInt && p3->type == Is_TypeDouble))
 	{//caso algum dos operandos seja double, expressão retorna double
 		p0->type = Is_TypeDouble;
-		int temp = genTemp();
+		temp = genTemp();
 		if(p1->type == Is_TypeInt)
 		{
 			getAddr1(p1);
@@ -999,6 +1015,89 @@ void inicializaPRINTV()
 	while_grafo++;
 }
 
+void inicializaPRINTA()
+{
+	int temp = genTemp(), temp1 = genTemp(), temp2 = genTemp();
+	int temp3 = genTemp(), temp4 = genTemp(), i = genTemp();
+	char buffer[99];
+
+	sprintf(buffer,"_printa:\n");
+	bufAppendCode(buffer);
+
+	//temp = param0
+	sprintf(buffer,"mov $%d, #0\n",temp);
+	bufAppendCode(buffer);
+	
+	//temp1 = temp[1] ((&grafo[arestas]) - ponteiro para lista de arestas)
+	sprintf(buffer,"mov $%d, $%d[1]\n", temp1, temp);
+	bufAppendCode(buffer);
+
+	//temp1 = *temp1 (quantidade de arestas)
+	sprintf(buffer,"mov $%d, *$%d\n", temp1, temp1);
+	bufAppendCode(buffer);
+
+	//temp1 = *temp1 (quantidade de nós, 2 para cada aresta)
+	sprintf(buffer,"mul $%d, $%d, 2\n", temp1, temp1);
+	bufAppendCode(buffer);
+
+	//temp2 = temp[1] (&grafo[arestas] - ponteiro para lista de arestas) 
+	sprintf(buffer,"mov $%d, $%d[1]\n", temp2, temp);
+	bufAppendCode(buffer);
+
+	//i = 1
+	sprintf(buffer,"mov $%d, 1\n", i);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"_While_Begin__%d:\n", while_grafo);
+	bufAppendCode(buffer);
+
+	// slt temp3, i, temp1
+	sprintf(buffer,"sleq $%d, $%d, $%d\n", temp3, i, temp1);
+	bufAppendCode(buffer);
+
+	// while(i>=0)
+	sprintf(buffer,"brz _While_End__%d, $%d\n", while_grafo, temp3);
+	bufAppendCode(buffer);
+
+	// temp4 = temp2[i]
+	sprintf(buffer,"mov $%d, $%d[$%d]\n", temp4, temp2, i);
+	bufAppendCode(buffer);
+
+	// print temp4
+	sprintf(buffer,"print $%d\n", temp4);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"print ' '\n");
+	bufAppendCode(buffer);
+
+	// i = i + 1 
+	sprintf(buffer,"add $%d, $%d, 1\n", i, i);
+	bufAppendCode(buffer);
+
+	// temp4 = temp2[i]
+	sprintf(buffer,"mov $%d, $%d[$%d]\n", temp4, temp2, i);
+	bufAppendCode(buffer);
+
+	// print temp4
+	sprintf(buffer,"println $%d\n", temp4);
+	bufAppendCode(buffer);
+
+	// i = i + 1 
+	sprintf(buffer,"add $%d, $%d, 1\n", i, i);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"jump _While_Begin__%d\n", while_grafo);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"_While_End__%d:\n", while_grafo);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"return\n\n");
+	bufAppendCode(buffer);
+
+	while_grafo++;
+}
+
 void inicializaInsNo()
 {
 	int temp0 = genTemp(), temp = genTemp(), temp1 = genTemp(), temp2 = genTemp();
@@ -1007,75 +1106,178 @@ void inicializaInsNo()
 	
 	sprintf(buffer, "_insNo:\n");
 	bufAppendCode(buffer);
-
+	// temp = param0 (&grafo)
 	sprintf(buffer, "mov $%d, #0\n",temp0);
 	bufAppendCode(buffer);
-
+	// temp2 = param1 (valor nó)
 	sprintf(buffer, "mov $%d, #1\n",exp);
 	bufAppendCode(buffer);
-	
+	// temp3 = temp[0] (&grafo[nós])
 	sprintf(buffer, "mov $%d, $%d[0]\n",temp, temp0);
 	bufAppendCode(buffer);
-	
+	// temp3 = *temp3 (quantidade de nós)
 	sprintf(buffer, "mov $%d, *$%d\n", temp, temp);
 	bufAppendCode(buffer);
-	
+	// temp3 = temp3 + 2 (quantidade de nós + espaço para novo nó + espaço para qtd)
 	sprintf(buffer, "add $%d, $%d, 2\n",temp, temp);
 	bufAppendCode(buffer);
-	
+	// temp4 = malloc(temp3) (aloca novo espaço para os nós do grafo)
 	sprintf(buffer, "mema $%d, $%d\n", temp1, temp);
 	bufAppendCode(buffer);
-	
+	// temp3 = temp3 - 2 (quantidade de nós)
 	sprintf(buffer, "sub $%d, $%d, 2\n", temp, temp);
 	bufAppendCode(buffer);
-	
+	// temp5 = temp[0] (&grafos[nós])
 	sprintf(buffer, "mov $%d, $%d[0]\n",temp2,temp0);
 	bufAppendCode(buffer);
-	
+	// i = temp3 (quantidade de nós)
 	sprintf(buffer, "mov $%d, $%d\n", i, temp);
 	bufAppendCode(buffer);
-	
+	// temp3 = temp3 + 1 (indice aonde novo nó vai residir)
 	sprintf(buffer, "add $%d, $%d, 1\n", temp, temp);
 	bufAppendCode(buffer);
-	
+	// temp4[temp3] = temp2 (novo endereço de nós recebe novo nó)
 	sprintf(buffer, "mov $%d[$%d], $%d\n", temp1, temp, exp);
 	bufAppendCode(buffer);
-	
+	// temp4[0] = temp3 (salva quantidade nova de nós no novo endereço)
 	sprintf(buffer, "mov $%d[0], $%d\n",temp1,temp);
 	bufAppendCode(buffer);
-	
+	// while(i>0)
 	sprintf(buffer, "_While_Begin__%d:\n", while_grafo);
 	bufAppendCode(buffer);
-	
+	// slt temp6, 0, i
 	sprintf(buffer, "slt $%d, 0, $%d\n",temp9,i);
 	bufAppendCode(buffer);
-	
+	// brz, temp6
 	sprintf(buffer, "brz _While_End__%d, $%d\n", while_grafo,temp9);
 	bufAppendCode(buffer);
-	
+	// temp7 = temp5[i] (pega i-ésimo valor da lista antiga)
 	sprintf(buffer, "mov $%d, $%d[$%d]\n", temp3, temp2, i);
 	bufAppendCode(buffer);
-	
+	// temp4[i] = temp7 (copia i-ésimo valor da lista antiga para lista nova)
 	sprintf(buffer, "mov $%d[$%d], $%d\n", temp1, i, temp3);
 	bufAppendCode(buffer);
-	
+	// i = i-1
 	sprintf(buffer, "sub $%d, $%d, 1\n",i,i);
 	bufAppendCode(buffer);
-	
+	// 
 	sprintf(buffer, "jump _While_Begin__%d\n", while_grafo);
 	bufAppendCode(buffer);
-	
+	// 
 	sprintf(buffer, "_While_End__%d:\n", while_grafo);
 	bufAppendCode(buffer);
-	
+	// temp[0] = temp4 (troca lista antiga pela nova no grafo)
 	sprintf(buffer, "mov $%d[0], $%d\n",temp0, temp1);
 	bufAppendCode(buffer);
-	
+	// free(temp5) (libera lista antiga)
 	sprintf(buffer, "memf $%d\n",temp2);
 	bufAppendCode(buffer);
-
+	// 
 	sprintf(buffer, "return\n\n");
 	bufAppendCode(buffer);
 	
 	while_grafo++;
 }
+
+void inicializaInsAresta()
+{
+	int temp = genTemp(), temp2 = genTemp(), temp3 = genTemp(), temp4 = genTemp();
+	int temp5 = genTemp(), temp6 = genTemp(), temp7 = genTemp(), temp10 = genTemp(), i = genTemp();
+	char buffer[99];
+
+	sprintf(buffer, "_insAresta:\n");
+	bufAppendCode(buffer);
+	// temp = param0 (&grafo)
+	sprintf(buffer, "mov $%d, #0\n", temp);
+	bufAppendCode(buffer);
+	// temp2 = param1 (valor nó) 
+	sprintf(buffer, "mov $%d, #1\n",temp2);
+	bufAppendCode(buffer);
+	// temp10 = param2 (valor nó) 
+	sprintf(buffer, "mov $%d, #2\n", temp10);
+	bufAppendCode(buffer);
+	// temp3 = temp[1] (&grafo[arestas]) 
+	sprintf(buffer, "mov $%d, $%d[1]\n", temp3, temp);
+	bufAppendCode(buffer);
+	// temp3 = *temp3 (quantidade de arestas) 
+	sprintf(buffer, "mov $%d, *$%d\n", temp3, temp3);
+	bufAppendCode(buffer);
+	// temp3 = temp3 * 2 () 
+	sprintf(buffer, "mul $%d, $%d, 2\n", temp3, temp3);
+	bufAppendCode(buffer);
+	// temp3 = temp3 + 3 (quantidade de nós + espaço para novo nó + espaço para qtd) 
+	sprintf(buffer, "add $%d, $%d, 3\n", temp3, temp3);
+	bufAppendCode(buffer);
+	// temp4 = malloc(temp3) (aloca novo espaço para as arestas do grafo) 
+	sprintf(buffer, "mema $%d, $%d\n", temp4, temp3);
+	bufAppendCode(buffer);
+	// temp3 = temp3 - 3 (quantidade de arestas) 
+	sprintf(buffer, "sub $%d, $%d, 3\n", temp3, temp3);
+	bufAppendCode(buffer);
+	// 
+	sprintf(buffer, "div $%d, $%d, 2\n", temp3, temp3);
+	bufAppendCode(buffer);
+	// temp5 = temp[1] (&grafos[arestas])
+	sprintf(buffer, "mov $%d, $%d[1]\n", temp5, temp);
+	bufAppendCode(buffer);
+	// i = temp3 (quantidade de arestas) 
+	sprintf(buffer, "mov $%d, $%d\n", i, temp3);
+	bufAppendCode(buffer);
+	// i = i*2 (quantidade de nós) 
+	sprintf(buffer, "mul $%d, $%d, 2\n", i, i);
+	bufAppendCode(buffer);
+	// temp3 = temp3 + 1 (indice aonde nova aresta vai residir - no1) 
+	sprintf(buffer, "add $%d, $%d, 1\n", temp3, i);
+	bufAppendCode(buffer);
+	// temp4[temp3] = temp2 (novo endereço de aresta recebe novo nó1) 
+	sprintf(buffer, "mov $%d[$%d], $%d\n", temp4, temp3, temp2);
+	bufAppendCode(buffer);
+	// temp3 = temp3 + 1 (indice aonde nova aresta vai residir - no2) 
+	sprintf(buffer, "add $%d, $%d, 1\n", temp3, temp3);
+	bufAppendCode(buffer);
+	// temp4[temp3] = temp10 (novo endereço de aresta recebe novo nó2) 
+	sprintf(buffer, "mov $%d[$%d], $%d\n", temp4, temp3, temp10);
+	bufAppendCode(buffer);
+	// temp3 = temp3 / 2 (nova quantidade de arestas) 
+	sprintf(buffer, "div $%d, $%d, 2\n", temp3, temp3);
+	bufAppendCode(buffer);
+	// temp4[0] = temp3 (salva quantidade nova de arestas no novo endereço) 
+	sprintf(buffer, "mov $%d[0], $%d\n", temp4, temp3);
+	bufAppendCode(buffer);
+	// while(i>0)
+	sprintf(buffer, "_While_Begin__%d:\n",while_grafo);
+	bufAppendCode(buffer);
+	// slt temp6, 0, i 
+	sprintf(buffer, "slt $%d, 0, $%d\n", temp6, i);
+	bufAppendCode(buffer);
+	// brz, temp6 
+	sprintf(buffer, "brz _While_End__%d, $%d\n", while_grafo, temp6);
+	bufAppendCode(buffer);
+	// temp7 = temp5[i] (pega i-ésimo valor da lista antiga) 
+	sprintf(buffer, "mov $%d, $%d[$%d]\n", temp7, temp5, i);
+	bufAppendCode(buffer);
+	// temp4[i] = temp7 (copia i-ésimo valor da lista antiga para lista nova) 
+	sprintf(buffer, "mov $%d[$%d], $%d\n", temp4, i, temp7);
+	bufAppendCode(buffer);
+	// i = i-1 
+	sprintf(buffer, "sub $%d, $%d, 1\n", i, i);
+	bufAppendCode(buffer);
+	// 
+	sprintf(buffer, "jump _While_Begin__%d\n", while_grafo);
+	bufAppendCode(buffer);
+	//
+	sprintf(buffer, "_While_End__%d:\n", while_grafo);
+	bufAppendCode(buffer);
+	// temp[1] = temp4 (troca lista antiga pela nova no grafo) 
+	sprintf(buffer, "mov $%d[1], $%d\n", temp, temp4);
+	bufAppendCode(buffer);
+	// free(temp5) (libera lista antiga) 
+	sprintf(buffer, "memf $%d\n", temp5);
+	bufAppendCode(buffer);
+
+	sprintf(buffer, "return\n\n");
+	bufAppendCode(buffer);
+
+	while_grafo++;
+}
+

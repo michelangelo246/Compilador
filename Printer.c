@@ -278,6 +278,7 @@ char* printKind(int kind, int modo)
 	case is_ExpPRINT: if(modo==0)printf(" PRINT ");else return " PRINT "; break; 
 	case is_ExpPRINTV: if(modo==0)printf(" PRINTV ");else return " PRINTV "; break; 
 	case is_ExpPRINTVN: if(modo==0)printf(" PRINTVN ");else return " PRINTVN "; break; 
+	case is_ExpPRINTA: if(modo==0)printf(" PRINTA ");else return " PRINTA "; break; 
 	case is_ExpSCAN: if(modo==0)printf(" SCAN ");else return " SCAN "; break; 
 	case is_IniDecList: if(modo==0)printf(" IniDecList ");else return " IniDecList "; break; 
 	case is_IniDecId: if(modo==0)printf(" IniDecId ");else return " IniDecId "; break; 

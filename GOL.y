@@ -595,23 +595,52 @@ Expression
 																						{//se tipo de operandos forem distintos
 																							if(((linha->u.ident.Type != Is_TypeInt)&&(linha->u.ident.Type != Is_TypeDouble))||(($3->type != Is_TypeInt)&&($3->type != Is_TypeDouble)))
 																							{//e se algum dos dois for diferente de int e double
-																								if(!((linha->u.ident.Type == Is_TypeGraph)&&($3->type == Is_TypeInt)&&($2->kind == is_AssOpINS)))
+																								if($2->kind != is_AssOpINS)
 																								{//e nao for insercao de vertice
 																									yyerror("error"); 
 																									printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
 																								}
-																								else if((linha->u.ident.Type == Is_TypeGraph)&&($3->type == Is_TypeInt)&&($2->kind == is_AssOpINS))
+																								else if((linha->u.ident.Type == Is_TypeGraph)&&($2->kind == is_AssOpINS))
 																								{//se for isercao de vertice
-																									getAddrIdent($1);
-																									sprintf(buffer, "param %s\n", lastAddr1);
-																									bufAppendCode(buffer);
+																									if(($3->type == Is_TypeInt))
+																									{//e é tipo inteiro
+																										getAddrIdent($1);
+																										sprintf(buffer, "param %s\n", lastAddr1);
+																										bufAppendCode(buffer);
 
-																									getAddr1($3);
-																									sprintf(buffer, "param %s\n", lastAddr1);
-																									bufAppendCode(buffer);
-																									
-																									sprintf(buffer, "call _insNo, 2\n");
-																									bufAppendCode(buffer);
+																										getAddr1($3);
+																										sprintf(buffer, "param %s\n", lastAddr1);
+																										bufAppendCode(buffer);
+
+																										sprintf(buffer, "call _insNo, 2\n");
+																										bufAppendCode(buffer);
+																									}
+																									else
+																									{//e é tipo float
+																										int temp = genTemp();
+																										
+																										getAddrIdent($1);
+																										sprintf(buffer, "param %s\n", lastAddr1);
+																										bufAppendCode(buffer);
+
+																										getAddr1($3);
+																										sprintf(buffer, "mov $%d, %s\n", temp, lastAddr1);
+																										bufAppendCode(buffer);
+
+																										sprintf(buffer, "fltoint $%d, $%d\n", temp, temp);
+																										bufAppendCode(buffer);
+																										
+																										sprintf(buffer, "param $%d\n", temp);
+																										bufAppendCode(buffer);
+
+																										sprintf(buffer, "call _insNo, 2\n");
+																										bufAppendCode(buffer);
+																									}
+																								}
+																								else
+																								{
+																									yyerror("error"); 
+																									printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
 																								}
 																							}
 																							else if(linha->u.ident.Type == Is_TypeInt)
@@ -654,17 +683,37 @@ Expression
 																					} 
 																					else
 																					{
-																						if((($4->type != Is_TypeInt) && ($4->type != Is_TypeDouble)) || (($6->type != Is_TypeInt) && ($6->type != Is_TypeDouble)))
+																						if($2->kind != is_AssOpINS)
+																						{
+																							yyerror("error"); 
+																							printf("O formato de atribuição com par expressões só pode ser usado na inserção de arestas em um grafo. \n");
+																						}
+																						else if((($4->type != Is_TypeInt) && ($4->type != Is_TypeDouble)) || (($6->type != Is_TypeInt) && ($6->type != Is_TypeDouble)))
 																						{//se alguma das expressões não forem nem int nem double, reporta erro
 																							yyerror("error"); 
 																							printf("Inserção de arestas utilizando expressões com tipo não suportado. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n", printType($4->type), printType($6->type));
 																						}
+																						else if(linha->u.ident.Type != Is_TypeGraph)
+																						{
+																							yyerror("error"); 
+																							printf("Operador de inserção de arestas aplicado a identificador de tipo não suportado. Esperado: 'graph', Usado: '%s'\n", printType(linha->u.ident.Type));
+																						}
+																						else
+																						{
+																							getAddrIdent($1);
+																							sprintf(buffer, "param %s\n", lastAddr1);
+																							bufAppendCode(buffer);
+																							getAddr1($4);
+																							sprintf(buffer, "param %s\n", lastAddr1);
+																							bufAppendCode(buffer);
+																							getAddr1($6);
+																							sprintf(buffer, "param %s\n", lastAddr1);
+																							bufAppendCode(buffer);
+																							sprintf(buffer, "call _insAresta, 3\n");
+																							bufAppendCode(buffer);
+																						}
 																					}
-																					if(linha->u.ident.Type != Is_TypeGraph)
-																					{
-																						yyerror("error"); 
-																						printf("Operador de inserção de arestas aplicado a identificador de tipo não suportado. Esperado: 'graph', Usado: '%s'\n", printType(linha->u.ident.Type));
-																					}
+																					
 																				}
 /*ExpPRINT*/		| "print" "(" Expression ")"								{ 
 																					$$ = make_No(is_ExpPRINT, ins_No($3, NULL), NULL, Is_TypeVoid);
@@ -715,6 +764,13 @@ Expression
 
 																						sprintf(buffer, "call _printv, 1\n");
 																						bufAppendCode(buffer);
+
+																						getAddr1($3);
+																						sprintf(buffer, "param %s\n", lastAddr1);
+																						bufAppendCode(buffer);
+				
+																						sprintf(buffer, "call _printa, 1\n");
+																						bufAppendCode(buffer);
 																					}
 																					else
 																					{
@@ -760,12 +816,31 @@ Expression
 																			printf("função print com parametro vn usada com tipo inválido. Esperado: 'graph'. Usado:%s\n",printType($3->type));
 																		}
 																	}
+																	else if(!strcmp($5,"a"))
+																	{
+																		$$ = make_No(is_ExpPRINTA, ins_No($3, NULL), NULL, Is_TypeVoid);
+																		if($3->type == Is_TypeGraph)
+																		{	
+																			getAddr1($3);
+																			sprintf(buffer, "param %s\n", lastAddr1);
+																			bufAppendCode(buffer);
+	
+																			sprintf(buffer, "call _printa, 1\n");
+																			bufAppendCode(buffer);
+																		}
+																		else
+																		{
+																			yyerror("error");
+																			printf("função print com parametro v usada com tipo inválido. Esperado: 'graph'. Usado:%s\n",printType($3->type));
+																		}
+																	}
 																	else
 																	{
 																		yyerror("error");
 																		printf("função print com parametro inválido. Esperado: 'v'. Usado:%s\n",$5);
 																	}
 																}
+
 /*ExpSCAN*/			| "scan" "(" _IDENT_ ")"					{
 																	$$ = make_No(is_ExpSCAN, NULL, ins_Args_Ident(Is_Ident, $3, NULL), Is_TypeVoid);
 																	Table_Line *linha = SymbolTable_lookup($3).linha;

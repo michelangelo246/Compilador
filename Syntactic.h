@@ -133,7 +133,7 @@ struct No_
 		   is_PosExpSub, is_PosExpIn, is_PosExpOut, is_PosExpNeig, is_PosExpCal, is_PosExpCalArg, 
 		   is_UnaExpPos, is_UnaExpOp, is_MulExpUna, is_MulExpMul, is_MulExpDiv, is_AddExpMul, is_AddExpAdd, 
 		   is_AddExpSub, is_RelExpAdd, is_RelExpLT, is_RelExpGT, is_RelExpLE, is_RelExpGE, is_EqExpRel, 
-		   is_EqExpEQ, is_EqExpNE, is_LogAndExpEq, is_LogAndExpAnd, is_LogOrExpLogAnd, is_LogOrExpLogOr, 
+		   is_EqExpEQ, is_EqExpNE, is_LogAndExpEq, is_LogAndExpAnd, is_LogOrExpLogAnd, is_LogOrExpLogOr, is_ExpPRINTA,
 		   is_ExpLogOr, is_ExpAss, is_ExpAssGraph, is_IniDecListIni, is_IniDecList, is_IniDecId, is_ExpPRINT,
 		   is_IniDecIdE, is_VarDec, is_VarDecListVar, is_VarDecList, is_ParamListId, is_ParamList, is_ExpStmNul,
 		   is_StmListStm, is_StmList, is_BlkStm, is_BlkStmList, is_BlkStmVar, is_BlkStmVarStm, is_RetStmRet, is_RetStmExp, 
@@ -197,6 +197,8 @@ void getLabelWhile();
 int widen(No p0,No p1, No p3, int kind);
 void inicializaPRINTVN();
 void inicializaPRINTV();
+void inicializaPRINTA();
 void inicializaInsNo();
+void inicializaInsAresta();
 
 #endif

@@ -58,7 +58,9 @@ int main(int argc, char ** argv)
 	bufAppendTable("\n.table\n");
 	inicializaPRINTV();
 	inicializaPRINTVN();
+	inicializaPRINTA();
 	inicializaInsNo();
+	inicializaInsAresta();
 	parse_tree = pTrans_Unit(input);
 	bufAppendCode("nop\n");
 

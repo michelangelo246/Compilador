@@ -1,20 +1,19 @@
 int main()
 {
-	graph g1;
+	graph g1, g2, g3;
 
-	g1 << 579;
-	g1 << 2+3;
-	g1 << 741;
+	g1 << (12,24);
+	g1 << (52,43);
+	g1 << (63,47);
 
-	print(g1);
+	g2 << (1,2);
 
-	print("\n");
+	g3 << (4,5);
 
-	print(g1,v);
+	g2 << (3,4);
 
-	print("\n");
 
-	print(g1,vn);
-	
-	return 0;
+	print(g1, a);
+	print(g2, a);
+	print(g3, a);
 }
