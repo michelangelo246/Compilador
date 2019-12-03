@@ -766,6 +766,54 @@ Expression
 																							}
 																						}
 																					}
+																					else if($3->type == Is_TypeGraph)
+																					{
+																						int temp, temp1, temp2, temp9, i;
+																						getAddr1($3);
+																						temp = genTemp();
+																						sprintf(buffer, "mov $%d, %s[0]\n",temp, lastAddr1);
+																						bufAppendCode(buffer);
+																						
+																						sprintf(buffer, "mov $%d, *$%d\n", temp, temp);
+																						bufAppendCode(buffer);
+																						
+																						getAddr1($3);
+																						temp2 = genTemp();
+																						sprintf(buffer, "mov $%d, %s[0]\n",temp2,lastAddr1);
+																						bufAppendCode(buffer);
+																						
+																						i = genTemp();
+																						sprintf(buffer, "mov $%d, 0\n", i);
+																						bufAppendCode(buffer);
+																						
+																						sprintf(buffer, "_While_Begin__%d:\n", while_grafo);
+																						bufAppendCode(buffer);
+																						
+																						temp9 = genTemp();
+																						sprintf(buffer, "sleq $%d, $%d, $%d\n",temp9, i, temp);
+																						bufAppendCode(buffer);
+																						
+																						sprintf(buffer, "brz _While_End__%d, $%d\n", while_grafo,temp9);
+																						bufAppendCode(buffer);
+																						
+																						temp1 = genTemp();
+																						sprintf(buffer, "mov $%d, $%d[$%d]\n", temp1, temp2, i);
+																						bufAppendCode(buffer);
+
+																						sprintf(buffer, "println $%d\n", temp1);
+																						bufAppendCode(buffer);
+
+																						sprintf(buffer, "add $%d, $%d, 1\n",i,i);
+																						bufAppendCode(buffer);
+																						
+																						sprintf(buffer, "jump _While_Begin__%d\n", while_grafo);
+																						bufAppendCode(buffer);
+																						
+																						sprintf(buffer, "_While_End__%d:\n", while_grafo);
+																						bufAppendCode(buffer);
+																						
+																						while_grafo++;
+																					}
 																					else
 																					{
 																						yyerror("error");

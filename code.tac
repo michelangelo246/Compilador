@@ -2,33 +2,26 @@
 
 .code
 main:
-mema $0, 2
-mema $1, 1
-mov *$1, 0
-mov $0[0], $1
-mema $2, 1
-mov *$2, 0
-mov $0[1], $2
-mov $3, 32
-mov $4, $3
-mov $5, $0[0]
-mov $5, *$5
-add $5, $5, 2
-mema $6, $5
-sub $5, $5, 2
-mov $7, $0[0]
-mov $8, $5
-add $5, $5, 1
-mov $6[$5], $4
-mov $6[0], $5
+mov $0, 0
+mov $1, $0
+mema $3, 2
+mema $4, 1
+mov *$4, 0
+mov $3[0], $4
+mema $5, 1
+mov *$5, 0
+mov $3[1], $5
+mov $6, $3[0]
+mov $6, *$6
+mov $7, $3[0]
+mov $8, 0
 _While_Begin__0:
-slt $9, 0, $8
+sleq $9, $8, $6
 brz _While_End__0, $9
 mov $10, $7[$8]
-mov $6[$8], $10
-sub $8, $8, 1
+println $10
+add $8, $8, 1
 jump _While_Begin__0
 _While_End__0:
-mov $0[0], $6
-memf $7
+mov $11, 0
 nop

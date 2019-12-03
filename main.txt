@@ -1,9 +1,9 @@
 int main()
 {
+	int i = 0, vertice;
 	graph g1;
 
-	g1 << 32;
-
+	print(g1);
 	
-	
+	return 0;
 }
