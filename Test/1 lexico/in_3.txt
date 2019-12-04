@@ -1,0 +1,7 @@
+int main()
+{
+	char string1[] = "teste1; 
+	int num = 3;
+	char string2[] = "teste2; 
+	return 0;
+}

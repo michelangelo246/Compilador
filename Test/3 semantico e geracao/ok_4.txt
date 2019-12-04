@@ -14,7 +14,6 @@ int main()
 	teste = 3.9;
 	if(teste == 0)
 	{
-		int x;
 		num = f(teste);
 	}
 	return 0;

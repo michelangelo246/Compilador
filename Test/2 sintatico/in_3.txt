@@ -1,0 +1,14 @@
+double Func(int num, double var, graph grafo)
+{
+	return var;
+}
+int main()
+{
+	int=3;
+	graph grafo;
+	int num1, num2, num3;
+	double var = Func(num,1.0,grafo);
+	
+	
+	return 0;
+}

@@ -1,0 +1,13 @@
+int main()
+{
+	int teste = $"essa e uma string
+	int var; //essa é uma declaracao
+	int abcdefghijklmniopqrstuvxyz;
+	/*esse comment fechou*/
+	return 0;
+	2.9/*esse é um comentario
+	"essa e uma string
+	int var; //essa é uma declaracao
+	return 0;$
+	2.9/*esse é um comentario$
+}

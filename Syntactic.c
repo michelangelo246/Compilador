@@ -533,8 +533,7 @@ No make_No(int p1, Nos p2, Args p3, _Type type)
 	}
 	
 	//Regras que possuem um identificador no corpo recebem um nó com esse identificador armazenado*
-	if((p1 == is_PriExpId) ||
-	(p1 == is_PosExpSub ) || (p1 == is_PosExpIn ) || (p1 == is_PosExpOut ) ||
+	if((p1 == is_PriExpId) || (p1 == is_PosExpIn ) || (p1 == is_PosExpOut ) ||
 	(p1 == is_PosExpNeig ) || (p1 == is_PosExpCal ) || (p1 == is_PosExpCalArg ) ||
 	(p1 == is_ExpAss ) || (p1 == is_ExpAssGraph ) || (p1 == is_IniDecId ) ||
 	(p1 == is_IniDecIdE ) || (p1 == is_ParamListId ) || (p1 == is_ParamList ) ||

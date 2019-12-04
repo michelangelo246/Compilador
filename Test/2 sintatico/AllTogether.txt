@@ -1,0 +1,22 @@
+double Func(int num, double var, graph grafo)
+{
+	int = 3;
+	if()
+	{
+		return 1;
+	}
+	return var;
+}
+int main()
+{
+	int=3;
+	graph grafo;
+	int num1;
+	double var = Func(num,1.0,grafo);
+	
+	while()
+	{
+		printf("hello world");
+	}
+	return 0;
+}

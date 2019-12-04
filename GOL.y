@@ -219,25 +219,6 @@ Primary_Exp
 
 Posfix_Exp 	
 /*PosExpPri*/		: Primary_Exp 							{ $$ = $1; } 
-/*PosExpSub*/		| _IDENT_ "[" "(" Expression ")" "]" 	{
-														$$ = make_No(is_PosExpSub, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeGraph);
-													  	Table_Line *linha = SymbolTable_lookup($1).linha;
-														if(!linha)
-														{//erro ao referenciar identificador nao declarado
-															yyerror("error"); 
-															printf("o identificador \"%s\" nao foi declarado\n",$1);
-														}
-														else if(linha->u.ident.Type != Is_TypeGraph)
-														{//erro ao utilizar operação com tipo diferente de grafo
-															yyerror("error"); 
-															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
-														}
-													  	if($4->type != Is_TypeGraph)
-														{//erro ao utilizar operação com tipo diferente de grafo
-															yyerror("error"); 
-															printf("A operacao espera uma expressao do tipo 'graph'\n"); 
-														} 
-													}
 /*PosExpIn*/		| _IDENT_ "@" "(" Expression ")" "#" 	{
 																$$ = make_No(is_PosExpIn, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
 															  	Table_Line *linha = SymbolTable_lookup($1).linha;
@@ -461,10 +442,10 @@ Posfix_Exp
 																printf("Função chamada com número incorreto de argumentos. Argumentos esperados: nenhum\n");
 															}
 														}
-					| _IDENT_ "[" error "]" 			{ printf("sem expressao para subgrafo"); }
-					| _IDENT_ "@" error "#" 			{ printf("sem expressao para grau de entrada"); }
-					| _IDENT_ "#" error "@" 			{ printf("sem expressao para grau de saida"); }
-					| _IDENT_ "&" error "&" 			{ printf("sem expressao para vizinhanca"); }
+					| _IDENT_ "[" error "]" 			{ printf("sem expressao para subgrafo\n"); }
+					| _IDENT_ "@" error "#" 			{ printf("sem expressao para grau de entrada\n"); }
+					| _IDENT_ "#" error "@" 			{ printf("sem expressao para grau de saida\n"); }
+					| _IDENT_ "&" error "&" 			{ printf("sem expressao para vizinhanca\n"); }
 					;
 	
 Unary_Exp 	
@@ -586,18 +567,15 @@ Eq_Exp
 /*EqExpRel*/		: Rel_Exp 				{ $$ = $1; } 
 /*EqExpEQ*/			| Eq_Exp "==" Rel_Exp 	{ 
 												$$ = make_No(is_EqExpEQ, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool);
-												if(($1->type != $3->type) && (($1->type != Is_TypeInt && $1->type != Is_TypeDouble)||($3->type != Is_TypeInt && $3->type != Is_TypeDouble)))
-												{//se os tipos forem diferentes e, ou $1 nao for nem 'int' e nem 'double' ou $3 nao for nem 'int' e nem 'double', reporta erro
-													if($1->type != $3->type)
-													{
-														yyerror("error"); 
-														printf("operador binario '==' com operandos de tipos diferentes. Tipo usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
-													}
-													else
-													{
-														yyerror("error"); 
-														printf("operador binario '==' com operandos de tipos invalidos. Esperados: 'int', 'double' ou 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
-													}
+												if($1->type != $3->type)
+												{//se os tipos forem diferentes, reporta erro
+													yyerror("error"); 
+													printf("operador binario '==' com operandos de tipos diferentes. Tipo usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+												}
+												else if(($1->type == Is_TypeGraph)||($1->type == Is_TypeVoid)||($1->type == Is_TypeBool))
+												{
+													yyerror("error"); 
+													printf("operador binario '==' com operandos de tipos inválidos. Esperados: 'int' ou 'double'. Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
 												}
 												//geração código 3-addr
 												$$->temp = genTemp();
@@ -608,19 +586,17 @@ Eq_Exp
 											}
 /*EqExpNE*/			| Eq_Exp "!=" Rel_Exp	{
 												$$ = make_No(is_EqExpNE, ins_No($1, ins_No($3, NULL)), NULL, Is_TypeBool);
-												if(($1->type != $3->type) && (($1->type != Is_TypeInt && $1->type != Is_TypeDouble)||($3->type != Is_TypeInt && $3->type != Is_TypeDouble)))
-												{//se os tipos forem diferentes e, ou $1 nao for nem 'int' e nem 'double' ou $3 nao for nem 'int' e nem 'double', reporta erro
-													if($1->type != $3->type)
-													{
-														yyerror("error"); 
-														printf("operador binario '!=' com operandos de tipos diferentes. Tipo usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
-													}
-													else
-													{
-														yyerror("error"); 
-														printf("operador binario '!=' com operandos de tipos invalidos. Esperados: 'int', 'double' ou 'bool', Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
-													}
-												}//geração código 3-addr
+												if($1->type != $3->type)
+												{//se os tipos forem diferentes, reporta erro
+													yyerror("error"); 
+													printf("operador binario '!=' com operandos de tipos diferentes. Tipo usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+												}
+												else if(($1->type == Is_TypeGraph)||($1->type == Is_TypeVoid)||($1->type == Is_TypeBool))
+												{
+													yyerror("error"); 
+													printf("operador binario '!=' com operandos de tipos inválidos. Esperados: 'int' ou 'double'. Usados: '%s' e '%s'\n",printType($1->type), printType($3->type));
+												}
+												//geração código 3-addr
 												$$->temp = genTemp();
 												getAddr1($1);
 												getAddr2($3);
@@ -1261,6 +1237,11 @@ If_Stm
 																				bufAppendCode(buffer);
 																				sprintf(buffer,"brz _If_End2_%d, $%d\n", $1->aux, $1->temp);
 																				bufAppendCode(buffer);
+																				if($1->kind == is_IfStmElse)
+																				{
+																					yyerror("error"); 
+																					printf("Comando 'Else' utilizado sem declaração de um comando 'If' prévio. \n");
+																				}
 																			}
 					  Block_Stm												{
 																				$$ = make_No(is_IfStmElse, ins_No($1, ins_No($4, NULL)), NULL, Is_TypeVoid);

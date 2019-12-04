@@ -1,5 +1,6 @@
 
 .table
+int x
 
 .code
 _printv:
@@ -234,8 +235,24 @@ _While_End__8:
 print '}'
 return
 
+f:
+mov $0, #0
+mov $2, 0
+return $2
+
 main:
-mov $0, 0
-mov $1, $0
+mov $1, 0
+mov $2, $1
+mov $4, 3.900000
+mov $0, $4
+mov $5, 0
+seq $6, $0, $5
+brz _If_End_0, $6
+param $0
+call f, 1
+pop $7
+mov $2, $7
+_If_End_0:
+mov $8, 0
 
 nop

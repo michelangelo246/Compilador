@@ -1,0 +1,7 @@
+int main()
+{
+	int teste = "essa e uma string"
+	int var; //esse e um comment de uma linha
+	/*esse comment fechou
+	return 0;
+}

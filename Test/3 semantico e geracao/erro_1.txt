@@ -14,7 +14,7 @@ int main()
 	int a,b=1,c;
 	graph a2, b2, c2;
 
-	a = g();
+	a = g(a,b,c);
 
 	a2 << a;
 	a2 << b+1;
@@ -29,9 +29,11 @@ int main()
 
 	while(a>b)
 	{
-		int a = 2;
+		a = 2;
 		f(a);
 	}
 
+	f(a2);
+	f();
 	return 0;
 }

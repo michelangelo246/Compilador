@@ -46,7 +46,7 @@ void shTree(No p, int pos)
 	}
 	
 	//Caso regra possua um identificador no corpo, imprime um nó para o identificador
-	if((p->kind == is_PosExpSub ) || (p->kind == is_ExpPRINTV) || 
+	if((p->kind == is_ExpPRINTV) || 
 	(p->kind == is_PosExpIn ) || (p->kind == is_PosExpOut ) || (p->kind == is_ExpPRINTVN) ||
 	(p->kind == is_PosExpNeig ) || (p->kind == is_PosExpCal ) || (p->kind == is_PosExpCalArg ) ||
 	(p->kind == is_ExpAss ) || (p->kind == is_ExpAssGraph ) || (p->kind == is_IniDecIdE ) || 
@@ -244,7 +244,6 @@ char* printKind(int kind, int modo)
 	case is_PriExpConst: if(modo==0)printf(" PriExpConst ");else return " PriExpConst "; break; 
 	case is_PriExpExp: if(modo==0)printf(" PriExpExp ");else return " PriExpExp "; break; 
 	case is_PosExpPri: if(modo==0)printf(" PosExpPri ");else return " PosExpPri "; break; 
-	case is_PosExpSub: if(modo==0)printf(" PosExpSub ");else return " PosExpSub "; break; 
 	case is_PosExpIn: if(modo==0)printf(" PosExpIn ");else return " @()# "; break; 
 	case is_PosExpOut: if(modo==0)printf(" PosExpOut ");else return " #()@ "; break; 
 	case is_PosExpNeig: if(modo==0)printf(" PosExpNeig ");else return " &()& "; break; 

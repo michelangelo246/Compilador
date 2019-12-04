@@ -130,7 +130,7 @@ struct No_
 	enum { is_TraUniExtVar, is_TraUniList, is_AssOpEQ, is_AssOpINS, is_ConstInt, is_ConstDouble, 
 		   is_ConstStr, is_UnaOpMinus, is_UnaOpNot, is_TypeVoid, is_TypeInt, is_TypeDouble, is_TypeGraph, 
 		   is_ArgExpListExp, is_ArgExpList, is_PriExpId, is_PriExpConst, is_PriExpExp, is_PosExpPri, 
-		   is_PosExpSub, is_PosExpIn, is_PosExpOut, is_PosExpNeig, is_PosExpCal, is_PosExpCalArg, 
+		   is_PosExpIn, is_PosExpOut, is_PosExpNeig, is_PosExpCal, is_PosExpCalArg, 
 		   is_UnaExpPos, is_UnaExpOp, is_MulExpUna, is_MulExpMul, is_MulExpDiv, is_AddExpMul, is_AddExpAdd, 
 		   is_AddExpSub, is_RelExpAdd, is_RelExpLT, is_RelExpGT, is_RelExpLE, is_RelExpGE, is_EqExpRel, is_ExpPRINTAD,
 		   is_EqExpEQ, is_EqExpNE, is_LogAndExpEq, is_LogAndExpAnd, is_LogOrExpLogAnd, is_LogOrExpLogOr, is_ExpPRINTA,

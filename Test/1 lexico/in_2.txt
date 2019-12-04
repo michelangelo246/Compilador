@@ -1,0 +1,6 @@
+int main()
+{
+	int abcdefghijklmnoabcdefghijklmnoa;
+	float aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
+	return 0;
+}

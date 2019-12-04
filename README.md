@@ -35,8 +35,7 @@ Operações removidas:
 
 ## Notas:
 
-Os únicos tipos numéricos são: ‘int’ e ‘float’; Não existe sobrecarga
-de nomes de funções; Em um ‘if’, o ‘else' estará associado com o ‘if’ mais recente; Expressões matemáticas são avaliadas em ordem consistente com aquelas da matemática; O tipo grafo armazena grafos direcionados com repetição de arestas; O tamanho máximo de um identificador é 31 caracteres; As declarações de variáveis devem constar antes dos statements e somente no escopo global ou de uma função; Grafos não podem ser declarados globalmente;
+Os únicos tipos numéricos são: ‘int’ e ‘float’; Não existe sobrecarga de nomes de funções; Em um ‘if’, o ‘else' estará associado com o ‘if’ mais recente; Expressões matemáticas são avaliadas em ordem consistente com aquelas da matemática; O tipo grafo armazena grafos direcionados com repetição de arestas; O tamanho máximo de um identificador é 31 caracteres; As declarações de variáveis devem constar antes dos statements e somente no escopo global ou de uma função; Grafos não podem ser declarados globalmente;
 
 # Codigo:
 

@@ -1,6 +1,20 @@
+int x;
+int f(double num)
+{
+	int x;
+	return 0;
+}
+
 int main()
 {
-	int i = 0;
-	
-	return i;
+	double teste;
+	int num=0;
+	int x;
+
+	teste = 3.9;
+	if(teste == 0)
+	{
+		num = f(teste);
+	}
+	return 0;
 }

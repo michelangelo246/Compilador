@@ -1,0 +1,10 @@
+int main()
+{
+	int i=10;
+	char string[] = "teste"; //isso e um teste
+	while(i>0)
+	{
+		i--; /*isso tambem*/
+	}
+	return 0;
+}
