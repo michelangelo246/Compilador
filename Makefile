@@ -1,9 +1,22 @@
 all: TestGOL
 
+clean:
+	rm -f *.o
+	rm -f *.png
+	rm -f *.pdf
+	rm -f *.dot
+	rm -f *.tac
+	rm Lexer.c
+	rm Parser.c
+
 TestGOL: Syntactic.o Lexer.o Parser.o Printer.o Test.o
 	#@echo "Linking TestGOL..."
 	gcc -g -W -Wall Syntactic.o Lexer.o Parser.o Printer.o Test.o -o parser
 	rm *.o
+	rm -f *.png
+	rm -f *.pdf
+	rm -f *.dot
+	rm -f *.tac
 	rm Lexer.c
 	rm Parser.c
 

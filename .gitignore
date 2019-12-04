@@ -35,6 +35,7 @@
 *.dot
 *.stackdump
 *.odt#
-tac.exe
+*.png
+*.tac
 
 .vscode

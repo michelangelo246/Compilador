@@ -235,55 +235,7 @@ print '}'
 return
 
 main:
-mema $0, 2
-mema $1, 1
-mov *$1, 0
-mov $0[0], $1
-mema $2, 1
-mov *$2, 0
-mov $0[1], $2
-mema $3, 2
-mema $4, 1
-mov *$4, 0
-mov $3[0], $4
-mema $5, 1
-mov *$5, 0
-mov $3[1], $5
-mov $7, 1
-param $0
-param $7
-call _insNo, 2
-mov $8, 2
-param $0
-param $8
-call _insNo, 2
-mov $9, 3
-param $0
-param $9
-call _insNo, 2
-mov $10, 4
-param $0
-param $10
-call _insNo, 2
-mov $11, 1
-mov $12, 2
-param $0
-param $11
-param $12
-call _insAresta, 3
-mov $13, 1
-mov $14, 3
-param $0
-param $13
-param $14
-call _insAresta, 3
-mov $15, 1
-mov $16, 4
-param $0
-param $15
-param $16
-call _insAresta, 3
-mov $3, $0
-param $3
-call _printd, 1
+mov $0, 0
+mov $1, $0
+
 nop

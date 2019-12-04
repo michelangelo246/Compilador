@@ -87,7 +87,7 @@ int main(int argc, char ** argv)
 	}
 	fclose(codigo);
 
-	if(parse_tree)//if(0)//
+	if(parse_tree)
 	{
 		printf("\nAnalise concluida!\n");
 		if(error == 0)
@@ -96,7 +96,7 @@ int main(int argc, char ** argv)
 			printf(" 1 - Texto puro no terminal;\n");
 			printf(" 2 - Grafico na Web; \n (Copiar manualmente codigo dot gerado e colar no site: http://www.webgraphviz.com/)\n");
 			printf(" 3 - Grafico em arquivo .png; \n (Adicione suporte a extensao .dot com o comando: \" sudo apt install graphviz \")\n");
-			printf("\n Além disso, caso deseje executar o código, digite 4\n");
+			printf("\n Além disso, caso deseje executar o código, digite 4 (requer a presença do interpretador TAC)\n");
 			ok = 0;
 			while(!ok)
 			{
@@ -108,12 +108,14 @@ int main(int argc, char ** argv)
 				case 1:
 					printf("\n[Plain text]\n");
 					showTrans_Unit(parse_tree);
+					printf("\n\n/!\\Arquivo TAC ('code.tac') gerado com sucesso/!\\ \n\n");
 					ok = 1;
 					break;
 				case 2:
 					printf("\n[GraphViz]\n");
 					printf("%s\n", showTrans_Unit(parse_tree));
 					printf("\n /!\\ Copie e cole em http://www.webgraphviz.com/ /!\\");
+					printf("\n\n/!\\Arquivo TAC ('code.tac') gerado com sucesso/!\\ \n\n");
 					ok = 1;
 					break;
 				case 3:
@@ -121,8 +123,11 @@ int main(int argc, char ** argv)
 					printf("\n[Plain text]\n");
 					fputs(showTrans_Unit(parse_tree),arvore);
 					fclose(arvore);
-					printf("\n\n /!\\ Arquivo .dot gerado com sucesso! /!\\\nUtilize o comando \" dot -Tpng Arvore.dot -o Arvore.png \" para gerar a imagem \n");
 					system("dot -Tpng Arvore.dot -o Arvore.png");
+					system("dot -Tpdf Arvore.dot -o Arvore.pdf");
+					printf("\n\n /!\\ Arquivos .dot, .png e .pdf gerados com sucesso! /!\\\n");
+					printf("Caso os arquivos .dot e .png não tenham sido criados, utilize o comando\n \" dot -Tpng Arvore.dot -o Arvore.png \" para a geração. ");
+					printf("\n/!\\Arquivo TAC ('code.tac') gerado com sucesso/!\\ \n\n");
 					ok = 1;
 					break;
 				case 4:
@@ -130,8 +135,12 @@ int main(int argc, char ** argv)
 					printf("\n[Plain text]\n");
 					fputs(showTrans_Unit(parse_tree),arvore);
 					fclose(arvore);
-					printf("\n\n /!\\ Arquivo .dot gerado com sucesso! /!\\\nUtilize o comando \" dot -Tpng Arvore.dot -o Arvore.png \" para gerar a imagem \n");
 					system("dot -Tpng Arvore.dot -o Arvore.png");
+					printf("\n\n /!\\ Arquivos .dot, .png e .pdf gerados com sucesso! /!\\\n");
+					printf("Caso os arquivos .dot e .png não tenham sido criados, utilize o comando\n \" dot -Tpng Arvore.dot -o Arvore.png \" para a geração. ");
+					printf("\n\n/!\\Arquivo TAC ('code.tac') gerado com sucesso/!\\ \n");
+					printf("\n[Execução TAC]\n");
+					system("tac code.tac");
 					ok = 1;
 					break;
 				default:
