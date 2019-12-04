@@ -38,6 +38,7 @@ extern int buf_code_size;
 extern int buf_table_size;
 extern char lastAddr1[99];
 extern char lastAddr2[99];
+extern int retorno;
 
 extern int initialize_lexer(FILE * inp);
 
@@ -1143,7 +1144,16 @@ Return_Stm
 														yyerror("error"); 
 														printf("Função retornando tipo diferente de sua declaração. Tipo Esperado: '%s', Tipo usado: 'void' \n", printType(linha->u.ident.Type));
 													}
-													if(strcmp(SymbolTable->name,"main"))bufAppendCode("return\n");
+													if(strcmp(SymbolTable->name,"main"))
+													{
+														bufAppendCode("return\n");
+													}
+													if(SymbolTable->index_name == 0)
+													{
+														retorno = 1;
+														sprintf(buffer,"\n");
+														bufAppendCode(buffer);
+													}
 												} 
 /*RetStmExp*/		| "return" Expression ";"	{
 													$$ = make_No(is_RetStmExp, ins_No($2, NULL), NULL, $2->type);
@@ -1157,6 +1167,12 @@ Return_Stm
 													{
 														getAddr1($2);
 														sprintf(buffer,"return %s\n",lastAddr1);
+														bufAppendCode(buffer);
+													}
+													if(SymbolTable->index_name == 0)
+													{
+														retorno = 1;
+														sprintf(buffer,"\n");
 														bufAppendCode(buffer);
 													}
 												}
@@ -1260,7 +1276,34 @@ Declarator
 					;
 	
 Function_Def 	
-/*FunDef*/			: Type Declarator Block_Stm	{ $$ = make_No(is_FunDef, ins_No($1, ins_No($2, ins_No($3, NULL))), NULL, Is_TypeVoid); }
+/*FunDef*/			: Type Declarator Block_Stm	{ 
+													$$ = make_No(is_FunDef, ins_No($1, ins_No($2, ins_No($3, NULL))), NULL, Is_TypeVoid);
+													if(retorno == 0)
+													{
+														if(strcmp($2->u.ident_.ident_,"main"))
+														{
+															if($1->type==Is_TypeInt)
+															{
+																sprintf(buffer,"return 0\n\n");
+																bufAppendCode(buffer);
+															}
+															else if($1->type==Is_TypeDouble)
+															{
+																sprintf(buffer,"return 0.0\n\n");
+																bufAppendCode(buffer);
+															}
+															else
+															{
+																sprintf(buffer,"return \n\n");
+																bufAppendCode(buffer);
+															}
+														}
+													}
+													else
+													{
+														retorno = 0;
+													}
+												}
 					;
 	
 Ext_Var_Decl 	

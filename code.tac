@@ -1,4 +1,3 @@
-
 .table
 
 .code
@@ -187,7 +186,7 @@ jump _While_Begin__6
 _While_End__6:
 return $2
 
-main:
+f1:
 mema $0, 2
 mema $1, 1
 mov *$1, 0
@@ -245,26 +244,26 @@ param $19
 param $20
 call _insAresta, 3
 mov $21, 3
-mov $22, 5
+mov $22, 6
 param $0
 param $21
 param $22
 call _insAresta, 3
 mov $23, 3
-mov $24, 6
 param $0
 param $23
-param $24
-call _insAresta, 3
-mov $25, 3
-param $0
-param $25
 call _graphNeig, 2
-pop $26
-param $26
+pop $24
+param $24
 call _printvn, 1
-param $26
+param $24
 call _printv, 1
-param $26
+param $24
 call _printa, 1
+return
+
+main:
+call f1
+mov $0, 0
+
 nop

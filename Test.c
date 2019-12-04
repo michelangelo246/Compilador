@@ -16,6 +16,7 @@ int main(int argc, char ** argv)
 	char *filename = NULL;
 	int pick, ok;
 	char *aux;
+	extern int retorno;
 	
 	if(argc > 1)
 	{
@@ -53,6 +54,7 @@ int main(int argc, char ** argv)
 	buf_code_size = 1;
 	buf_table_size = 1;
 	while_grafo = 0;
+	retorno = 0;
 
 	bufAppendCode("\n.code\n");
 	bufAppendTable("\n.table\n");
