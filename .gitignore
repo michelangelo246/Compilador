@@ -35,7 +35,8 @@
 *.dot
 *.stackdump
 *.odt#
-*.png
+Arvore.png
 *.tac
+Arvore.pdf
 
 .vscode

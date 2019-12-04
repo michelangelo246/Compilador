@@ -12,7 +12,7 @@ int main()
 	int x;
 
 	teste = 3.9;
-	if(teste == 0)
+	if(0 == 0)
 	{
 		num = f(teste);
 	}

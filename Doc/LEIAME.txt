@@ -1,0 +1,27 @@
+Nome: Michelangelo da Rocha Machado
+Matrícula: 14/0156089
+
+* Compilação:
+Utilização do makefile fornecido:
+make -j8
+
+** Alternativamente:
+gcc -g -W -Wall -c Syntactic.c
+flex -PGOL -o Lexer.c GOL.l
+gcc -g -W -Wall -c Lexer.c 
+bison -t -pGOL GOL.y -o Parser.c
+gcc -g -W -Wall -c Parser.c
+gcc -g -W -Wall -c Printer.c
+gcc -g -W -Wall -c Test.c
+gcc -g -W -Wall Syntactic.o Lexer.o Parser.o Printer.o Test.o -o parser
+
+* Descrição dos módulos e arquivos:
+Test.c - Contém a main e as inicializações do tradutor
+Syntactic - Definição das estruturas (Arvore, Tabela de símbolos, etc) e funções utilizadas sobre essas estruturas bem como na análise semântica e geração de código.
+Printer - Definição das funções que imprimem a árvore abstrata anotada
+Parser.h - Definições para comunicação com o bison
+GOL.y - Definições sintáticas e semânticas e geração de código de três endereços
+GOL.l - Definições léxicas
+
+* Arquivos teste:
+Diretório 'Arquivos de teste'

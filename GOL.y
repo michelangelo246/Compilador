@@ -857,7 +857,7 @@ Expression
 /*ExpPRINTV*/		| "print" "(" Expression "," _IDENT_ ")"	{
 																	if(!strcmp($5,"v"))
 																	{
-																		$$ = make_No(is_ExpPRINTV, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $5, NULL), Is_TypeVoid);
+																		$$ = make_No(is_ExpPRINTV, ins_No($3, NULL), NULL, Is_TypeVoid);
 																		if($3->type == Is_TypeGraph)
 																		{	
 																			getAddr1($3);

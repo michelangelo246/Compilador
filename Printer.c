@@ -46,8 +46,7 @@ void shTree(No p, int pos)
 	}
 	
 	//Caso regra possua um identificador no corpo, imprime um nó para o identificador
-	if((p->kind == is_ExpPRINTV) || 
-	(p->kind == is_PosExpIn ) || (p->kind == is_PosExpOut ) || (p->kind == is_ExpPRINTVN) ||
+	if((p->kind == is_PosExpIn ) || (p->kind == is_PosExpOut ) ||
 	(p->kind == is_PosExpNeig ) || (p->kind == is_PosExpCal ) || (p->kind == is_PosExpCalArg ) ||
 	(p->kind == is_ExpAss ) || (p->kind == is_ExpAssGraph ) || (p->kind == is_IniDecIdE ) || 
 	(p->kind == is_ParamListId ) || (p->kind == is_ParamList ) || (p->kind == is_DecIdParam ) || (p->kind == is_DecId ))

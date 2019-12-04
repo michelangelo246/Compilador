@@ -1,6 +1,5 @@
 
 .table
-int x
 
 .code
 _printv:
@@ -235,24 +234,84 @@ _While_End__8:
 print '}'
 return
 
-f:
-mov $0, #0
-mov $2, 0
-return $2
-
 main:
-mov $1, 0
-mov $2, $1
-mov $4, 3.900000
-mov $0, $4
-mov $5, 0
-seq $6, $0, $5
-brz _If_End_0, $6
+mema $0, 2
+mema $1, 1
+mov *$1, 0
+mov $0[0], $1
+mema $2, 1
+mov *$2, 0
+mov $0[1], $2
+mema $3, 2
+mema $4, 1
+mov *$4, 0
+mov $3[0], $4
+mema $5, 1
+mov *$5, 0
+mov $3[1], $5
+mov $7, 2
+mov $8, 3
 param $0
-call f, 1
-pop $7
-mov $2, $7
-_If_End_0:
-mov $8, 0
-
+param $7
+param $8
+call _insAresta, 3
+mov $9, 2
+mov $10, 5
+param $0
+param $9
+param $10
+call _insAresta, 3
+mov $11, 2
+mov $12, 6
+param $0
+param $11
+param $12
+call _insAresta, 3
+mov $13, 2
+mov $14, 5
+param $0
+param $13
+param $14
+call _insAresta, 3
+mov $15, 3
+mov $16, 5
+param $0
+param $15
+param $16
+call _insAresta, 3
+mov $17, 4
+mov $18, 5
+param $0
+param $17
+param $18
+call _insAresta, 3
+mov $19, 5
+mov $20, 5
+param $0
+param $19
+param $20
+call _insAresta, 3
+mov $21, 3
+mov $22, 6
+param $0
+param $21
+param $22
+call _insAresta, 3
+mov $23, 3
+param $0
+param $23
+call _graphNeig, 2
+pop $24
+param $24
+call _printvn, 1
+param $24
+call _printv, 1
+param $24
+call _printa, 1
+param $0
+call _printa, 1
+param $0
+call _printv, 1
+param $0
+call _printvn, 1
 nop
