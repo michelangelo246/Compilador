@@ -1493,4 +1493,96 @@ void inicializaGrafoCopy()
 	sprintf(buffer,"return $%d", temp2);
 	bufAppendCode(buffer);
 
+	while_grafo++;
+}
+
+void inicializaNeig()
+{
+	int temp = genTemp(), temp2 = genTemp(), temp3 = genTemp();
+	int temp4 = genTemp(), temp5 = genTemp(), temp6 = genTemp();
+	int temp7 = genTemp(), temp8 = genTemp(), temp9 = genTemp();
+	int temp10 = genTemp(), temp11 = genTemp(), temp12 = genTemp();
+	int temp13 = genTemp();
+	char buffer[99];
+
+	sprintf(buffer,"_graphNeig:\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d, #0\n", temp);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d, #1\n", temp2);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mema $%d, 2\n", temp3);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mema $%d, 1\n", temp4);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov *$%d, 0\n", temp4);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d[0], $%d\n", temp3, temp4);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mema $%d, 1\n", temp5);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov *$%d, 0\n", temp5);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d[1], $%d\n", temp3, temp5);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d, $%d\n", temp6, temp);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d, $%d[1]\n", temp7, temp6);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d, *$%d\n", temp7, temp7);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mul $%d, $%d, 2\n", temp7, temp7);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d, $%d[1]\n", temp8, temp6);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d, 1\n", temp9);
+	bufAppendCode(buffer);
+	sprintf(buffer,"_While_Begin__%d:\n", while_grafo);
+	bufAppendCode(buffer);
+	sprintf(buffer,"sleq $%d, $%d, $%d\n", temp10, temp9, temp7);
+	bufAppendCode(buffer);
+	sprintf(buffer,"brz _While_End__%d, $%d\n", while_grafo, temp10);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d, $%d[$%d]\n", temp11, temp8, temp9);
+	bufAppendCode(buffer);
+	sprintf(buffer,"add $%d, $%d, 1\n", temp9, temp9);
+	bufAppendCode(buffer);
+	sprintf(buffer,"mov $%d, $%d[$%d]\n", temp12, temp8, temp9);
+	bufAppendCode(buffer);
+	sprintf(buffer,"seq $%d, $%d, $%d\n", temp13, temp11, temp2);
+	bufAppendCode(buffer);
+	sprintf(buffer,"brz _NaoTem_%d, $%d\n", while_grafo, temp13);
+	bufAppendCode(buffer);
+	sprintf(buffer,"param $%d\n", temp3);
+	bufAppendCode(buffer);
+	sprintf(buffer,"param $%d\n", temp12);
+	bufAppendCode(buffer);
+	sprintf(buffer,"call _insNo, 2\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"jump _End_%d\n", while_grafo);
+	bufAppendCode(buffer);
+	sprintf(buffer,"_NaoTem_%d:\n", while_grafo);
+	bufAppendCode(buffer);
+	sprintf(buffer,"seq $%d, $%d, $%d\n", temp13, temp12, temp2);
+	bufAppendCode(buffer);
+	sprintf(buffer,"brz _End_%d, $%d\n", while_grafo, temp13);
+	bufAppendCode(buffer);
+	sprintf(buffer,"param $%d\n", temp3);
+	bufAppendCode(buffer);
+	sprintf(buffer,"param $%d\n", temp11);
+	bufAppendCode(buffer);
+	sprintf(buffer,"call _insNo, 2\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"_End_%d:\n", while_grafo);
+	bufAppendCode(buffer);
+	sprintf(buffer,"add $%d, $%d, 1\n", temp9, temp9);
+	bufAppendCode(buffer);
+	sprintf(buffer,"jump _While_Begin__%d\n", while_grafo);
+	bufAppendCode(buffer);
+	sprintf(buffer,"_While_End__%d:\n", while_grafo);
+	bufAppendCode(buffer);
+	sprintf(buffer,"return $%d\n\n", temp3);
+	bufAppendCode(buffer);
+
+	while_grafo++;
 }

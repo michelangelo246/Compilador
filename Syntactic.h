@@ -202,5 +202,6 @@ void inicializaInsNo();
 void inicializaInsAresta();
 void inicializaGetGrauIn();
 void inicializaGetGrauOut();
+void inicializaNeig();
 
 #endif

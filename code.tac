@@ -1,3 +1,4 @@
+
 .table
 
 .code
@@ -146,6 +147,46 @@ jump _While_Begin__5
 _While_End__5:
 return $4
 
+_graphNeig:
+mov $0, #0
+mov $1, #1
+mema $2, 2
+mema $3, 1
+mov *$3, 0
+mov $2[0], $3
+mema $4, 1
+mov *$4, 0
+mov $2[1], $4
+mov $5, $0
+mov $6, $5[1]
+mov $6, *$6
+mul $6, $6, 2
+mov $7, $5[1]
+mov $8, 1
+_While_Begin__6:
+sleq $9, $8, $6
+brz _While_End__6, $9
+mov $10, $7[$8]
+add $8, $8, 1
+mov $11, $7[$8]
+seq $12, $10, $1
+brz _NaoTem_6, $12
+param $2
+param $11
+call _insNo, 2
+jump _End_6
+_NaoTem_6:
+seq $12, $11, $1
+brz _End_6, $12
+param $2
+param $10
+call _insNo, 2
+_End_6:
+add $8, $8, 1
+jump _While_Begin__6
+_While_End__6:
+return $2
+
 main:
 mema $0, 2
 mema $1, 1
@@ -163,92 +204,67 @@ mov *$5, 0
 mov $3[1], $5
 mov $7, 2
 mov $8, 3
-param $3
+param $0
 param $7
 param $8
 call _insAresta, 3
 mov $9, 2
 mov $10, 5
-param $3
+param $0
 param $9
 param $10
 call _insAresta, 3
 mov $11, 2
 mov $12, 6
-param $3
+param $0
 param $11
 param $12
 call _insAresta, 3
 mov $13, 2
 mov $14, 5
-param $3
+param $0
 param $13
 param $14
 call _insAresta, 3
 mov $15, 3
 mov $16, 5
-param $3
+param $0
 param $15
 param $16
 call _insAresta, 3
 mov $17, 4
 mov $18, 5
-param $3
+param $0
 param $17
 param $18
 call _insAresta, 3
 mov $19, 5
 mov $20, 5
-param $3
+param $0
 param $19
 param $20
 call _insAresta, 3
 mov $21, 3
 mov $22, 5
-param $3
+param $0
 param $21
 param $22
 call _insAresta, 3
 mov $23, 3
 mov $24, 6
-param $3
+param $0
 param $23
 param $24
 call _insAresta, 3
-mov $25, 6
+mov $25, 3
 param $0
 param $25
-call _getGrauIn, 2
+call _graphNeig, 2
 pop $26
-println $26
-mov $27, 5
-param $0
-param $27
-call _getGrauIn, 2
-pop $28
-println $28
-mov $29, 3
-param $0
-param $29
-call _getGrauIn, 2
-pop $30
-println $30
-mov $31, 2
-param $0
-param $31
-call _getGrauOut, 2
-pop $32
-println $32
-mov $33, 3
-param $0
-param $33
-call _getGrauOut, 2
-pop $34
-println $34
-mov $35, 4
-param $0
-param $35
-call _getGrauOut, 2
-pop $36
-println $36
+param $26
+call _printvn, 1
+param $26
+call _printv, 1
+param $26
+call _printa, 1
 nop

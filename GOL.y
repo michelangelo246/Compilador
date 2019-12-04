@@ -366,7 +366,7 @@ Posfix_Exp
 																		sprintf(buffer, "param %s\n", lastAddr1);
 																		bufAppendCode(buffer);
 																	}
-																	sprintf(buffer, "call _getNeig, 2\n");
+																	sprintf(buffer, "call _graphNeig, 2\n");
 																	bufAppendCode(buffer);
 																	$$->temp = genTemp();
 																	sprintf(buffer, "pop $%d\n",$$->temp);

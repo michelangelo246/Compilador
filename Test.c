@@ -63,6 +63,7 @@ int main(int argc, char ** argv)
 	inicializaInsAresta(); TempCount = 0;
 	inicializaGetGrauIn(); TempCount = 0;
 	inicializaGetGrauOut(); TempCount = 0;
+	inicializaNeig(); TempCount = 0;
 	parse_tree = pTrans_Unit(input);
 	bufAppendCode("nop\n");
 
