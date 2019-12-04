@@ -200,5 +200,7 @@ void inicializaPRINTV();
 void inicializaPRINTA();
 void inicializaInsNo();
 void inicializaInsAresta();
+void inicializaGetGrauIn();
+void inicializaGetGrauOut();
 
 #endif

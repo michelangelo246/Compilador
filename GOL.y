@@ -238,24 +238,52 @@ Posfix_Exp
 														} 
 													}
 /*PosExpIn*/		| _IDENT_ "@" "(" Expression ")" "#" 	{
-														$$ = make_No(is_PosExpIn, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
-													  	Table_Line *linha = SymbolTable_lookup($1).linha;
-														if(!linha)
-														{//erro ao referenciar identificador nao declarado
-															yyerror("error"); 
-															printf("o identificador \"%s\" nao foi declarado\n",$1);
-														}
-														else if(linha->u.ident.Type != Is_TypeGraph)
-														{//erro ao utilizar operação com tipo diferente de int
-															yyerror("error"); 
-															printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
-														}
-													  	if($4->type != Is_TypeInt)
-														{//erro ao utilizar operação com tipo diferente de int
-															yyerror("error");
-															printf("A operacao espera uma expressao do tipo 'int'\n");
-														}
-													}
+																$$ = make_No(is_PosExpIn, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
+															  	Table_Line *linha = SymbolTable_lookup($1).linha;
+																if(!linha)
+																{//erro ao referenciar identificador nao declarado
+																	yyerror("error"); 
+																	printf("o identificador \"%s\" nao foi declarado\n",$1);
+																}
+																else if(linha->u.ident.Type != Is_TypeGraph)
+																{//erro ao utilizar operação com tipo diferente de int
+																	yyerror("error"); 
+																	printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
+																}
+																else if(($4->type == Is_TypeDouble)||($4->type == Is_TypeInt))
+																{//realiza operação
+																	getAddrIdent($1);
+																	sprintf(buffer, "param %s\n", lastAddr1);
+																	bufAppendCode(buffer);
+																	if($4->type == Is_TypeDouble)
+																	{//se expressão é double
+																		int temp = genTemp();
+																		getAddr1($4);
+																		sprintf(buffer, "fltoint $%d, %s\n", temp, lastAddr1);
+																		bufAppendCode(buffer);
+																		getAddr1($4);	
+																		sprintf(buffer, "param $%d\n", temp);
+																		bufAppendCode(buffer);
+
+																	}
+																	else
+																	{
+																		getAddr1($4);	
+																		sprintf(buffer, "param %s\n", lastAddr1);
+																		bufAppendCode(buffer);
+																	}
+																	sprintf(buffer, "call _getGrauIn, 2\n");
+																	bufAppendCode(buffer);
+																	$$->temp = genTemp();
+																	sprintf(buffer, "pop $%d\n",$$->temp);
+																	bufAppendCode(buffer);
+																}
+																else
+																{//erro ao utilizar operação com tipo diferente de int
+																	yyerror("error"); 
+																	printf("Operacao de grau de entrada com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usado: '%s'\n",printType($4->type));
+																}
+															}
 /*PosExpOut*/		| _IDENT_ "#" "(" Expression ")" "@" 	{
 																$$ = make_No(is_PosExpOut, ins_No($4, NULL), ins_Args_Ident(Is_Ident, $1, NULL), Is_TypeInt);
 															  	Table_Line *linha = SymbolTable_lookup($1).linha;
@@ -269,10 +297,38 @@ Posfix_Exp
 																	yyerror("error"); 
 																	printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
 																}
-															  	if($4->type != Is_TypeInt)
-																{ //erro ao utilizar operação utilizando tipo diferente de int
+															  	else if(($4->type == Is_TypeDouble)||($4->type == Is_TypeInt))
+																{//realiza operação
+																	getAddrIdent($1);
+																	sprintf(buffer, "param %s\n", lastAddr1);
+																	bufAppendCode(buffer);
+																	if($4->type == Is_TypeDouble)
+																	{//se expressão é double
+																		int temp = genTemp();
+																		getAddr1($4);
+																		sprintf(buffer, "fltoint $%d, %s\n", temp, lastAddr1);
+																		bufAppendCode(buffer);
+																		getAddr1($4);	
+																		sprintf(buffer, "param $%d\n", temp);
+																		bufAppendCode(buffer);
+																		
+																	}
+																	else
+																	{
+																		getAddr1($4);	
+																		sprintf(buffer, "param %s\n", lastAddr1);
+																		bufAppendCode(buffer);
+																	}
+																	sprintf(buffer, "call _getGrauOut, 2\n");
+																	bufAppendCode(buffer);
+																	$$->temp = genTemp();
+																	sprintf(buffer, "pop $%d\n",$$->temp);
+																	bufAppendCode(buffer);
+																}
+																else
+																{//erro ao utilizar operação com tipo diferente de int
 																	yyerror("error"); 
-																	printf("A operacao espera uma expressao do tipo 'int'\n"); 
+																	printf("Operacao de grau de entrada com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usado: '%s'\n",printType($4->type));
 																}
 															}
 /*PosExpNeig*/		| _IDENT_ "&" "(" Expression ")" "&" 	{
@@ -684,7 +740,7 @@ Expression
 																					else
 																					{
 																						if($2->kind != is_AssOpINS)
-																						{
+																						{//se operação não for inserção de vértice
 																							yyerror("error"); 
 																							printf("O formato de atribuição com par expressões só pode ser usado na inserção de arestas em um grafo. \n");
 																						}
@@ -694,7 +750,7 @@ Expression
 																							printf("Inserção de arestas utilizando expressões com tipo não suportado. Esperado: 'int' ou 'double', Usados: '%s' e '%s'\n", printType($4->type), printType($6->type));
 																						}
 																						else if(linha->u.ident.Type != Is_TypeGraph)
-																						{
+																						{//se identifier não for grafo
 																							yyerror("error"); 
 																							printf("Operador de inserção de arestas aplicado a identificador de tipo não suportado. Esperado: 'graph', Usado: '%s'\n", printType(linha->u.ident.Type));
 																						}
@@ -768,7 +824,7 @@ Expression
 																						getAddr1($3);
 																						sprintf(buffer, "param %s\n", lastAddr1);
 																						bufAppendCode(buffer);
-				
+
 																						sprintf(buffer, "call _printa, 1\n");
 																						bufAppendCode(buffer);
 																					}
@@ -1144,6 +1200,7 @@ Declarator
 															recent_identifier_index = 0; 
 														  	SymbolTable_ins_Fun($1, yy_mylinenumber, yy_mycolumnnumber, recent_type, $3);
 															//geração de código 3-addr
+															TempCount = 0;
 															sprintf(buffer,"%s:\n",$1);
 															bufAppendCode(buffer);
 														} 
@@ -1152,6 +1209,7 @@ Declarator
 														  	recent_identifier = $1; recent_identifier_index = 0;
 														  	SymbolTable_ins_Fun( $1, yy_mylinenumber, yy_mycolumnnumber, recent_type, NULL);
 															//geração de código 3-addr
+															TempCount = 0;
 															sprintf(buffer,"%s:\n",$1);
 															bufAppendCode(buffer);
 														}

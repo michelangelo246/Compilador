@@ -56,11 +56,13 @@ int main(int argc, char ** argv)
 
 	bufAppendCode("\n.code\n");
 	bufAppendTable("\n.table\n");
-	inicializaPRINTV();
-	inicializaPRINTVN();
-	inicializaPRINTA();
-	inicializaInsNo();
-	inicializaInsAresta();
+	inicializaPRINTV(); TempCount = 0;
+	inicializaPRINTVN(); TempCount = 0;
+	inicializaPRINTA(); TempCount = 0;
+	inicializaInsNo(); TempCount = 0;
+	inicializaInsAresta(); TempCount = 0;
+	inicializaGetGrauIn(); TempCount = 0;
+	inicializaGetGrauOut(); TempCount = 0;
 	parse_tree = pTrans_Unit(input);
 	bufAppendCode("nop\n");
 
