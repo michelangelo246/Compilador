@@ -344,10 +344,38 @@ Posfix_Exp
 																	yyerror("error"); 
 																	printf("Operador aplicado a identificador de tipo incorreto. Esperado: 'graph', Usado: '%s'\n",printType(linha->u.ident.Type));
 																}
-															  	if($4->type != Is_TypeInt)
-																{ 
+															  	else if(($4->type == Is_TypeDouble)||($4->type == Is_TypeInt))
+																{//realiza operação
+																	getAddrIdent($1);
+																	sprintf(buffer, "param %s\n", lastAddr1);
+																	bufAppendCode(buffer);
+																	if($4->type == Is_TypeDouble)
+																	{//se expressão é double
+																		int temp = genTemp();
+																		getAddr1($4);
+																		sprintf(buffer, "fltoint $%d, %s\n", temp, lastAddr1);
+																		bufAppendCode(buffer);
+																		getAddr1($4);	
+																		sprintf(buffer, "param $%d\n", temp);
+																		bufAppendCode(buffer);
+																		
+																	}
+																	else
+																	{
+																		getAddr1($4);	
+																		sprintf(buffer, "param %s\n", lastAddr1);
+																		bufAppendCode(buffer);
+																	}
+																	sprintf(buffer, "call _getNeig, 2\n");
+																	bufAppendCode(buffer);
+																	$$->temp = genTemp();
+																	sprintf(buffer, "pop $%d\n",$$->temp);
+																	bufAppendCode(buffer);
+																}
+																else
+																{//erro ao utilizar operação com tipo diferente de int
 																	yyerror("error"); 
-																	printf("A operacao espera uma expressao do tipo 'int'\n"); 
+																	printf("Operacao de grau de entrada com operandos de tipos invalidos. Esperados: 'int' ou 'double', Usado: '%s'\n",printType($4->type));
 																}
 															}
 /*PosExpCal*/		| _IDENT_ "(" ")" 			  		{
@@ -653,8 +681,22 @@ Expression
 																							{//e se algum dos dois for diferente de int e double
 																								if($2->kind != is_AssOpINS)
 																								{//e nao for insercao de vertice
-																									yyerror("error"); 
-																									printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
+																									if((linha->u.ident.Type == Is_TypeGraph) && ($3->type == Is_TypeGraph))
+																									{
+																										getAddr1($3);
+																										sprintf(buffer, "param %s\n", lastAddr1);
+																										bufAppendCode(buffer);
+																										sprintf(buffer, "call _graphCopy, 1\n");
+																										bufAppendCode(buffer);
+																										getAddrIdent($1);
+																										sprintf(buffer, "pop %s\n", lastAddr1);
+																										bufAppendCode(buffer);
+																									}
+																									else
+																									{
+																										yyerror("error"); 
+																										printf("Atribuição com tipos distintos. Tipos usados: '%s' e '%s'\n",printType(linha->u.ident.Type), printType($3->type));
+																									}
 																								}
 																								else if((linha->u.ident.Type == Is_TypeGraph)&&($2->kind == is_AssOpINS))
 																								{//se for isercao de vertice

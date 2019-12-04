@@ -163,55 +163,55 @@ mov *$5, 0
 mov $3[1], $5
 mov $7, 2
 mov $8, 3
-param $0
+param $3
 param $7
 param $8
 call _insAresta, 3
 mov $9, 2
 mov $10, 5
-param $0
+param $3
 param $9
 param $10
 call _insAresta, 3
 mov $11, 2
 mov $12, 6
-param $0
+param $3
 param $11
 param $12
 call _insAresta, 3
 mov $13, 2
 mov $14, 5
-param $0
+param $3
 param $13
 param $14
 call _insAresta, 3
 mov $15, 3
 mov $16, 5
-param $0
+param $3
 param $15
 param $16
 call _insAresta, 3
 mov $17, 4
 mov $18, 5
-param $0
+param $3
 param $17
 param $18
 call _insAresta, 3
 mov $19, 5
 mov $20, 5
-param $0
+param $3
 param $19
 param $20
 call _insAresta, 3
 mov $21, 3
 mov $22, 5
-param $0
+param $3
 param $21
 param $22
 call _insAresta, 3
 mov $23, 3
 mov $24, 6
-param $0
+param $3
 param $23
 param $24
 call _insAresta, 3
@@ -251,23 +251,4 @@ param $35
 call _getGrauOut, 2
 pop $36
 println $36
-mov $37, 10
-mov $6, $37
-_While_Begin_0:
-mov $38, 0
-slt $39, $38, $6
-brz _While_End_0, $39
-print 'H'
-print 'e'
-print 'l'
-print 'l'
-print 'o'
-print ' '
-println $6
-print '\n'
-mov $40, 1
-sub $41, $6, $40
-mov $6, $41
-jump _While_Begin_0
-_While_End_0:
 nop
