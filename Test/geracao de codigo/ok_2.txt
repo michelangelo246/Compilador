@@ -15,5 +15,13 @@ int main()
 
 	print(g1&(3)&); //2,5,6
 
+	print(g1, a);
+
+	print(g1, v);
+
+	print(g1, vn);
+
+	print(g1, an);
+
 	
 }

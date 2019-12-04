@@ -1,3 +1,4 @@
+
 .table
 
 .code
@@ -186,7 +187,54 @@ jump _While_Begin__6
 _While_End__6:
 return $2
 
-f1:
+_printd:
+print 'd'
+print 'i'
+print 'g'
+print 'r'
+print 'a'
+print 'p'
+print 'h'
+print '{'
+mov $0, #0
+mov $1, $0[0]
+mov $1, *$1
+mov $2, $0[0]
+mov $5, 1
+_While_Begin__7:
+sleq $3, $5, $1
+brz _While_End__7, $3
+mov $4, $2[$5]
+print $4
+print ';'
+add $5, $5, 1
+jump _While_Begin__7
+_While_End__7:
+mov $6, #0
+mov $7, $6[1]
+mov $7, *$7
+mul $7, $7, 2
+mov $8, $6[1]
+mov $11, 1
+_While_Begin__8:
+sleq $9, $11, $7
+brz _While_End__8, $9
+mov $10, $8[$11]
+print $10
+print '-'
+print '>'
+print ' '
+add $11, $11, 1
+mov $10, $8[$11]
+println $10
+print ';'
+add $11, $11, 1
+jump _While_Begin__8
+_While_End__8:
+print '}'
+return
+
+main:
 mema $0, 2
 mema $1, 1
 mov *$1, 0
@@ -201,69 +249,41 @@ mov $3[0], $4
 mema $5, 1
 mov *$5, 0
 mov $3[1], $5
-mov $7, 2
-mov $8, 3
+mov $7, 1
 param $0
 param $7
+call _insNo, 2
+mov $8, 2
+param $0
 param $8
-call _insAresta, 3
-mov $9, 2
-mov $10, 5
+call _insNo, 2
+mov $9, 3
 param $0
 param $9
+call _insNo, 2
+mov $10, 4
+param $0
 param $10
-call _insAresta, 3
-mov $11, 2
-mov $12, 6
+call _insNo, 2
+mov $11, 1
+mov $12, 2
 param $0
 param $11
 param $12
 call _insAresta, 3
-mov $13, 2
-mov $14, 5
+mov $13, 1
+mov $14, 3
 param $0
 param $13
 param $14
 call _insAresta, 3
-mov $15, 3
-mov $16, 5
+mov $15, 1
+mov $16, 4
 param $0
 param $15
 param $16
 call _insAresta, 3
-mov $17, 4
-mov $18, 5
-param $0
-param $17
-param $18
-call _insAresta, 3
-mov $19, 5
-mov $20, 5
-param $0
-param $19
-param $20
-call _insAresta, 3
-mov $21, 3
-mov $22, 6
-param $0
-param $21
-param $22
-call _insAresta, 3
-mov $23, 3
-param $0
-param $23
-call _graphNeig, 2
-pop $24
-param $24
-call _printvn, 1
-param $24
-call _printv, 1
-param $24
-call _printa, 1
-return
-
-main:
-call f1
-mov $0, 0
-
+mov $3, $0
+param $3
+call _printd, 1
 nop

@@ -1,39 +1,60 @@
-Date : 2019-11-15 04:17:51
+Date : 2019-12-04 04:17:54
 Directory : c:\Users\Michelangelo\Desktop\Compilador
-Total : 10 files,  1817 codes, 73 comments, 246 blanks, all 2136 lines
+Total : 25 files,  5148 codes, 1920 comments, 524 blanks, all 7592 lines
 
 Languages
-+----------+------------+------------+------------+------------+------------+
-| language | files      | code       | comment    | blank      | total      |
-+----------+------------+------------+------------+------------+------------+
-| C        |          3 |        772 |         35 |         97 |        904 |
-| YACC     |          1 |        639 |          8 |         46 |        693 |
-| C++      |          3 |        187 |         20 |         59 |        266 |
-| YYLEX    |          1 |        158 |         10 |         20 |        188 |
-| Markdown |          1 |         40 |          0 |         15 |         55 |
-| Makefile |          1 |         21 |          0 |          9 |         30 |
-+----------+------------+------------+------------+------------+------------+
++------------------+------------+------------+------------+------------+------------+
+| language         | files      | code       | comment    | blank      | total      |
++------------------+------------+------------+------------+------------+------------+
+| C                |         17 |      2,040 |        126 |        280 |      2,446 |
+| Plain Text (PDF) |          1 |      1,427 |      1,743 |         62 |      3,232 |
+| YACC             |          1 |      1,223 |         18 |         72 |      1,313 |
+| C++              |          3 |        227 |         21 |         64 |        312 |
+| YYLEX            |          1 |        166 |         11 |         21 |        198 |
+| Markdown         |          1 |         45 |          0 |         16 |         61 |
+| Makefile         |          1 |         20 |          1 |          9 |         30 |
++------------------+------------+------------+------------+------------+------------+
 
 Directories
-+-------------+------------+------------+------------+------------+------------+
-| path        | files      | code       | comment    | blank      | total      |
-+-------------+------------+------------+------------+------------+------------+
-| .           |         10 |      1,817 |         73 |        246 |      2,136 |
-+-------------+------------+------------+------------+------------+------------+
++----------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                         | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                            |         25 |      5,148 |      1,920 |        524 |      7,592 |
+| Doc                                                                                          |          1 |      1,427 |      1,743 |         62 |      3,232 |
+| Test                                                                                         |         13 |        245 |          0 |         68 |        313 |
+| Test\Versao atual                                                                            |          4 |        103 |          0 |         24 |        127 |
+| Test\Versao incompleta                                                                       |          7 |        103 |          0 |         30 |        133 |
+| Test\geracao de codigo                                                                       |          2 |         39 |          0 |         14 |         53 |
++----------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
 
 Files
-+-------------+----------+------------+------------+------------+------------+
-| filename    | language | code       | comment    | blank      | total      |
-+-------------+----------+------------+------------+------------+------------+
-| GOL.l       | YYLEX    |        158 |         10 |         20 |        188 |
-| GOL.y       | YACC     |        639 |          8 |         46 |        693 |
-| Makefile    | Makefile |         21 |          0 |          9 |         30 |
-| Parser.h    | C++      |         52 |         12 |          9 |         73 |
-| Printer.c   | C        |        314 |          1 |         26 |        341 |
-| Printer.h   | C++      |         17 |          1 |         10 |         28 |
-| README.md   | Markdown |         40 |          0 |         15 |         55 |
-| Syntactic.c | C        |        374 |         32 |         62 |        468 |
-| Syntactic.h | C++      |        118 |          7 |         40 |        165 |
-| Test.c      | C        |         84 |          2 |          9 |         95 |
-| Total       |          |      1,817 |         73 |        246 |      2,136 |
-+-------------+----------+------------+------------+------------+------------+
++----------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| filename                                                                                     | language         | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| c:\Users\Michelangelo\Desktop\Compilador\Doc\14_0156089_semantico.pdf                        | Plain Text (PDF) |      1,427 |      1,743 |         62 |      3,232 |
+| c:\Users\Michelangelo\Desktop\Compilador\GOL.l                                               | YYLEX            |        166 |         11 |         21 |        198 |
+| c:\Users\Michelangelo\Desktop\Compilador\GOL.y                                               | YACC             |      1,223 |         18 |         72 |      1,313 |
+| c:\Users\Michelangelo\Desktop\Compilador\Makefile                                            | Makefile         |         20 |          1 |          9 |         30 |
+| c:\Users\Michelangelo\Desktop\Compilador\Parser.h                                            | C++              |         54 |         12 |          9 |         75 |
+| c:\Users\Michelangelo\Desktop\Compilador\Printer.c                                           | C                |        342 |          2 |         26 |        370 |
+| c:\Users\Michelangelo\Desktop\Compilador\Printer.h                                           | C++              |         17 |          1 |         10 |         28 |
+| c:\Users\Michelangelo\Desktop\Compilador\README.md                                           | Markdown         |         45 |          0 |         16 |         61 |
+| c:\Users\Michelangelo\Desktop\Compilador\Syntactic.c                                         | C                |      1,298 |        120 |        170 |      1,588 |
+| c:\Users\Michelangelo\Desktop\Compilador\Syntactic.h                                         | C++              |        156 |          8 |         45 |        209 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test.c                                              | C                |        134 |          4 |         11 |        149 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao atual\descricao arquivos teste.txt      | C                |          9 |          0 |          2 |         11 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao atual\erro_1.txt                        | C                |         32 |          0 |          7 |         39 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao atual\erro_2.txt                        | C                |         32 |          0 |          8 |         40 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao atual\funcionando_1.txt                 | C                |         30 |          0 |          7 |         37 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\descricao arquivos teste.txt | C                |         16 |          0 |          6 |         22 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\erro_1.txt                   | C                |         21 |          0 |          5 |         26 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\erro_2.txt                   | C                |         15 |          0 |          4 |         19 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\erro_3.txt                   | C                |         10 |          0 |          4 |         14 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\erro_4.txt                   | C                |          7 |          0 |          4 |         11 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\funcionando_1.txt            | C                |         19 |          0 |          3 |         22 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\funcionando_2.txt            | C                |         15 |          0 |          4 |         19 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\geracao de codigo\ok_1.txt                     | C                |         21 |          0 |          5 |         26 |
+| c:\Users\Michelangelo\Desktop\Compilador\Test\geracao de codigo\ok_2.txt                     | C                |         18 |          0 |          9 |         27 |
+| c:\Users\Michelangelo\Desktop\Compilador\main.txt                                            | C                |         21 |          0 |          5 |         26 |
+| Total                                                                                        |                  |      5,148 |      1,920 |        524 |      7,592 |
++----------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+

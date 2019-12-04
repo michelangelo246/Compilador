@@ -881,7 +881,7 @@ Expression
 /*ExpPRINTV*/		| "print" "(" Expression "," _IDENT_ ")"	{
 																	if(!strcmp($5,"v"))
 																	{
-																		$$ = make_No(is_ExpPRINTV, ins_No($3, NULL), NULL, Is_TypeVoid);
+																		$$ = make_No(is_ExpPRINTV, ins_No($3, NULL), ins_Args_Ident(Is_Ident, $5, NULL), Is_TypeVoid);
 																		if($3->type == Is_TypeGraph)
 																		{	
 																			getAddr1($3);
@@ -933,6 +933,24 @@ Expression
 																			printf("função print com parametro v usada com tipo inválido. Esperado: 'graph'. Usado:%s\n",printType($3->type));
 																		}
 																	}
+																	else if(!strcmp($5,"d"))
+																	{
+																		$$ = make_No(is_ExpPRINTAD, ins_No($3, NULL), NULL, Is_TypeVoid);
+																		if($3->type == Is_TypeGraph)
+																		{	
+																			getAddr1($3);
+																			sprintf(buffer, "param %s\n", lastAddr1);
+																			bufAppendCode(buffer);
+	
+																			sprintf(buffer, "call _printd, 1\n");
+																			bufAppendCode(buffer);
+																		}
+																		else
+																		{
+																			yyerror("error");
+																			printf("função print com parametro v usada com tipo inválido. Esperado: 'graph'. Usado:%s\n",printType($3->type));
+																		}
+																	}
 																	else
 																	{
 																		yyerror("error");
@@ -941,7 +959,7 @@ Expression
 																}
 
 /*ExpSCAN*/			| "scan" "(" _IDENT_ ")"					{
-																	$$ = make_No(is_ExpSCAN, NULL, ins_Args_Ident(Is_Ident, $3, NULL), Is_TypeVoid);
+																	$$ = make_No(is_ExpSCAN, NULL, NULL, Is_TypeVoid);
 																	Table_Line *linha = SymbolTable_lookup($3).linha;
 																	if(!linha)
 																	{//erro ao referenciar identificador nao declarado

@@ -1586,3 +1586,172 @@ void inicializaNeig()
 
 	while_grafo++;
 }
+
+void inicializaDot()
+{
+	int temp = genTemp(), temp1 = genTemp(), temp2 = genTemp();
+	int temp3 = genTemp(), temp4 = genTemp(), i = genTemp();
+	char buffer[99];
+
+	sprintf(buffer,"_printd:\n");
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"print 'd'\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"print 'i'\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"print 'g'\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"print 'r'\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"print 'a'\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"print 'p'\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"print 'h'\n");
+	bufAppendCode(buffer);
+	sprintf(buffer,"print '{'\n");
+	bufAppendCode(buffer);
+
+	//temp = param0
+	sprintf(buffer,"mov $%d, #0\n",temp);
+	bufAppendCode(buffer);
+	
+	//temp1 = temp[0] ((&grafo[nós]) - ponteiro para lista de nós)
+	sprintf(buffer,"mov $%d, $%d[0]\n", temp1, temp);
+	bufAppendCode(buffer);
+
+	//temp1 = *temp1 (quantidade de nós)
+	sprintf(buffer,"mov $%d, *$%d\n", temp1, temp1);
+	bufAppendCode(buffer);
+
+	//temp2 = temp[0] (&grafo[nós] - ponteiro para lista de nós) 
+	sprintf(buffer,"mov $%d, $%d[0]\n", temp2, temp);
+	bufAppendCode(buffer);
+
+	//i = 1
+	sprintf(buffer,"mov $%d, 1\n", i);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"_While_Begin__%d:\n", while_grafo);
+	bufAppendCode(buffer);
+
+	// slt temp3, i, temp1
+	sprintf(buffer,"sleq $%d, $%d, $%d\n", temp3, i, temp1);
+	bufAppendCode(buffer);
+
+	// while(i>=0)
+	sprintf(buffer,"brz _While_End__%d, $%d\n", while_grafo, temp3);
+	bufAppendCode(buffer);
+
+	// temp4 = temp2[i]
+	sprintf(buffer,"mov $%d, $%d[$%d]\n", temp4, temp2, i);
+	bufAppendCode(buffer);
+
+	// print temp4
+	sprintf(buffer,"print $%d\n", temp4);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"print ';'\n");
+	bufAppendCode(buffer);
+
+	// i = i + 1 
+	sprintf(buffer,"add $%d, $%d, 1\n", i, i);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"jump _While_Begin__%d\n", while_grafo);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"_While_End__%d:\n", while_grafo);
+	bufAppendCode(buffer);
+
+	while_grafo++;
+
+	int temp10 = genTemp(), temp101 = genTemp(), temp102 = genTemp();
+	int temp103 = genTemp(), temp104 = genTemp(), j = genTemp();
+
+	//temp = param0
+	sprintf(buffer,"mov $%d, #0\n",temp10);
+	bufAppendCode(buffer);
+	
+	//temp1 = temp[1] ((&grafo[arestas]) - ponteiro para lista de arestas)
+	sprintf(buffer,"mov $%d, $%d[1]\n", temp101, temp10);
+	bufAppendCode(buffer);
+
+	//temp1 = *temp1 (quantidade de arestas)
+	sprintf(buffer,"mov $%d, *$%d\n", temp101, temp101);
+	bufAppendCode(buffer);
+
+	//temp1 = *temp1 (quantidade de nós, 2 para cada aresta)
+	sprintf(buffer,"mul $%d, $%d, 2\n", temp101, temp101);
+	bufAppendCode(buffer);
+
+	//temp2 = temp[1] (&grafo[arestas] - ponteiro para lista de arestas) 
+	sprintf(buffer,"mov $%d, $%d[1]\n", temp102, temp10);
+	bufAppendCode(buffer);
+
+	//i = 1
+	sprintf(buffer,"mov $%d, 1\n", j);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"_While_Begin__%d:\n", while_grafo);
+	bufAppendCode(buffer);
+
+	// slt temp3, i, temp1
+	sprintf(buffer,"sleq $%d, $%d, $%d\n", temp103, j, temp101);
+	bufAppendCode(buffer);
+
+	// while(i>=0)
+	sprintf(buffer,"brz _While_End__%d, $%d\n", while_grafo, temp103);
+	bufAppendCode(buffer);
+
+	// temp4 = temp2[i]
+	sprintf(buffer,"mov $%d, $%d[$%d]\n", temp104, temp102, j);
+	bufAppendCode(buffer);
+
+	// print temp4
+	sprintf(buffer,"print $%d\n", temp104);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"print '-'\n");
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"print '>'\n");
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"print ' '\n");
+	bufAppendCode(buffer);
+
+	// i = i + 1 
+	sprintf(buffer,"add $%d, $%d, 1\n", j, j);
+	bufAppendCode(buffer);
+
+	// temp4 = temp2[i]
+	sprintf(buffer,"mov $%d, $%d[$%d]\n", temp104, temp102, j);
+	bufAppendCode(buffer);
+
+	// print temp4
+	sprintf(buffer,"println $%d\n", temp104);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"print ';'\n");
+	bufAppendCode(buffer);
+
+	// i = i + 1 
+	sprintf(buffer,"add $%d, $%d, 1\n", j, j);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"jump _While_Begin__%d\n", while_grafo);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"_While_End__%d:\n", while_grafo);
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"print '}'\n");
+	bufAppendCode(buffer);
+
+	sprintf(buffer,"return\n\n");
+	bufAppendCode(buffer);
+
+	while_grafo++;
+}

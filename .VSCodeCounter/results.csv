@@ -1,12 +1,27 @@
-filename, language, YYLEX, Makefile, C++, C, Markdown, YACC, comment, blank, total
-GOL.l, YYLEX, 158, 0, 0, 0, 0, 0, 10, 20, 188
-GOL.y, YACC, 0, 0, 0, 0, 0, 639, 8, 46, 693
-Makefile, Makefile, 0, 21, 0, 0, 0, 0, 0, 9, 30
-Parser.h, C++, 0, 0, 52, 0, 0, 0, 12, 9, 73
-Printer.c, C, 0, 0, 0, 314, 0, 0, 1, 26, 341
-Printer.h, C++, 0, 0, 17, 0, 0, 0, 1, 10, 28
-README.md, Markdown, 0, 0, 0, 0, 40, 0, 0, 15, 55
-Syntactic.c, C, 0, 0, 0, 374, 0, 0, 32, 62, 468
-Syntactic.h, C++, 0, 0, 118, 0, 0, 0, 7, 40, 165
-Test.c, C, 0, 0, 0, 84, 0, 0, 2, 9, 95
-Total, -, 158, 21, 187, 772, 40, 639, 73, 246, 2136
+filename, language, YYLEX, C, YACC, C++, Makefile, Markdown, Plain Text (PDF), comment, blank, total
+c:\Users\Michelangelo\Desktop\Compilador\Doc\14_0156089_semantico.pdf, Plain Text (PDF), 0, 0, 0, 0, 0, 0, 1427, 1743, 62, 3232
+c:\Users\Michelangelo\Desktop\Compilador\GOL.l, YYLEX, 166, 0, 0, 0, 0, 0, 0, 11, 21, 198
+c:\Users\Michelangelo\Desktop\Compilador\GOL.y, YACC, 0, 0, 1223, 0, 0, 0, 0, 18, 72, 1313
+c:\Users\Michelangelo\Desktop\Compilador\Makefile, Makefile, 0, 0, 0, 0, 20, 0, 0, 1, 9, 30
+c:\Users\Michelangelo\Desktop\Compilador\Parser.h, C++, 0, 0, 0, 54, 0, 0, 0, 12, 9, 75
+c:\Users\Michelangelo\Desktop\Compilador\Printer.c, C, 0, 342, 0, 0, 0, 0, 0, 2, 26, 370
+c:\Users\Michelangelo\Desktop\Compilador\Printer.h, C++, 0, 0, 0, 17, 0, 0, 0, 1, 10, 28
+c:\Users\Michelangelo\Desktop\Compilador\README.md, Markdown, 0, 0, 0, 0, 0, 45, 0, 0, 16, 61
+c:\Users\Michelangelo\Desktop\Compilador\Syntactic.c, C, 0, 1298, 0, 0, 0, 0, 0, 120, 170, 1588
+c:\Users\Michelangelo\Desktop\Compilador\Syntactic.h, C++, 0, 0, 0, 156, 0, 0, 0, 8, 45, 209
+c:\Users\Michelangelo\Desktop\Compilador\Test.c, C, 0, 134, 0, 0, 0, 0, 0, 4, 11, 149
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao atual\descricao arquivos teste.txt, C, 0, 9, 0, 0, 0, 0, 0, 0, 2, 11
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao atual\erro_1.txt, C, 0, 32, 0, 0, 0, 0, 0, 0, 7, 39
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao atual\erro_2.txt, C, 0, 32, 0, 0, 0, 0, 0, 0, 8, 40
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao atual\funcionando_1.txt, C, 0, 30, 0, 0, 0, 0, 0, 0, 7, 37
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\descricao arquivos teste.txt, C, 0, 16, 0, 0, 0, 0, 0, 0, 6, 22
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\erro_1.txt, C, 0, 21, 0, 0, 0, 0, 0, 0, 5, 26
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\erro_2.txt, C, 0, 15, 0, 0, 0, 0, 0, 0, 4, 19
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\erro_3.txt, C, 0, 10, 0, 0, 0, 0, 0, 0, 4, 14
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\erro_4.txt, C, 0, 7, 0, 0, 0, 0, 0, 0, 4, 11
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\funcionando_1.txt, C, 0, 19, 0, 0, 0, 0, 0, 0, 3, 22
+c:\Users\Michelangelo\Desktop\Compilador\Test\Versao incompleta\funcionando_2.txt, C, 0, 15, 0, 0, 0, 0, 0, 0, 4, 19
+c:\Users\Michelangelo\Desktop\Compilador\Test\geracao de codigo\ok_1.txt, C, 0, 21, 0, 0, 0, 0, 0, 0, 5, 26
+c:\Users\Michelangelo\Desktop\Compilador\Test\geracao de codigo\ok_2.txt, C, 0, 18, 0, 0, 0, 0, 0, 0, 9, 27
+c:\Users\Michelangelo\Desktop\Compilador\main.txt, C, 0, 21, 0, 0, 0, 0, 0, 0, 5, 26
+Total, -, 166, 2040, 1223, 227, 20, 45, 1427, 1920, 524, 7592

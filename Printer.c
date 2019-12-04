@@ -46,9 +46,8 @@ void shTree(No p, int pos)
 	}
 	
 	//Caso regra possua um identificador no corpo, imprime um nó para o identificador
-	if((p->kind == is_PosExpSub ) || (p->kind == is_ExpSCAN) || (p->kind == is_ExpPRINTV) || 
-	(p->kind == is_ExpPRINT) || (p->kind == is_PosExpIn ) || (p->kind == is_PosExpOut ) ||
-	(p->kind == is_ExpPRINTVN) ||
+	if((p->kind == is_PosExpSub ) || (p->kind == is_ExpPRINTV) || 
+	(p->kind == is_PosExpIn ) || (p->kind == is_PosExpOut ) || (p->kind == is_ExpPRINTVN) ||
 	(p->kind == is_PosExpNeig ) || (p->kind == is_PosExpCal ) || (p->kind == is_PosExpCalArg ) ||
 	(p->kind == is_ExpAss ) || (p->kind == is_ExpAssGraph ) || (p->kind == is_IniDecIdE ) || 
 	(p->kind == is_ParamListId ) || (p->kind == is_ParamList ) || (p->kind == is_DecIdParam ) || (p->kind == is_DecId ))
@@ -246,9 +245,9 @@ char* printKind(int kind, int modo)
 	case is_PriExpExp: if(modo==0)printf(" PriExpExp ");else return " PriExpExp "; break; 
 	case is_PosExpPri: if(modo==0)printf(" PosExpPri ");else return " PosExpPri "; break; 
 	case is_PosExpSub: if(modo==0)printf(" PosExpSub ");else return " PosExpSub "; break; 
-	case is_PosExpIn: if(modo==0)printf(" PosExpIn ");else return " PosExpIn "; break; 
-	case is_PosExpOut: if(modo==0)printf(" PosExpOut ");else return " PosExpOut "; break; 
-	case is_PosExpNeig: if(modo==0)printf(" PosExpNeig ");else return " PosExpNeig "; break; 
+	case is_PosExpIn: if(modo==0)printf(" PosExpIn ");else return " @()# "; break; 
+	case is_PosExpOut: if(modo==0)printf(" PosExpOut ");else return " #()@ "; break; 
+	case is_PosExpNeig: if(modo==0)printf(" PosExpNeig ");else return " &()& "; break; 
 	case is_PosExpCal: if(modo==0)printf(" PosExpCal ");else return " PosExpCal "; break; 
 	case is_PosExpCalArg: if(modo==0)printf(" PosExpCalArg ");else return " PosExpCalArg "; break; 
 	case is_UnaExpPos: if(modo==0)printf(" UnaExpPos ");else return " UnaExpPos "; break; 
@@ -260,17 +259,17 @@ char* printKind(int kind, int modo)
 	case is_AddExpAdd: if(modo==0)printf(" AddExpAdd ");else return " + "; break; 
 	case is_AddExpSub: if(modo==0)printf(" AddExpSub ");else return " - "; break; 
 	case is_RelExpAdd: if(modo==0)printf(" RelExpAdd ");else return " RelExpAdd "; break; 
-	case is_RelExpLT: if(modo==0)printf(" RelExpLT ");else return " RelExpLT "; break; 
-	case is_RelExpGT: if(modo==0)printf(" RelExpGT ");else return " RelExpGT "; break; 
-	case is_RelExpLE: if(modo==0)printf(" RelExpLE ");else return " RelExpLE "; break; 
-	case is_RelExpGE: if(modo==0)printf(" RelExpGE ");else return " RelExpGE "; break; 
+	case is_RelExpLT: if(modo==0)printf(" RelExpLT ");else return " < "; break; 
+	case is_RelExpGT: if(modo==0)printf(" RelExpGT ");else return " > "; break; 
+	case is_RelExpLE: if(modo==0)printf(" RelExpLE ");else return " <= "; break; 
+	case is_RelExpGE: if(modo==0)printf(" RelExpGE ");else return " >= "; break; 
 	case is_EqExpRel: if(modo==0)printf(" EqExpRel ");else return " EqExpRel "; break; 
-	case is_EqExpEQ: if(modo==0)printf(" EqExpEQ ");else return " EqExpEQ "; break; 
-	case is_EqExpNE: if(modo==0)printf(" EqExpNE ");else return " EqExpNE "; break; 
+	case is_EqExpEQ: if(modo==0)printf(" EqExpEQ ");else return " == "; break; 
+	case is_EqExpNE: if(modo==0)printf(" EqExpNE ");else return " != "; break; 
 	case is_LogAndExpEq: if(modo==0)printf(" LogAndExpEq ");else return " LogAndExpEq "; break; 
-	case is_LogAndExpAnd: if(modo==0)printf(" LogAndExpAnd ");else return " LogAndExpAnd "; break; 
+	case is_LogAndExpAnd: if(modo==0)printf(" LogAndExpAnd ");else return " && "; break; 
 	case is_LogOrExpLogAnd: if(modo==0)printf(" LogOrExpLogAnd ");else return " LogOrExpLogAnd "; break; 
-	case is_LogOrExpLogOr: if(modo==0)printf(" LogOrExpLogOr ");else return " LogOrExpLogOr "; break; 
+	case is_LogOrExpLogOr: if(modo==0)printf(" LogOrExpLogOr ");else return " || "; break; 
 	case is_ExpLogOr: if(modo==0)printf(" ExpLogOr ");else return " ExpLogOr "; break; 
 	case is_ExpAss: if(modo==0)printf(" ExpAss ");else return " ExpAss "; break; 
 	case is_ExpAssGraph: if(modo==0)printf(" ExpAssGraph ");else return " ExpAssGraph "; break; 
@@ -279,6 +278,7 @@ char* printKind(int kind, int modo)
 	case is_ExpPRINTV: if(modo==0)printf(" PRINTV ");else return " PRINTV "; break; 
 	case is_ExpPRINTVN: if(modo==0)printf(" PRINTVN ");else return " PRINTVN "; break; 
 	case is_ExpPRINTA: if(modo==0)printf(" PRINTA ");else return " PRINTA "; break; 
+	case is_ExpPRINTAD: if(modo==0)printf(" PRINTD ");else return " PRINTD "; break; 
 	case is_ExpSCAN: if(modo==0)printf(" SCAN ");else return " SCAN "; break; 
 	case is_IniDecList: if(modo==0)printf(" IniDecList ");else return " IniDecList "; break; 
 	case is_IniDecId: if(modo==0)printf(" IniDecId ");else return " IniDecId "; break; 

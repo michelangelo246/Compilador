@@ -11,7 +11,7 @@
 int main(int argc, char ** argv)
 {
 	FILE *input, *arvore;
-	//FILE *codigo;
+	FILE *codigo;
 	No parse_tree;
 	char *filename = NULL;
 	int pick, ok;
@@ -66,27 +66,28 @@ int main(int argc, char ** argv)
 	inicializaGetGrauIn(); TempCount = 0;
 	inicializaGetGrauOut(); TempCount = 0;
 	inicializaNeig(); TempCount = 0;
+	inicializaDot(); TempCount = 0;
 	parse_tree = pTrans_Unit(input);
 	bufAppendCode("nop\n");
 
-	//codigo = fopen("code.tac","w");
+	codigo = fopen("code.tac","w");
 	aux = buf_Table;
 	while(aux && *aux != '\0')
 	{
-		//fputc(*aux,codigo);
-		printf("%c",*aux);
+		fputc(*aux,codigo);
+		//printf("%c",*aux);
 		aux++;
 	}
 	aux = buf_Code;
 	while(aux && *aux != '\0')
 	{
-		//fputc(*aux,codigo);
-		printf("%c",*aux);
+		fputc(*aux,codigo);
+		//printf("%c",*aux);
 		aux++;
 	}
-	//fclose(codigo);
+	fclose(codigo);
 
-	if(0)//if(parse_tree)
+	if(parse_tree)//if(0)//
 	{
 		printf("\nAnalise concluida!\n");
 		if(error == 0)
@@ -95,6 +96,7 @@ int main(int argc, char ** argv)
 			printf(" 1 - Texto puro no terminal;\n");
 			printf(" 2 - Grafico na Web; \n (Copiar manualmente codigo dot gerado e colar no site: http://www.webgraphviz.com/)\n");
 			printf(" 3 - Grafico em arquivo .png; \n (Adicione suporte a extensao .dot com o comando: \" sudo apt install graphviz \")\n");
+			printf("\n Além disso, caso deseje executar o código, digite 4\n");
 			ok = 0;
 			while(!ok)
 			{
@@ -123,6 +125,15 @@ int main(int argc, char ** argv)
 					system("dot -Tpng Arvore.dot -o Arvore.png");
 					ok = 1;
 					break;
+				case 4:
+					arvore = fopen("Arvore.dot","w");
+					printf("\n[Plain text]\n");
+					fputs(showTrans_Unit(parse_tree),arvore);
+					fclose(arvore);
+					printf("\n\n /!\\ Arquivo .dot gerado com sucesso! /!\\\nUtilize o comando \" dot -Tpng Arvore.dot -o Arvore.png \" para gerar a imagem \n");
+					system("dot -Tpng Arvore.dot -o Arvore.png");
+					ok = 1;
+					break;
 				default:
 					printf("\nEscolha uma das opções acima (1, 2 ou 3): ");
 					break;
@@ -133,7 +144,6 @@ int main(int argc, char ** argv)
 		SymbolTable_Show(SymbolTable);
 		return 0;
 	}
-	//system("tac code.tac");
-	return 0;//retornar 1!
+	return 1;
 }
 
