@@ -60,4 +60,4 @@ O programa gera como saída um arquivo de extensão '.tac' o qual pode ser inter
 
 | Código GOL    | Código gerado (fragmento) |
 | ------------- |:-------------:|
-| <img src="https://github.com/michelangelo246/Compilador/blob/master/Figures/CodigoGOL.PNG" width="250">      | <img src="https://github.com/michelangelo246/Compilador/blob/master/Figures/CodigoTAC.PNG" width="500">
+| <img src="https://github.com/michelangelo246/Compilador/blob/master/Figures/CodigoGOL.PNG" width="250">      | <img src="https://github.com/michelangelo246/Compilador/blob/master/Figures/CodigoTAC.PNG" width="250">
