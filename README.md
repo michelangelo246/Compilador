@@ -11,6 +11,9 @@ Autor: Michelangelo da Rocha Machado.
 - [x] Geração de código intermediário
 
 # Linguagem
+## Documentação:
+[GOL Language Documentation](https://github.com/michelangelo246/Compilador/blob/master/Doc/14_0156089_tradutor.pdf)
+
 ## Efeito de algumas operações:
 
 As operações a seguir foram derivadas de algumas das operações
