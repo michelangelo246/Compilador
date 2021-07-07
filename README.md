@@ -1,40 +1,40 @@
 ![Screenshot](Figures/Capturar.JPG)
 
-Projeto de uma linguagem denominada GOL e de seu respectivo compilador (fase de síntese) com geração de código de três endereços.
+Design of a language called GOL and its respective compiler (synthesis phase) with three-address code generation.
 
-Autor: Michelangelo da Rocha Machado.
+Author: Michelangelo da Rocha Machado.
 
-# Andamento do projeto
-- [x] Análise Léxica
-- [x] Análise sintática
-- [x] Análise semântica
-- [x] Geração de código intermediário
+# Project Todo
+- [x] Lexical Analysis
+- [x] Syntax analisys
+- [x] Semantic analysis
+- [x] Intermediate code generation
+- [ ] EN translation
 
-# Linguagem
-## Documentação:
+# Language
+## Documentation (pt-br only):
 [GOL Language Documentation](https://github.com/michelangelo246/Compilador/blob/master/Doc/14_0156089_tradutor.pdf)
 
-## Efeito de algumas operações:
+## Description of the main operations:
 
-As operações a seguir foram derivadas de algumas das operações
-básicas encontradas na biblioteca Ngraph para lidar com grafos em C++.
+The following operations were derivated from the basic operations found in the Ngraph library to handle Graphs in C++.
 
 ```c
-graph G1; //Declaração de variável do tipo graph
+graph G1; // var declaration of type graph
 graph G2;
 graph G3;
 int a = 13;
 
-G1 << a; //Inserção de vértice 13 no grafo G1
-G1 << (a,14); //Inserção de aresta (13,14) no grafo G1
-G2 << 15; //Inserção de vértice 15 no grafo G2
-a = G3@(13)#; //a recebe o grau de entrada do nó 13
-a = G3#(13)@; //a recebe o grau de saída do nó 13
-G3 = G1&(13)&; //G3 recebe grafo composto pelos vizinhos do nó 13 no grafo G1
+G1 << a; // Insertion of vertex 13 in graph G1
+G1 << (a,14); // Insertion of edge (13.14) in graph G1
+G2 << 15; // Insertion of vertex 15 in graph G2
+a = G3@(13)#; // a receives the input degree of node 13
+a = G3#(13)@; // a receives the output degree of node 13
+G3 = G1&(13)&; //G3 receives the graph composed by node 13 neighbors in graph G1
 ```
-Operações removidas:
-* ~~G3 = G1 + G2; //G3 recebe união dos grafos G1 e G2~~
-* ~~G2 = G3[(G1)]; //G2 recebe subgrafo de G3 composto por vértices de G1~~
+Removed operations:
+* ~~G3 = G1 + G2; // G3 receives the union of graphs G1 and G2~~
+* ~~G2 = G3[(G1)]; // G2 receives subgraph of G3 composed of vertices of G1~~
 
 ## Notas:
 
